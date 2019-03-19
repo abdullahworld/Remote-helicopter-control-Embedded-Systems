@@ -10,9 +10,20 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./ADCdemo1.obj" \
+"./ADCdemo2.obj" \
+"./buttons4.obj" \
+"./circBufT.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
-"./week2_blink.obj" \
-"./week2_blink_edited.obj" \
+"./uartDemo.obj" \
+"./ustdlib.obj" \
+"./OrbitOLED/OrbitOLEDInterface.obj" \
+"./OrbitOLED/lib_OrbitOled/ChrFont0.obj" \
+"./OrbitOLED/lib_OrbitOled/FillPat.obj" \
+"./OrbitOLED/lib_OrbitOled/OrbitOled.obj" \
+"./OrbitOLED/lib_OrbitOled/OrbitOledChar.obj" \
+"./OrbitOLED/lib_OrbitOled/OrbitOledGrph.obj" \
+"./OrbitOLED/lib_OrbitOled/delay.obj" \
 "../tm4c123gh6pm.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
@@ -25,7 +36,11 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include OrbitOLED/subdir_vars.mk
+-include OrbitOLED/lib_OrbitOled/subdir_vars.mk
 -include subdir_rules.mk
+-include OrbitOLED/subdir_rules.mk
+-include OrbitOLED/lib_OrbitOled/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -122,42 +137,42 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-Week2Lab3.out \
+Week4Lab.out \
 
 EXE_OUTPUTS__QUOTED += \
-"Week2Lab3.out" \
+"Week4Lab.out" \
 
 BIN_OUTPUTS += \
-Week2Lab3.hex \
+Week4Lab.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"Week2Lab3.hex" \
+"Week4Lab.hex" \
 
 
 # All Target
 all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "Week2Lab3.out"
+	@$(MAKE) --no-print-directory -Onone "Week4Lab.out"
 
 # Tool invocations
-Week2Lab3.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+Week4Lab.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --define=ccs="ccs" --define=PART_TM4C123GH6PM --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Week2Lab3.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib" -i"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Week2Lab3_linkInfo.xml" --rom_model -o "Week2Lab3.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --define=ccs="ccs" --define=PART_TM4C123GH6PM --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Week4Lab.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib" -i"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Week4Lab_linkInfo.xml" --rom_model -o "Week4Lab.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
-Week2Lab3.hex: $(EXE_OUTPUTS)
+Week4Lab.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex"  -o "Week2Lab3.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/bin/armhex"  -o "Week4Lab.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "tm4c123gh6pm_startup_ccs.obj" "week2_blink.obj" "week2_blink_edited.obj" 
-	-$(RM) "tm4c123gh6pm_startup_ccs.d" "week2_blink.d" "week2_blink_edited.d" 
+	-$(RM) "ADCdemo1.obj" "ADCdemo2.obj" "buttons4.obj" "circBufT.obj" "tm4c123gh6pm_startup_ccs.obj" "uartDemo.obj" "ustdlib.obj" "OrbitOLED\OrbitOLEDInterface.obj" "OrbitOLED\lib_OrbitOled\ChrFont0.obj" "OrbitOLED\lib_OrbitOled\FillPat.obj" "OrbitOLED\lib_OrbitOled\OrbitOled.obj" "OrbitOLED\lib_OrbitOled\OrbitOledChar.obj" "OrbitOLED\lib_OrbitOled\OrbitOledGrph.obj" "OrbitOLED\lib_OrbitOled\delay.obj" 
+	-$(RM) "ADCdemo1.d" "ADCdemo2.d" "buttons4.d" "circBufT.d" "tm4c123gh6pm_startup_ccs.d" "uartDemo.d" "ustdlib.d" "OrbitOLED\OrbitOLEDInterface.d" "OrbitOLED\lib_OrbitOled\ChrFont0.d" "OrbitOLED\lib_OrbitOled\FillPat.d" "OrbitOLED\lib_OrbitOled\OrbitOled.d" "OrbitOLED\lib_OrbitOled\OrbitOledChar.d" "OrbitOLED\lib_OrbitOled\OrbitOledGrph.d" "OrbitOLED\lib_OrbitOled\delay.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
