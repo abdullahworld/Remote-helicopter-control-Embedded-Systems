@@ -27,8 +27,8 @@
 //*****************************************************************************
 // Constants
 //*****************************************************************************
-#define BUF_SIZE 10
-#define SAMPLE_RATE_HZ 10
+#define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
+#define SAMPLE_RATE_HZ 40 // 10 samples per second assuming a jitter of 4Hz
 
 //*****************************************************************************
 // Global variables
