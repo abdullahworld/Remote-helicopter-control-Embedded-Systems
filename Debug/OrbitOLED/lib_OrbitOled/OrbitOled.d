@@ -1,8 +1,8 @@
 # FIXED
 
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: ../OrbitOLED/lib_OrbitOled/OrbitOled.c
-OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/delay.h
-OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/LaunchPad.h
+OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/delay.h
+OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/LaunchPad.h
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdint.h
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/sys/stdint.h
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/sys/cdefs.h
@@ -20,14 +20,14 @@ OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverl
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ssi.h
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/sysctl.h
 OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/timer.h
-OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitBoosterPackDefs.h
-OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitOled.h
-OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitOledChar.h
-OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitOledGrph.h
+OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitBoosterPackDefs.h
+OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitOled.h
+OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitOledChar.h
+OrbitOLED/lib_OrbitOled/OrbitOled.obj: C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitOledGrph.h
 
 ../OrbitOLED/lib_OrbitOled/OrbitOled.c: 
-C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/delay.h: 
-C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/LaunchPad.h: 
+C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/delay.h: 
+C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/LaunchPad.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/stdint.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/sys/stdint.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/include/sys/cdefs.h: 
@@ -45,7 +45,7 @@ C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/gpio.h:
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ssi.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/sysctl.h: 
 C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/timer.h: 
-C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitBoosterPackDefs.h: 
-C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitOled.h: 
-C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitOledChar.h: 
-C:/Users/Admin/Documents/CCS-workspace/Week4Lab/OrbitOLED/lib_OrbitOled/OrbitOledGrph.h: 
+C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitBoosterPackDefs.h: 
+C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitOled.h: 
+C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitOledChar.h: 
+C:/Users/Admin/Documents/thu_pm_group-1/OrbitOLED/lib_OrbitOled/OrbitOledGrph.h: 
