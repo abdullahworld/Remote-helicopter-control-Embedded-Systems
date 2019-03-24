@@ -11,8 +11,10 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./ADCdemo2.obj" \
+"./altitude.obj" \
 "./buttons4.obj" \
 "./circBufT.obj" \
+"./main.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
 "./ustdlib.obj" \
 "./OrbitOLED/OrbitOLEDInterface.obj" \
@@ -170,8 +172,8 @@ thu_pm_group-1.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "ADCdemo2.obj" "buttons4.obj" "circBufT.obj" "tm4c123gh6pm_startup_ccs.obj" "ustdlib.obj" "OrbitOLED\OrbitOLEDInterface.obj" "OrbitOLED\lib_OrbitOled\ChrFont0.obj" "OrbitOLED\lib_OrbitOled\FillPat.obj" "OrbitOLED\lib_OrbitOled\OrbitOled.obj" "OrbitOLED\lib_OrbitOled\OrbitOledChar.obj" "OrbitOLED\lib_OrbitOled\OrbitOledGrph.obj" "OrbitOLED\lib_OrbitOled\delay.obj" 
-	-$(RM) "ADCdemo2.d" "buttons4.d" "circBufT.d" "tm4c123gh6pm_startup_ccs.d" "ustdlib.d" "OrbitOLED\OrbitOLEDInterface.d" "OrbitOLED\lib_OrbitOled\ChrFont0.d" "OrbitOLED\lib_OrbitOled\FillPat.d" "OrbitOLED\lib_OrbitOled\OrbitOled.d" "OrbitOLED\lib_OrbitOled\OrbitOledChar.d" "OrbitOLED\lib_OrbitOled\OrbitOledGrph.d" "OrbitOLED\lib_OrbitOled\delay.d" 
+	-$(RM) "ADCdemo2.obj" "altitude.obj" "buttons4.obj" "circBufT.obj" "main.obj" "tm4c123gh6pm_startup_ccs.obj" "ustdlib.obj" "OrbitOLED\OrbitOLEDInterface.obj" "OrbitOLED\lib_OrbitOled\ChrFont0.obj" "OrbitOLED\lib_OrbitOled\FillPat.obj" "OrbitOLED\lib_OrbitOled\OrbitOled.obj" "OrbitOLED\lib_OrbitOled\OrbitOledChar.obj" "OrbitOLED\lib_OrbitOled\OrbitOledGrph.obj" "OrbitOLED\lib_OrbitOled\delay.obj" 
+	-$(RM) "ADCdemo2.d" "altitude.d" "buttons4.d" "circBufT.d" "main.d" "tm4c123gh6pm_startup_ccs.d" "ustdlib.d" "OrbitOLED\OrbitOLEDInterface.d" "OrbitOLED\lib_OrbitOled\ChrFont0.d" "OrbitOLED\lib_OrbitOled\FillPat.d" "OrbitOLED\lib_OrbitOled\OrbitOled.d" "OrbitOLED\lib_OrbitOled\OrbitOledChar.d" "OrbitOLED\lib_OrbitOled\OrbitOledGrph.d" "OrbitOLED\lib_OrbitOled\delay.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
