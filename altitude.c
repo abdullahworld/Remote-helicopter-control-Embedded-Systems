@@ -29,6 +29,7 @@
 //*****************************************************************************
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 40 // 10 samples per second assuming a jitter of 4Hz
+#define VOLTAGE_SENSOR_RANGE 800 // in mV
 
 //*****************************************************************************
 // Global variables
@@ -146,7 +147,7 @@ initDisplay (void)
 //
 //*****************************************************************************
 void
-displayMeanVal(uint16_t meanVal, uint32_t count)
+displayMeanVal(int16_t meanVal, int32_t count)
 {
 	char string[17];  // 16 characters across the display
 
@@ -162,15 +163,28 @@ displayMeanVal(uint16_t meanVal, uint32_t count)
     OLEDStringDraw (string, 0, 3);
 }
 
+void
+displayAltitude(int32_t altitude)
+{
+    char string[17];  // 16 characters across the display
+
+    // Form a new string for the line.  The maximum width specified for the
+    //  number field ensures it is displayed right justified.
+    usnprintf (string, sizeof(string), "ALTITUDE = %4d", altitude);
+    // Update line on display.
+    OLEDStringDraw (string, 0, 0);
+}
 
 int
 main(void)
 {
 	uint16_t i;
 	int32_t sum;
+	int32_t meanVal;
+	int32_t helicopter_landed_value;
+	int8_t altitude_showing = 1;
+	int8_t n = 0;
 
-
-	
 	initClock ();
 	initADC ();
 	initDisplay ();
@@ -181,9 +195,6 @@ main(void)
     IntMasterEnable();
 
 
-    int32_t helicopter_landed = readCircBuf(&g_inBuffer);
-
-
 	while (1)
 	{
 		//
@@ -192,9 +203,23 @@ main(void)
 		sum = 0;
 		for (i = 0; i < BUF_SIZE; i++)
 			sum = sum + readCircBuf (&g_inBuffer);
-		// Calculate and display the rounded mean of the buffer contents
-		displayMeanVal ((2 * sum + BUF_SIZE) / 2 / BUF_SIZE, g_ulSampCnt);
 
+		meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
+
+		if (n == 1) {
+		    helicopter_landed_value = meanVal;
+		    n++;
+		} else if (n < 1) {
+		    n++;
+		}
+
+		if (altitude_showing == 0) {
+            // Calculate and display the rounded mean of the buffer contents
+            displayMeanVal (meanVal, g_ulSampCnt);
+		} else {
+		    //
+		    displayAltitude((meanVal-helicopter_landed_value)/(VOLTAGE_SENSOR_RANGE/100));
+	    }
 		SysCtlDelay (SysCtlClockGet() / 6);  // Update display at ~ 2 Hz
 	}
 }
