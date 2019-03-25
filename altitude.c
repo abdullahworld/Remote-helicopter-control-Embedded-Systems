@@ -23,6 +23,7 @@
 #include "utils/ustdlib.h"
 #include "circBufT.h"
 #include "OrbitOLED/OrbitOLEDInterface.h"
+#include "buttons4.h"
 
 //*****************************************************************************
 // Constants
@@ -50,6 +51,10 @@ SysTickIntHandler(void)
     //
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
+
+
+
+
 }
 
 //*****************************************************************************
@@ -170,7 +175,7 @@ displayAltitude(int32_t altitude)
 
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    usnprintf (string, sizeof(string), "ALTITUDE = %4d", altitude);
+    usnprintf (string, sizeof(string), "ALTITUDE = %4d%%", altitude);
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
 }
@@ -184,10 +189,14 @@ main(void)
 	int32_t helicopter_landed_value;
 	int8_t altitude_showing = 1;
 	int8_t n = 0;
+	int32_t counter = 0;
+
+	SysCtlPeripheralReset (LEFT_BUT_PERIPH);      // DOWN button GPIO
 
 	initClock ();
 	initADC ();
 	initDisplay ();
+	initButtons ();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
 	initCircBuf (&g_inBuffer, BUF_SIZE);
 
     //
@@ -197,30 +206,40 @@ main(void)
 
 	while (1)
 	{
-		//
-		// Background task: calculate the (approximate) mean of the values in the
-		// circular buffer and display it, together with the sample number.
-		sum = 0;
-		for (i = 0; i < BUF_SIZE; i++)
-			sum = sum + readCircBuf (&g_inBuffer);
+	    if (counter == 10000)
+            {
+            //
+            // Background task: calculate the (approximate) mean of the values in the
+            // circular buffer and display it, together with the sample number.
+            sum = 0;
+            for (i = 0; i < BUF_SIZE; i++)
+                sum = sum + readCircBuf (&g_inBuffer);
 
-		meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
+            meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
 
-		if (n == 1) {
-		    helicopter_landed_value = meanVal;
-		    n++;
-		} else if (n < 1) {
-		    n++;
-		}
+            if ((checkButton (LEFT) == PUSHED))
+                    {
+                helicopter_landed_value = meanVal;
+                    }
 
-		if (altitude_showing == 0) {
-            // Calculate and display the rounded mean of the buffer contents
-            displayMeanVal (meanVal, g_ulSampCnt);
-		} else {
-		    //
-		    displayAltitude((meanVal-helicopter_landed_value)/(VOLTAGE_SENSOR_RANGE/100));
+            if (n == 2) {
+                helicopter_landed_value = meanVal;
+                n++;
+            } else if (n < 2) {
+                n++;
+            }
+
+            if (altitude_showing == 0) {
+                // Calculate and display the rounded mean of the buffer contents
+                displayMeanVal (meanVal, g_ulSampCnt);
+            } else {
+                //
+                displayAltitude((meanVal-helicopter_landed_value)/(VOLTAGE_SENSOR_RANGE/100));
+            }
+            counter = 0;
 	    }
-		SysCtlDelay (SysCtlClockGet() / 6);  // Update display at ~ 2 Hz
+	    counter++;
+	    updateButtons();
 	}
 }
 
