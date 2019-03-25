@@ -31,6 +31,9 @@
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 40 // 10 samples per second assuming a jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
+#define SCREEN_ALTITUDE 1
+#define SCREEN_MEAN_ADC 2
+#define SCREEN_BLANK 3
 
 //*****************************************************************************
 // Global variables
@@ -156,16 +159,14 @@ displayMeanVal(int16_t meanVal, int32_t count)
 {
 	char string[17];  // 16 characters across the display
 
-    OLEDStringDraw ("ADC demo 2", 0, 0);
-	
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    usnprintf (string, sizeof(string), "Mean ADC = %4d", meanVal);
+    usnprintf (string, sizeof(string), "MEAN ADC = %4d", meanVal);
     // Update line on display.
-    OLEDStringDraw (string, 0, 1);
+    OLEDStringDraw (string, 0, 0);
 
-    usnprintf (string, sizeof(string), "Sample # %5d", count);
-    OLEDStringDraw (string, 0, 3);
+    usnprintf (string, sizeof(string), "SAMPLE NO. %5d", count);
+    OLEDStringDraw (string, 0, 1);
 }
 
 void
@@ -180,6 +181,24 @@ displayAltitude(int32_t altitude)
     OLEDStringDraw (string, 0, 0);
 }
 
+void
+displayWipe(void)
+{
+    char string[17];  // 16 characters across the display
+
+    // Form a new string for the line.  The maximum width specified for the
+    //  number field ensures it is displayed right justified.
+    // Update lines with lines of 16 spaces
+    usnprintf (string, sizeof(string), "                ");
+    OLEDStringDraw (string, 0, 0);
+    usnprintf (string, sizeof(string), "                ");
+    OLEDStringDraw (string, 0, 1);
+    usnprintf (string, sizeof(string), "                ");
+    OLEDStringDraw (string, 0, 2);
+    usnprintf (string, sizeof(string), "                ");
+    OLEDStringDraw (string, 0, 3);
+}
+
 int
 main(void)
 {
@@ -187,11 +206,12 @@ main(void)
 	int32_t sum;
 	int32_t meanVal;
 	int32_t helicopter_landed_value;
-	int8_t altitude_showing = 1;
+	int8_t screen_state = SCREEN_ALTITUDE;
 	int8_t n = 0;
 	int32_t counter = 0;
 
-	SysCtlPeripheralReset (LEFT_BUT_PERIPH);      // DOWN button GPIO
+	SysCtlPeripheralReset (LEFT_BUT_PERIPH);
+	SysCtlPeripheralReset (UP_BUT_PERIPH);
 
 	initClock ();
 	initADC ();
@@ -203,43 +223,58 @@ main(void)
     // Enable interrupts to the processor.
     IntMasterEnable();
 
-
 	while (1)
 	{
+	    if ((checkButton (LEFT) == PUSHED))
+	    {
+	        helicopter_landed_value = meanVal;
+	    }
+
+	    if ((screen_state == SCREEN_ALTITUDE) && (checkButton (UP) == PUSHED))
+	    {
+	        displayWipe();
+	        screen_state = SCREEN_MEAN_ADC;
+        }
+        if ((screen_state == SCREEN_MEAN_ADC) && (checkButton (UP) == PUSHED))
+        {
+            displayWipe();
+            screen_state = SCREEN_BLANK;
+        }
+        if ((screen_state == SCREEN_BLANK) && (checkButton (UP) == PUSHED))
+        {
+            displayWipe();
+            screen_state = SCREEN_ALTITUDE;
+        }
+        updateButtons();
+
 	    if (counter == 10000)
             {
-            //
-            // Background task: calculate the (approximate) mean of the values in the
-            // circular buffer and display it, together with the sample number.
-            sum = 0;
-            for (i = 0; i < BUF_SIZE; i++)
-                sum = sum + readCircBuf (&g_inBuffer);
-
-            meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
-
-            if ((checkButton (LEFT) == PUSHED))
-                    {
-                helicopter_landed_value = meanVal;
-                    }
-
-            if (n == 2) {
-                helicopter_landed_value = meanVal;
-                n++;
-            } else if (n < 2) {
-                n++;
-            }
-
-            if (altitude_showing == 0) {
-                // Calculate and display the rounded mean of the buffer contents
-                displayMeanVal (meanVal, g_ulSampCnt);
-            } else {
                 //
-                displayAltitude((meanVal-helicopter_landed_value)/(VOLTAGE_SENSOR_RANGE/100));
+                // Background task: calculate the (approximate) mean of the values in the
+                // circular buffer and display it, together with the sample number.
+                sum = 0;
+                for (i = 0; i < BUF_SIZE; i++)
+                    sum = sum + readCircBuf (&g_inBuffer);
+
+                meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
+
+                if (n == 2) {
+                    helicopter_landed_value = meanVal;
+                    n++;
+                } else if (n < 2) {
+                    n++;
+                }
+
+                if (screen_state == SCREEN_MEAN_ADC) {
+                    // Calculate and display the rounded mean of the buffer contents
+                    displayMeanVal (meanVal, g_ulSampCnt);
+                } else if (screen_state == SCREEN_ALTITUDE){
+                    //
+                    displayAltitude((meanVal-helicopter_landed_value)/(VOLTAGE_SENSOR_RANGE/100));
+                }
+                counter = 0;
             }
-            counter = 0;
-	    }
 	    counter++;
-	    updateButtons();
 	}
 }
 
