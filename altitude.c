@@ -126,7 +126,7 @@ initADC (void)
     // sequence 0 has 8 programmable steps.  Since we are only doing a single
     // conversion using sequence 3 we will only configure step 0.  For more
     // on the ADC sequences and steps, refer to the LM3S1968 datasheet.
-    ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0 | ADC_CTL_IE |
+    ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH9 | ADC_CTL_IE |
                              ADC_CTL_END);
                              
     //
@@ -181,23 +181,6 @@ displayAltitude(int32_t altitude)
     OLEDStringDraw (string, 0, 0);
 }
 
-void
-displayWipe(void)
-{
-    char string[17];  // 16 characters across the display
-
-    // Form a new string for the line.  The maximum width specified for the
-    //  number field ensures it is displayed right justified.
-    // Update lines with lines of 16 spaces
-    usnprintf (string, sizeof(string), "                ");
-    OLEDStringDraw (string, 0, 0);
-    usnprintf (string, sizeof(string), "                ");
-    OLEDStringDraw (string, 0, 1);
-    usnprintf (string, sizeof(string), "                ");
-    OLEDStringDraw (string, 0, 2);
-    usnprintf (string, sizeof(string), "                ");
-    OLEDStringDraw (string, 0, 3);
-}
 
 int
 main(void)
@@ -228,21 +211,17 @@ main(void)
 	    if ((checkButton (LEFT) == PUSHED))
 	    {
 	        helicopter_landed_value = meanVal;
-	    }
-
-	    if ((screen_state == SCREEN_ALTITUDE) && (checkButton (UP) == PUSHED))
+	    } else if ((screen_state == SCREEN_ALTITUDE) && (checkButton (UP) == PUSHED))
 	    {
-	        displayWipe();
+	        OrbitOledClear();
 	        screen_state = SCREEN_MEAN_ADC;
-        }
-        if ((screen_state == SCREEN_MEAN_ADC) && (checkButton (UP) == PUSHED))
+        } else if ((screen_state == SCREEN_MEAN_ADC) && (checkButton (UP) == PUSHED))
         {
-            displayWipe();
+            OrbitOledClear();
             screen_state = SCREEN_BLANK;
-        }
-        if ((screen_state == SCREEN_BLANK) && (checkButton (UP) == PUSHED))
+        } else if ((screen_state == SCREEN_BLANK) && (checkButton (UP) == PUSHED))
         {
-            displayWipe();
+            OrbitOledClear();
             screen_state = SCREEN_ALTITUDE;
         }
         updateButtons();
@@ -270,7 +249,7 @@ main(void)
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == SCREEN_ALTITUDE){
                     //
-                    displayAltitude((meanVal-helicopter_landed_value)/(VOLTAGE_SENSOR_RANGE/100));
+                    displayAltitude((helicopter_landed_value-meanVal)/(VOLTAGE_SENSOR_RANGE/100));
                 }
                 counter = 0;
             }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Helicopter Project</name>
+	<name>HelicopterProject</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -24,4 +24,17 @@
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>ustdlib.c</name>
+			<type>1</type>
+			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/ti/TivaWare_C_Series-2.1.4.178/utils/ustdlib.c</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>ORIGINAL_PROJECT_ROOT</name>
+			<value>file:/C:/Users/Admin/Desktop/Week4Lab</value>
+		</variable>
+	</variableList>
 </projectDescription>
