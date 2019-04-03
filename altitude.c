@@ -35,15 +35,13 @@
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 40 // 25 samples per second assuming a jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
-#define SCREEN_ALTITUDE 1 // A screen state that shows the altitude of the helicopter as a percentage
-#define SCREEN_MEAN_ADC 2 // A screen state that shows the mean ADC value and the number of samples
-#define SCREEN_BLANK 3 // A screen state where everything on the display is wiped
 #define COUNTER_RATE 2000 // In Hz (This does not include the delay from running the functions)
 
 
 //*****************************************************************************
 // Global variables
 //*****************************************************************************
+enum screen {stats, mean_adc, blank};
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
 
@@ -190,7 +188,7 @@ int main(void)
 	int32_t sum;
 	int32_t meanVal;
 	int32_t helicopter_landed_value;
-	int8_t screen_state = SCREEN_ALTITUDE;
+	int8_t screen_state = stats;
 	int8_t n = 0;
 	int32_t counter = 0;
 	int32_t altitude;
@@ -218,14 +216,14 @@ int main(void)
 	                } else if (checkButton(UP) == PUSHED) {
 	                    OrbitOledClear();
 	                    switch(screen_state) {
-	                        case SCREEN_ALTITUDE:
-	                        screen_state = SCREEN_MEAN_ADC;
+	                        case stats:
+	                        screen_state = mean_adc;
 	                            break;
-	                        case SCREEN_MEAN_ADC:
-	                        screen_state = SCREEN_BLANK;
+	                        case mean_adc:
+	                        screen_state = blank;
 	                            break;
-	                        case SCREEN_BLANK:
-	                        screen_state = SCREEN_ALTITUDE;
+	                        case blank:
+	                        screen_state = stats;
 	                            break;
 	                    }
 	                }
@@ -245,10 +243,10 @@ int main(void)
                     n++;
                 }
 
-                if (screen_state == SCREEN_MEAN_ADC) {
+                if (screen_state == mean_adc) {
                     // Calculates and display the rounded mean of the buffer contents
                     displayMeanVal (meanVal, g_ulSampCnt);
-                } else if (screen_state == SCREEN_ALTITUDE) {
+                } else if (screen_state == stats) {
                     altitude = (2*(helicopter_landed_value-meanVal) + (VOLTAGE_SENSOR_RANGE/100))/2/(VOLTAGE_SENSOR_RANGE/100);
                     yaw = 0;
                     displayStats(altitude,yaw);
