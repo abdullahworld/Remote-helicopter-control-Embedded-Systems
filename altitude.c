@@ -205,17 +205,15 @@ main(void)
 	while (1)
 	{
 	    if (checkButton(UP) == PUSHED) {
+	        OrbitOledClear();
             switch(screen_state) {
                 case SCREEN_ALTITUDE:
-                OrbitOledClear();
                 screen_state = SCREEN_MEAN_ADC;
                     break;
                 case SCREEN_MEAN_ADC:
-                OrbitOledClear();
                 screen_state = SCREEN_BLANK;
                     break;
                 case SCREEN_BLANK:
-                OrbitOledClear();
                 screen_state = SCREEN_ALTITUDE;
                     break;
             }
