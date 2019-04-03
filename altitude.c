@@ -1,11 +1,12 @@
 //*****************************************************************************
 //
-// ADCdemo1.c - Simple interrupt driven program which samples with AIN0
+// Altitude.c - An interrupt driven program that measures the height of the helicopter
 //
-// Author:  P.J. Bones	UCECE
-// Last modified:	8.2.2018
+// Authors: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified:	4.4.2019
 //
 //*****************************************************************************
+// Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
 //*****************************************************************************
 
@@ -31,15 +32,16 @@
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 40 // 10 samples per second assuming a jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
-#define SCREEN_ALTITUDE 1
-#define SCREEN_MEAN_ADC 2
-#define SCREEN_BLANK 3
+#define SCREEN_ALTITUDE 1 // A screen state that shows the altitude of the helicopter as a percentage
+#define SCREEN_MEAN_ADC 2 // A screen state that shows the mean ADC value and the number of samples
+#define SCREEN_BLANK 3 // A screen state where everything on the display is wiped
 
 //*****************************************************************************
 // Global variables
 //*****************************************************************************
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
+static uint32_t counter;    // Counter for the interrupts
 
 //*****************************************************************************
 //
@@ -54,10 +56,6 @@ SysTickIntHandler(void)
     //
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
-
-
-
-
 }
 
 //*****************************************************************************
@@ -142,6 +140,7 @@ initADC (void)
     ADCIntEnable(ADC0_BASE, 3);
 }
 
+
 void
 initDisplay (void)
 {
@@ -224,11 +223,10 @@ main(void)
             OrbitOledClear();
             screen_state = SCREEN_ALTITUDE;
         }
-        updateButtons();
+	    updateButtons();
 
 	    if (counter == 10000)
             {
-                //
                 // Background task: calculate the (approximate) mean of the values in the
                 // circular buffer and display it, together with the sample number.
                 sum = 0;
@@ -237,6 +235,7 @@ main(void)
 
                 meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
 
+                // Creates a delay so there are values in the buffer to use for the landed value
                 if (n == 2) {
                     helicopter_landed_value = meanVal;
                     n++;
@@ -245,11 +244,11 @@ main(void)
                 }
 
                 if (screen_state == SCREEN_MEAN_ADC) {
-                    // Calculate and display the rounded mean of the buffer contents
+                    // Calculates and display the rounded mean of the buffer contents
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == SCREEN_ALTITUDE){
                     //
-                    displayAltitude((helicopter_landed_value-meanVal)/(VOLTAGE_SENSOR_RANGE/100));
+                    displayAltitude((helicopter_landed_value-meanVal)/(VOLTAGE_SENSOR_RANGE/100)); // max height v = -0.8v and min height v = 0v
                 }
                 counter = 0;
             }
