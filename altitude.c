@@ -29,8 +29,8 @@
 //*****************************************************************************
 // Constants
 //*****************************************************************************
-#define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
-#define SAMPLE_RATE_HZ 40 // 10 samples per second assuming a jitter of 4Hz
+#define BUF_SIZE 25 // Matches number of samples per second and enough will not significantly deviate
+#define SAMPLE_RATE_HZ 100 // 25 samples per second assuming a jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
 #define SCREEN_ALTITUDE 1 // A screen state that shows the altitude of the helicopter as a percentage
 #define SCREEN_MEAN_ADC 2 // A screen state that shows the mean ADC value and the number of samples
@@ -204,7 +204,9 @@ main(void)
 
 	while (1)
 	{
-	    if (checkButton(UP) == PUSHED) {
+	    if (checkButton(LEFT) == PUSHED) {
+	        helicopter_landed_value = meanVal;
+	    } else if (checkButton(UP) == PUSHED) {
 	        OrbitOledClear();
             switch(screen_state) {
                 case SCREEN_ALTITUDE:
