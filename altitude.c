@@ -3,7 +3,7 @@
 // Altitude.c - An interrupt driven program that measures the height of the helicopter
 //
 // Authors: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified:	4.4.2019
+// Last modified: 4.4.2019
 //
 //*****************************************************************************
 // Based on ADCdemo1.c by P.J. Bones UCECE
@@ -29,8 +29,8 @@
 //*****************************************************************************
 // Constants
 //*****************************************************************************
-#define BUF_SIZE 25 // Matches number of samples per second and enough will not significantly deviate
-#define SAMPLE_RATE_HZ 100 // 25 samples per second assuming a jitter of 4Hz
+#define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
+#define SAMPLE_RATE_HZ 40 // 25 samples per second assuming a jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
 #define SCREEN_ALTITUDE 1 // A screen state that shows the altitude of the helicopter as a percentage
 #define SCREEN_MEAN_ADC 2 // A screen state that shows the mean ADC value and the number of samples
@@ -121,6 +121,7 @@ initADC (void)
     // sequence 0 has 8 programmable steps.  Since we are only doing a single
     // conversion using sequence 3 we will only configure step 0.  For more
     // on the ADC sequences and steps, refer to the LM3S1968 datasheet.
+    // Set to pin PE4
     ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH9 | ADC_CTL_IE |
                              ADC_CTL_END);
                              
@@ -244,8 +245,9 @@ main(void)
                     // Calculates and display the rounded mean of the buffer contents
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == SCREEN_ALTITUDE){
-                    //
-                    displayAltitude((helicopter_landed_value-meanVal)/(VOLTAGE_SENSOR_RANGE/100)); // max height v = -0.8v and min height v = 0v
+                    displayAltitude((2*(helicopter_landed_value-meanVal)+(VOLTAGE_SENSOR_RANGE/100))/2/(VOLTAGE_SENSOR_RANGE/100));
+                 // max height v = -0.8v and min height v = 0v
+                 // This truncates the calculation to the right value: (2*x + y)/2/y = x/y + 0.5
                 }
                 counter = 0;
             }
