@@ -51,9 +51,7 @@ static uint32_t counter;    // Counter for the interrupts
 void
 SysTickIntHandler(void)
 {
-    //
     // Initiate a conversion
-    //
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
 }
