@@ -35,6 +35,7 @@
 #define SCREEN_ALTITUDE 1 // A screen state that shows the altitude of the helicopter as a percentage
 #define SCREEN_MEAN_ADC 2 // A screen state that shows the mean ADC value and the number of samples
 #define SCREEN_BLANK 3 // A screen state where everything on the display is wiped
+#define COUNTER_CYCLES 10000
 
 //*****************************************************************************
 // Global variables
@@ -203,25 +204,25 @@ main(void)
 
 	while (1)
 	{
-	    if ((checkButton (LEFT) == PUSHED))
-	    {
-	        helicopter_landed_value = meanVal;
-	    } else if ((screen_state == SCREEN_ALTITUDE) && (checkButton (UP) == PUSHED))
-	    {
-	        OrbitOledClear();
-	        screen_state = SCREEN_MEAN_ADC;
-        } else if ((screen_state == SCREEN_MEAN_ADC) && (checkButton (UP) == PUSHED))
-        {
-            OrbitOledClear();
-            screen_state = SCREEN_BLANK;
-        } else if ((screen_state == SCREEN_BLANK) && (checkButton (UP) == PUSHED))
-        {
-            OrbitOledClear();
-            screen_state = SCREEN_ALTITUDE;
-        }
+	    if (checkButton(UP) == PUSHED) {
+            switch(screen_state) {
+                case SCREEN_ALTITUDE:
+                OrbitOledClear();
+                screen_state = SCREEN_MEAN_ADC;
+                    break;
+                case SCREEN_MEAN_ADC:
+                OrbitOledClear();
+                screen_state = SCREEN_BLANK;
+                    break;
+                case SCREEN_BLANK:
+                OrbitOledClear();
+                screen_state = SCREEN_ALTITUDE;
+                    break;
+            }
+	    }
 	    updateButtons();
 
-	    if (counter == 10000)
+	    if (counter == COUNTER_CYCLES)
             {
                 // Background task: calculate the (approximate) mean of the values in the
                 // circular buffer and display it, together with the sample number.
