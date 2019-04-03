@@ -169,15 +169,18 @@ void displayMeanVal(int16_t meanVal, int32_t count)
 }
 
 
-void displayAltitude(int32_t altitude)
+void displayStats(int32_t altitude, int32_t yaw)
 {
     char string[17];  // 16 characters across the display
 
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    usnprintf (string, sizeof(string), "ALTITUDE = %4d%%", altitude);
+    usnprintf (string, sizeof(string), "ALTITUDE: %4d%%", altitude);
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
+    usnprintf (string, sizeof(string), "YAW: %9d%%", yaw);
+    // Update line on display.
+    OLEDStringDraw (string, 0, 1);
 }
 
 
@@ -190,6 +193,8 @@ int main(void)
 	int8_t screen_state = SCREEN_ALTITUDE;
 	int8_t n = 0;
 	int32_t counter = 0;
+	int32_t altitude;
+	int32_t yaw;
 
 	SysCtlPeripheralReset (LEFT_BUT_PERIPH);
 	SysCtlPeripheralReset (UP_BUT_PERIPH);
@@ -243,8 +248,10 @@ int main(void)
                 if (screen_state == SCREEN_MEAN_ADC) {
                     // Calculates and display the rounded mean of the buffer contents
                     displayMeanVal (meanVal, g_ulSampCnt);
-                } else if (screen_state == SCREEN_ALTITUDE){
-                    displayAltitude((2*(helicopter_landed_value-meanVal)+(VOLTAGE_SENSOR_RANGE/100))/2/(VOLTAGE_SENSOR_RANGE/100));
+                } else if (screen_state == SCREEN_ALTITUDE) {
+                    altitude = (2*(helicopter_landed_value-meanVal) + (VOLTAGE_SENSOR_RANGE/100))/2/(VOLTAGE_SENSOR_RANGE/100);
+                    yaw = 0;
+                    displayStats(altitude,yaw);
                  // max height v = -0.8v and min height v = 0v
                  // This adds 0.5 so the value is truncated to the right value: (2*x + y)/2/y = x/y + 0.5
                 }
