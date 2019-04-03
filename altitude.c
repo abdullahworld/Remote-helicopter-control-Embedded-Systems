@@ -10,6 +10,7 @@
 // Based on the 'convert' series from 2016
 //*****************************************************************************
 
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -25,6 +26,8 @@
 #include "circBufT.h"
 #include "OrbitOLED/OrbitOLEDInterface.h"
 #include "buttons4.h"
+#include "altitude.h"
+
 
 //*****************************************************************************
 // Constants
@@ -35,25 +38,26 @@
 #define SCREEN_ALTITUDE 1 // A screen state that shows the altitude of the helicopter as a percentage
 #define SCREEN_MEAN_ADC 2 // A screen state that shows the mean ADC value and the number of samples
 #define SCREEN_BLANK 3 // A screen state where everything on the display is wiped
-#define COUNTER_CYCLES 10000
+#define COUNTER_RATE 2000 // In Hz (This does not include the delay from running the functions)
+
 
 //*****************************************************************************
 // Global variables
 //*****************************************************************************
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
-static uint32_t counter;    // Counter for the interrupts
+
 
 //*****************************************************************************
 // The interrupt handler for the for SysTick interrupt.
 //*****************************************************************************
-void
-SysTickIntHandler(void)
+void SysTickIntHandler(void)
 {
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
 }
+
 
 //*****************************************************************************
 //
@@ -61,8 +65,7 @@ SysTickIntHandler(void)
 // Writes to the circular buffer.
 //
 //*****************************************************************************
-void
-ADCIntHandler(void)
+void ADCIntHandler(void)
 {
 	uint32_t ulValue;
 	
@@ -78,11 +81,11 @@ ADCIntHandler(void)
 	ADCIntClear(ADC0_BASE, 3);                          
 }
 
+
 //*****************************************************************************
 // Initialisation functions for the clock (incl. SysTick), ADC, display
 //*****************************************************************************
-void
-initClock (void)
+void initClock (void)
 {
     // Set the clock rate to 20 MHz
     SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
@@ -100,8 +103,8 @@ initClock (void)
     SysTickEnable();
 }
 
-void 
-initADC (void)
+
+void initADC (void)
 {
     //
     // The ADC0 peripheral must be enabled for configuration and use.
@@ -139,20 +142,19 @@ initADC (void)
 }
 
 
-void
-initDisplay (void)
+void initDisplay (void)
 {
     // intialise the Orbit OLED display
     OLEDInitialise ();
 }
+
 
 //*****************************************************************************
 //
 // Function to display the mean ADC value (10-bit value, note) and sample count.
 //
 //*****************************************************************************
-void
-displayMeanVal(int16_t meanVal, int32_t count)
+void displayMeanVal(int16_t meanVal, int32_t count)
 {
 	char string[17];  // 16 characters across the display
 
@@ -166,8 +168,8 @@ displayMeanVal(int16_t meanVal, int32_t count)
     OLEDStringDraw (string, 0, 1);
 }
 
-void
-displayAltitude(int32_t altitude)
+
+void displayAltitude(int32_t altitude)
 {
     char string[17];  // 16 characters across the display
 
@@ -179,8 +181,7 @@ displayAltitude(int32_t altitude)
 }
 
 
-int
-main(void)
+int main(void)
 {
 	uint16_t i;
 	int32_t sum;
@@ -192,45 +193,43 @@ main(void)
 
 	SysCtlPeripheralReset (LEFT_BUT_PERIPH);
 	SysCtlPeripheralReset (UP_BUT_PERIPH);
-
 	initClock ();
 	initADC ();
 	initDisplay ();
 	initButtons ();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
 	initCircBuf (&g_inBuffer, BUF_SIZE);
 
-    //
     // Enable interrupts to the processor.
     IntMasterEnable();
 
 	while (1)
 	{
-	    if (checkButton(LEFT) == PUSHED) {
-	        helicopter_landed_value = meanVal;
-	    } else if (checkButton(UP) == PUSHED) {
-	        OrbitOledClear();
-            switch(screen_state) {
-                case SCREEN_ALTITUDE:
-                screen_state = SCREEN_MEAN_ADC;
-                    break;
-                case SCREEN_MEAN_ADC:
-                screen_state = SCREEN_BLANK;
-                    break;
-                case SCREEN_BLANK:
-                screen_state = SCREEN_ALTITUDE;
-                    break;
-            }
-	    }
 	    updateButtons();
 
-	    if (counter == COUNTER_CYCLES)
+	    if (counter == SysCtlClockGet()/COUNTER_RATE)
             {
+	        if (checkButton(LEFT) == PUSHED) {
+	                    helicopter_landed_value = meanVal;
+	                } else if (checkButton(UP) == PUSHED) {
+	                    OrbitOledClear();
+	                    switch(screen_state) {
+	                        case SCREEN_ALTITUDE:
+	                        screen_state = SCREEN_MEAN_ADC;
+	                            break;
+	                        case SCREEN_MEAN_ADC:
+	                        screen_state = SCREEN_BLANK;
+	                            break;
+	                        case SCREEN_BLANK:
+	                        screen_state = SCREEN_ALTITUDE;
+	                            break;
+	                    }
+	                }
+
                 // Background task: calculate the (approximate) mean of the values in the
                 // circular buffer and display it, together with the sample number.
                 sum = 0;
                 for (i = 0; i < BUF_SIZE; i++)
                     sum = sum + readCircBuf (&g_inBuffer);
-
                 meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
 
                 // Creates a delay so there are values in the buffer to use for the landed value
@@ -247,11 +246,10 @@ main(void)
                 } else if (screen_state == SCREEN_ALTITUDE){
                     displayAltitude((2*(helicopter_landed_value-meanVal)+(VOLTAGE_SENSOR_RANGE/100))/2/(VOLTAGE_SENSOR_RANGE/100));
                  // max height v = -0.8v and min height v = 0v
-                 // This truncates the calculation to the right value: (2*x + y)/2/y = x/y + 0.5
+                 // This adds 0.5 so the value is truncated to the right value: (2*x + y)/2/y = x/y + 0.5
                 }
                 counter = 0;
             }
 	    counter++;
 	}
 }
-
