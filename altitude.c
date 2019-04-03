@@ -44,9 +44,7 @@ static uint32_t g_ulSampCnt;	// Counter for the interrupts
 static uint32_t counter;    // Counter for the interrupts
 
 //*****************************************************************************
-//
 // The interrupt handler for the for SysTick interrupt.
-//
 //*****************************************************************************
 void
 SysTickIntHandler(void)
