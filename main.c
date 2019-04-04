@@ -41,10 +41,13 @@
 // Global variables
 //*****************************************************************************
 enum screen {stats, mean_adc, blank};
+enum quadrature {Same, Different};
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
-static uint32_t R_g_ulSampCnt;    // Counter for the interrupts that is reset
-static uint32_t ChanA;
+static uint32_t R_g_ulSampCnt;
+static uint8_t ChanA, ChanB;
+static enum quadrature diskState;
+static uint16_t slots;
 
 
 //*****************************************************************************
@@ -83,11 +86,36 @@ void ADCIntHandler(void)
 }
 
 
-// Uses the GPIO interrupt to count how many times the down button is pushed
-// Switch to channel A of the optical sensor for the slotted disk
+// Seems quite clunkly. Could use a table lookup instead
 void ChanAIntHandler(void) {
-    ChanA++;
-    GPIOIntClear(DOWN_BUT_PORT_BASE, DOWN_BUT_PIN);
+    ChanA = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_0);
+    ChanB = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_1);
+    if (ChanA == 1 && ChanB == 1) {
+        diskState = Same;
+    } else if (ChanA == 1 && ChanB == 0 && diskState == Same){
+        slots++;
+        diskState = Different;
+    } else if (ChanA == 0 && ChanB == 1 && diskState == Same) {
+        slots--;
+        diskState = Different;
+    }
+    GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_0);
+}
+
+
+void ChanBIntHandler(void) {
+       ChanA = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_0);
+       ChanB = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_1);
+       if (ChanA == 1 && ChanB == 1) {
+           diskState = Same;
+       } else if (ChanA == 1 && ChanB == 0 && diskState == Same){
+           slots++;
+           diskState = Different;
+       } else if (ChanA == 0 && ChanB == 1 && diskState == Same) {
+           slots--;
+           diskState = Different;
+       }
+    GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_1);
 }
 
 
@@ -191,7 +219,7 @@ void displayStats(int32_t altitude, int32_t yaw)
     usnprintf (string, sizeof(string), "ALTITUDE: %4d%%", altitude);
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
-    usnprintf (string, sizeof(string), "YAW: %9d%%", yaw);
+    usnprintf (string, sizeof(string), "YAW: %9d", yaw);
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
 }
@@ -230,11 +258,11 @@ if (checkButton(LEFT) == PUSHED) {
 int main(void)
 {
 	uint16_t i;
+	int8_t n = 0;
 	int32_t sum;
 	int32_t meanVal;
 	int32_t helicopter_landed_value;
-	int8_t screen_state = stats;
-	int8_t n = 0;
+	enum screen screen_state = stats;
 	int32_t altitude;
 	int32_t yaw;
 
@@ -242,13 +270,35 @@ int main(void)
 	SysCtlPeripheralReset (UP_BUT_PERIPH);
 	initClock();
 	initADC();
-	initDisplay();
+
 	initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
+
+
+	SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOB);
+
+    GPIOPinTypeGPIOInput (GPIO_PORTB_BASE, GPIO_PIN_0);
+    GPIOPinTypeGPIOInput (GPIO_PORTB_BASE, GPIO_PIN_1);
+
+    // Unsure about GPIO strength and WPD
+    GPIOPadConfigSet (GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIOPadConfigSet (GPIO_PORTB_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+
+    GPIODirModeSet(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 , GPIO_DIR_MODE_IN);
+
+    GPIOIntRegister(GPIO_PORTB_BASE,ChanAIntHandler);
+    GPIOIntRegister(GPIO_PORTB_BASE,ChanBIntHandler);
+
+    // Should be GPIO_BOTH_EDGES, but crashes the program. Maybe try with test unit.
+    GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_0,GPIO_HIGH_LEVEL);
+    GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_1,GPIO_HIGH_LEVEL);
+
+    GPIOIntEnable(GPIO_PORTB_BASE,GPIO_PIN_0);
+    GPIOIntEnable(GPIO_PORTB_BASE,GPIO_PIN_1);
+    //IntEnable(GPIO_PORTB_BASE); Doesn't work
+
 	initCircBuf (&g_inBuffer, BUF_SIZE);
 	initSysTick();
-	GPIOIntRegister(DOWN_BUT_PORT_BASE,ChanAIntHandler);
-	GPIOIntTypeSet(DOWN_BUT_PORT_BASE,DOWN_BUT_PIN,GPIO_RISING_EDGE);
-    GPIOIntEnable(DOWN_BUT_PORT_BASE,DOWN_BUT_PIN);
+	initDisplay();
 
 
     // Enable interrupts to the processor.
@@ -281,7 +331,7 @@ int main(void)
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == stats) {
                     altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
-                    yaw = ChanA;
+                    yaw = (360*slots/112);
                     displayStats(altitude,yaw);
                  // max height v = -0.8v and min height v = 0v
                  // This adds 0.5 so the value is truncated to the right value: (2*100*x + y)/2y = x/y + 0.5
