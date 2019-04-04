@@ -44,6 +44,7 @@
 enum screen {stats, mean_adc, blank};
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
+static uint32_t R_g_ulSampCnt;    // Counter for the interrupts that is reset
 
 
 //*****************************************************************************
@@ -55,6 +56,7 @@ void SysTickIntHandler(void)
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
+    R_g_ulSampCnt++;
 }
 
 
@@ -242,7 +244,7 @@ int main(void)
 
 	while (1)
 	{
-	    if (g_ulSampCnt > 0)
+	    if (R_g_ulSampCnt > 0)
 	        {
                 helicopter_landed_value = buttonLeft(meanVal, helicopter_landed_value);
                 screen_state = buttonUp(screen_state);
@@ -272,7 +274,7 @@ int main(void)
                  // max height v = -0.8v and min height v = 0v
                  // This adds 0.5 so the value is truncated to the right value: (2*100*x + y)/2y = x/y + 0.5
                 }
-                g_ulSampCnt = 0;
+                R_g_ulSampCnt = 0;
 	        }
 	}
 }
