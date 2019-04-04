@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// Altitude.c - An interrupt driven program that measures the height of the helicopter
+// main.c - An interrupt driven program that measures the height of the helicopter
 //
 // Authors: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 4.4.2019
@@ -33,7 +33,7 @@
 // Constants
 //*****************************************************************************
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
-#define SAMPLE_RATE_HZ 40 // 25 samples per second assuming a jitter of 4Hz
+#define SAMPLE_RATE_HZ 100 // jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
 #define COUNTER_RATE 2000 // In Hz (This does not include the delay from running the functions)
 
@@ -51,6 +51,7 @@ static uint32_t g_ulSampCnt;	// Counter for the interrupts
 //*****************************************************************************
 void SysTickIntHandler(void)
 {
+    updateButtons();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
@@ -88,7 +89,11 @@ void initClock (void)
     // Set the clock rate to 20 MHz
     SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
-    //
+
+}
+
+
+void intSysTick(void) {
     // Set up the period for the SysTick timer.  The SysTick timer period is
     // set as a function of the system clock.
     SysTickPeriodSet(SysCtlClockGet() / SAMPLE_RATE_HZ);
@@ -190,30 +195,29 @@ int main(void)
 	int32_t helicopter_landed_value;
 	int8_t screen_state = stats;
 	int8_t n = 0;
-	int32_t counter = 0;
 	int32_t altitude;
 	int32_t yaw;
 
 	SysCtlPeripheralReset (LEFT_BUT_PERIPH);
 	SysCtlPeripheralReset (UP_BUT_PERIPH);
-	initClock ();
-	initADC ();
-	initDisplay ();
-	initButtons ();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
+	initClock();
+	initADC();
+	initDisplay();
+	initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
 	initCircBuf (&g_inBuffer, BUF_SIZE);
+	intSysTick();
 
     // Enable interrupts to the processor.
     IntMasterEnable();
 
 	while (1)
 	{
-	    updateButtons();
-
-	    if (counter == SysCtlClockGet()/COUNTER_RATE)
+	    if (g_ulSampCnt > 0)
             {
 	        if (checkButton(LEFT) == PUSHED) {
 	                    helicopter_landed_value = meanVal;
-	                } else if (checkButton(UP) == PUSHED) {
+	                }
+	        else if (checkButton(UP) == PUSHED) {
 	                    OrbitOledClear();
 	                    switch(screen_state) {
 	                        case stats:
@@ -236,10 +240,10 @@ int main(void)
                 meanVal = (2 * sum + BUF_SIZE) / 2 / BUF_SIZE;
 
                 // Creates a delay so there are values in the buffer to use for the landed value
-                if (n == 2) {
+                if (n == BUF_SIZE) {
                     helicopter_landed_value = meanVal;
                     n++;
-                } else if (n < 2) {
+                } else if (n < BUF_SIZE) {
                     n++;
                 }
 
@@ -247,14 +251,14 @@ int main(void)
                     // Calculates and display the rounded mean of the buffer contents
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == stats) {
-                    altitude = (2*(helicopter_landed_value-meanVal) + (VOLTAGE_SENSOR_RANGE/100))/2/(VOLTAGE_SENSOR_RANGE/100);
+                    altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
                     yaw = 0;
                     displayStats(altitude,yaw);
                  // max height v = -0.8v and min height v = 0v
-                 // This adds 0.5 so the value is truncated to the right value: (2*x + y)/2/y = x/y + 0.5
+                 // This adds 0.5 so the value is truncated to the right value: (2*100*x + y)/2y = x/y + 0.5
                 }
-                counter = 0;
+                g_ulSampCnt = 0;
             }
-	    counter++;
+
 	}
 }
