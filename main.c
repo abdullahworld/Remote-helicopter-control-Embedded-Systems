@@ -187,6 +187,36 @@ void displayStats(int32_t altitude, int32_t yaw)
 }
 
 
+enum screen buttonUp(enum screen screen_state) {
+    if (checkButton(UP) == PUSHED) {
+        OrbitOledClear();
+        switch(screen_state) {
+            case stats:
+                screen_state = mean_adc;
+                break;
+            case mean_adc:
+                screen_state = blank;
+                break;
+            case blank:
+                screen_state = stats;
+                break;
+        }
+    }
+    return screen_state;
+}
+
+
+int32_t buttonLeft(int32_t meanVal, int32_t helicopter_landed_value) {
+if (checkButton(LEFT) == PUSHED) {
+        return meanVal;
+    } else {
+        return helicopter_landed_value;
+
+    }
+
+}
+
+
 int main(void)
 {
 	uint16_t i;
@@ -213,24 +243,9 @@ int main(void)
 	while (1)
 	{
 	    if (g_ulSampCnt > 0)
-            {
-	        if (checkButton(LEFT) == PUSHED) {
-	                    helicopter_landed_value = meanVal;
-	                }
-	        else if (checkButton(UP) == PUSHED) {
-	                    OrbitOledClear();
-	                    switch(screen_state) {
-	                        case stats:
-	                        screen_state = mean_adc;
-	                            break;
-	                        case mean_adc:
-	                        screen_state = blank;
-	                            break;
-	                        case blank:
-	                        screen_state = stats;
-	                            break;
-	                    }
-	                }
+	        {
+                helicopter_landed_value = buttonLeft(meanVal, helicopter_landed_value);
+                screen_state = buttonUp(screen_state);
 
                 // Background task: calculate the (approximate) mean of the values in the
                 // circular buffer and display it, together with the sample number.
@@ -258,7 +273,6 @@ int main(void)
                  // This adds 0.5 so the value is truncated to the right value: (2*100*x + y)/2y = x/y + 0.5
                 }
                 g_ulSampCnt = 0;
-            }
-
+	        }
 	}
 }
