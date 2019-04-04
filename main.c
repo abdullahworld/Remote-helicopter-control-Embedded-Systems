@@ -26,7 +26,7 @@
 #include "circBufT.h"
 #include "OrbitOLED/OrbitOLEDInterface.h"
 #include "buttons4.h"
-#include "altitude.h"
+#include "driverlib/interrupt.h"
 
 
 //*****************************************************************************
@@ -35,7 +35,6 @@
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 100 // jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
-#define COUNTER_RATE 2000 // In Hz (This does not include the delay from running the functions)
 
 
 //*****************************************************************************
@@ -45,6 +44,7 @@ enum screen {stats, mean_adc, blank};
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
 static uint32_t R_g_ulSampCnt;    // Counter for the interrupts that is reset
+static uint32_t ChanA;
 
 
 //*****************************************************************************
@@ -83,6 +83,14 @@ void ADCIntHandler(void)
 }
 
 
+// Uses the GPIO interrupt to count how many times the down button is pushed
+// Switch to channel A of the optical sensor for the slotted disk
+void ChanAIntHandler(void) {
+    ChanA++;
+    GPIOIntClear(DOWN_BUT_PORT_BASE, DOWN_BUT_PIN);
+}
+
+
 //*****************************************************************************
 // Initialisation functions for the clock (incl. SysTick), ADC, display
 //*****************************************************************************
@@ -95,7 +103,7 @@ void initClock (void)
 }
 
 
-void intSysTick(void) {
+void initSysTick(void) {
     // Set up the period for the SysTick timer.  The SysTick timer period is
     // set as a function of the system clock.
     SysTickPeriodSet(SysCtlClockGet() / SAMPLE_RATE_HZ);
@@ -237,7 +245,11 @@ int main(void)
 	initDisplay();
 	initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
 	initCircBuf (&g_inBuffer, BUF_SIZE);
-	intSysTick();
+	initSysTick();
+	GPIOIntRegister(DOWN_BUT_PORT_BASE,ChanAIntHandler);
+	GPIOIntTypeSet(DOWN_BUT_PORT_BASE,DOWN_BUT_PIN,GPIO_RISING_EDGE);
+    GPIOIntEnable(DOWN_BUT_PORT_BASE,DOWN_BUT_PIN);
+
 
     // Enable interrupts to the processor.
     IntMasterEnable();
@@ -269,7 +281,7 @@ int main(void)
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == stats) {
                     altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
-                    yaw = 0;
+                    yaw = ChanA;
                     displayStats(altitude,yaw);
                  // max height v = -0.8v and min height v = 0v
                  // This adds 0.5 so the value is truncated to the right value: (2*100*x + y)/2y = x/y + 0.5
