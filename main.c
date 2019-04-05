@@ -87,7 +87,7 @@ void ADCIntHandler(void)
 
 
 // Seems quite clunkly. Could use a table lookup instead
-void ChanAIntHandler(void) {
+void YawIntHandler(void) {
     ChanA = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_0);
     ChanB = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_1);
     if (ChanA == 1 && ChanB == 1) {
@@ -99,23 +99,7 @@ void ChanAIntHandler(void) {
         slots--;
         diskState = Different;
     }
-    GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_0);
-}
-
-
-void ChanBIntHandler(void) {
-       ChanA = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_0);
-       ChanB = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_1);
-       if (ChanA == 1 && ChanB == 1) {
-           diskState = Same;
-       } else if (ChanA == 1 && ChanB == 0 && diskState == Same){
-           slots++;
-           diskState = Different;
-       } else if (ChanA == 0 && ChanB == 1 && diskState == Same) {
-           slots--;
-           diskState = Different;
-       }
-    GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_1);
+    GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 );
 }
 
 
@@ -190,6 +174,18 @@ void initDisplay (void)
 }
 
 
+void initGPIO(void) {
+    SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOB);
+    GPIOPinTypeGPIOInput (GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    // Unsure about GPIO strength and WPD
+    GPIOPadConfigSet (GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIODirModeSet(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 , GPIO_DIR_MODE_IN);
+    GPIOIntRegister(GPIO_PORTB_BASE,YawIntHandler);
+    GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_0 | GPIO_PIN_1,GPIO_BOTH_EDGES);
+    GPIOIntEnable(GPIO_PORTB_BASE,GPIO_PIN_0 | GPIO_PIN_1);
+}
+
+
 //*****************************************************************************
 //
 // Function to display the mean ADC value (10-bit value, note) and sample count.
@@ -216,10 +212,10 @@ void displayStats(int32_t altitude, int32_t yaw)
 
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    usnprintf (string, sizeof(string), "ALTITUDE: %4d%%", altitude);
+    usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", altitude);
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
-    usnprintf (string, sizeof(string), "YAW: %9d", yaw);
+    usnprintf (string, sizeof(string), "YAW: %7d DEG", yaw);
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
 }
@@ -268,41 +264,20 @@ int main(void)
 
 	SysCtlPeripheralReset (LEFT_BUT_PERIPH);
 	SysCtlPeripheralReset (UP_BUT_PERIPH);
+
 	initClock();
 	initADC();
-
+	initGPIO();
 	initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
-
-
-	SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOB);
-
-    GPIOPinTypeGPIOInput (GPIO_PORTB_BASE, GPIO_PIN_0);
-    GPIOPinTypeGPIOInput (GPIO_PORTB_BASE, GPIO_PIN_1);
-
-    // Unsure about GPIO strength and WPD
-    GPIOPadConfigSet (GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
-    GPIOPadConfigSet (GPIO_PORTB_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
-
-    GPIODirModeSet(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 , GPIO_DIR_MODE_IN);
-
-    GPIOIntRegister(GPIO_PORTB_BASE,ChanAIntHandler);
-    GPIOIntRegister(GPIO_PORTB_BASE,ChanBIntHandler);
-
-    // Should be GPIO_BOTH_EDGES, but crashes the program. Maybe try with test unit.
-    GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_0,GPIO_HIGH_LEVEL);
-    GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_1,GPIO_HIGH_LEVEL);
-
-    GPIOIntEnable(GPIO_PORTB_BASE,GPIO_PIN_0);
-    GPIOIntEnable(GPIO_PORTB_BASE,GPIO_PIN_1);
-    //IntEnable(GPIO_PORTB_BASE); Doesn't work
 
 	initCircBuf (&g_inBuffer, BUF_SIZE);
 	initSysTick();
 	initDisplay();
-
+	initGPIO();
 
     // Enable interrupts to the processor.
     IntMasterEnable();
+
 
 	while (1)
 	{
