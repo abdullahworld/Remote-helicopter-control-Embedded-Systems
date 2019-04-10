@@ -26,7 +26,6 @@
 #include "circBufT.h"
 #include "OrbitOLED/OrbitOLEDInterface.h"
 #include "buttons4.h"
-#include "driverlib/interrupt.h"
 
 
 //*****************************************************************************
@@ -35,6 +34,7 @@
 #define BUF_SIZE 10 // Matches number of samples per second and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 100 // jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
+#define NUM_SLOTS 112 // The number of slots in the slotted disk
 
 
 //*****************************************************************************
@@ -42,12 +42,12 @@
 //*****************************************************************************
 enum screen {stats, mean_adc, blank};
 enum quadrature {Same, Different};
+static enum quadrature diskState;
 static circBuf_t g_inBuffer;		// Buffer of size BUF_SIZE integers (sample values)
 static uint32_t g_ulSampCnt;	// Counter for the interrupts
 static uint32_t R_g_ulSampCnt;
 static uint8_t ChanA, ChanB;
-static enum quadrature diskState;
-static uint16_t slots;
+static int32_t slots;
 
 
 //*****************************************************************************
@@ -86,18 +86,20 @@ void ADCIntHandler(void)
 }
 
 
-// Seems quite clunkly. Could use a table lookup instead
 void YawIntHandler(void) {
     ChanA = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_0);
-    ChanB = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_1);
-    if (ChanA == 1 && ChanB == 1) {
+    ChanB = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_1) >> 1;
+    if (diskState == Different && ChanA == 1 && ChanB == 1) {
         diskState = Same;
-    } else if (ChanA == 1 && ChanB == 0 && diskState == Same){
+    } else if (diskState == Same && ChanA == 1 && ChanB == 0){
         slots++;
         diskState = Different;
-    } else if (ChanA == 0 && ChanB == 1 && diskState == Same) {
+    } else if (diskState == Same && ChanA == 0 && ChanB == 1) {
         slots--;
         diskState = Different;
+    }
+    if (slots >= NUM_SLOTS || slots <= -NUM_SLOTS) {
+        slots = 0;
     }
     GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 );
 }
@@ -245,9 +247,7 @@ if (checkButton(LEFT) == PUSHED) {
         return meanVal;
     } else {
         return helicopter_landed_value;
-
     }
-
 }
 
 
@@ -278,7 +278,6 @@ int main(void)
     // Enable interrupts to the processor.
     IntMasterEnable();
 
-
 	while (1)
 	{
 	    if (R_g_ulSampCnt > 0)
@@ -306,7 +305,7 @@ int main(void)
                     displayMeanVal (meanVal, g_ulSampCnt);
                 } else if (screen_state == stats) {
                     altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
-                    yaw = (360*slots/112);
+                    yaw = ((360*slots)/NUM_SLOTS);
                     displayStats(altitude,yaw);
                  // max height v = -0.8v and min height v = 0v
                  // This adds 0.5 so the value is truncated to the right value: (2*100*x + y)/2y = x/y + 0.5
