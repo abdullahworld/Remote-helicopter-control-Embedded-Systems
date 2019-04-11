@@ -6,6 +6,9 @@
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
+#include "mainRotor.h"
+#include "tailRotor.h"
+
 
 enum screen {stats, mean_adc, blank};
 static enum screen screen_state = stats;
@@ -47,10 +50,10 @@ void displayStats(int32_t altitude, int32_t yaw) {
     usnprintf (string, sizeof(string), "YAW: %7d DEG", yaw);
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
-    usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", 0);
+    usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", MainRotFreq());
     // Update line on display.
     OLEDStringDraw (string, 0, 2);
-    usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", 0);
+    usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", TailRotFreq());
     // Update line on display.
     OLEDStringDraw (string, 0, 3);
 }

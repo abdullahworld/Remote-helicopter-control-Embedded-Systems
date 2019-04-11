@@ -32,6 +32,8 @@
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
+#include "mainRotor.h"
+#include "tailRotor.h"
 
 
 //*****************************************************************************
@@ -68,7 +70,8 @@ void initClock (void)
     // Set the clock rate to 20 MHz
     SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
-
+    // Set the PWM clock rate (using the prescaler)
+    SetPWMClock();
 }
 
 
@@ -105,8 +108,10 @@ void MainInit(void) {
     SysCtlPeripheralReset(UP_BUT_PERIPH);
     initClock();
     initADC();
-    initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initADCCircBuf();
+    initialiseMainPWM();
+    initialiseTailPWM();
+    initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSysTick();
     initDisplay();
     initYawGPIO();
