@@ -32,8 +32,9 @@
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
-#include "mainRotor.h"
-#include "tailRotor.h"
+#include "motors.h"
+#include "switch.h"
+#include "control.h"
 
 
 //*****************************************************************************
@@ -55,6 +56,7 @@ uint32_t R_g_ulSampCnt;
 void SysTickIntHandler(void)
 {
     updateButtons();
+    updateSwitch();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
@@ -71,7 +73,7 @@ void initClock (void)
     SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
     // Set the PWM clock rate (using the prescaler)
-    SetPWMClock();
+
 }
 
 
@@ -92,7 +94,7 @@ void initSysTick(void) {
 void buttonUp(void) {
     if (checkButton(UP) == PUSHED) {
        // changeDispState();
-        increaseMainDuty();
+       // increaseMainDuty();
     }
 }
 
@@ -104,19 +106,26 @@ void buttonLeft(void) {
 }
 
 
+void switched(void) {
+    if (checkSwitch() == 0) {
+        findRef();
+    }
+}
+
+
 void MainInit(void) {
     SysCtlPeripheralReset(LEFT_BUT_PERIPH);
     SysCtlPeripheralReset(UP_BUT_PERIPH);
     initClock();
-    initADC();
-    initADCCircBuf();
     initialiseMainPWM();
     initialiseTailPWM();
+    initADC();
+    initADCCircBuf();
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
+    initSwitch();
     initDisplay();
     initYawGPIO();
     initSysTick();
-    activateMainPWM();
     // Enable interrupts to the processor.
     IntMasterEnable();
 }
@@ -131,6 +140,7 @@ int main(void) {
 	        SetDispValues(g_ulSampCnt);
 	        buttonUp();
 	        buttonLeft();
+	        switched();
             R_g_ulSampCnt = 0;
 	    }
 	}

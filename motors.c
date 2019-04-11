@@ -11,13 +11,15 @@
  * Last modified:  7.2.2018
  **********************************************************/
 
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
+#include "inc/hw_types.h"
 #include "driverlib/pin_map.h" //Needed for pin configure
+#include "driverlib/debug.h"
 #include "driverlib/gpio.h"
 #include "driverlib/pwm.h"
+#include "driverlib/systick.h"
 #include "driverlib/sysctl.h"
 
 
@@ -31,15 +33,20 @@
 /**********************************************************
  * Constants
  **********************************************************/
+// Systick configuration
+#define SYSTICK_RATE_HZ    100
+
+
 // PWM configuration
-#define PWM_START_RATE_HZ       200
-#define PWM_RATE_STEP_HZ        50
-#define PWM_DUTY_CYCLE_STEP     5
-#define PWM_RATE_MIN_HZ         50
-#define PWM_RATE_MAX_HZ         400
-#define PWM_FIXED_DUTY          2
-#define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
-#define PWM_DIVIDER             4
+#define PWM_MAIN_START_RATE_HZ  200
+#define PWM_TAIL_START_RATE_HZ  200
+#define PWM_RATE_STEP_HZ   50
+#define PWM_RATE_MIN_HZ    50
+#define PWM_RATE_MAX_HZ    400
+#define PWM_MAIN_FIXED_DUTY     10
+#define PWM_TAIL_FIXED_DUTY     20
+#define PWM_DIVIDER_CODE   SYSCTL_PWMDIV_4
+#define PWM_DIVIDER        4
 
 
 //  PWM Hardware Details M0PWM7 (gen 3)
@@ -55,7 +62,16 @@
 #define PWM_MAIN_GPIO_PIN    GPIO_PIN_5
 
 
-static uint8_t mainDuty = PWM_FIXED_DUTY;
+// PF1, J3-10
+#define PWM_TAIL_BASE        PWM1_BASE
+#define PWM_TAIL_GEN         PWM_GEN_2
+#define PWM_TAIL_OUTNUM      PWM_OUT_5
+#define PWM_TAIL_OUTBIT      PWM_OUT_5_BIT
+#define PWM_TAIL_PERIPH_PWM  SYSCTL_PERIPH_PWM1
+#define PWM_TAIL_PERIPH_GPIO SYSCTL_PERIPH_GPIOF
+#define PWM_TAIL_GPIO_BASE   GPIO_PORTF_BASE
+#define PWM_TAIL_GPIO_CONFIG GPIO_PF1_M1PWM5
+#define PWM_TAIL_GPIO_PIN    GPIO_PIN_1
 
 
 /********************************************************
@@ -72,12 +88,29 @@ void setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty) {
 }
 
 
+void
+setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
+{
+    // Calculate the PWM period corresponding to the freq.
+    uint32_t ui32Period =
+        SysCtlClockGet() / PWM_DIVIDER / ui32Freq;
+
+    PWMGenPeriodSet(PWM_TAIL_BASE, PWM_TAIL_GEN, ui32Period);
+    PWMPulseWidthSet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM,
+        ui32Period * ui32Duty / 100);
+}
+
+
 /*********************************************************
  * initialisePWM
  * M0PWM7 (J4-05, PC5) is used for the main rotor motor
  *********************************************************/
-void
-initialiseMainPWM(void) {
+void initialiseMainPWM(void) {
+    SysCtlPWMClockSet(PWM_DIVIDER_CODE);
+    // As a precaution, make sure that the peripherals used are reset
+    SysCtlPeripheralReset (PWM_MAIN_PERIPH_GPIO); // Used for PWM output
+    SysCtlPeripheralReset (PWM_MAIN_PERIPH_PWM);  // Main Rotor PWM
+
     SysCtlPeripheralEnable(PWM_MAIN_PERIPH_PWM);
     SysCtlPeripheralEnable(PWM_MAIN_PERIPH_GPIO);
 
@@ -87,36 +120,44 @@ initialiseMainPWM(void) {
     PWMGenConfigure(PWM_MAIN_BASE, PWM_MAIN_GEN,
                     PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
     // Set the initial PWM parameters
-    setMainPWM(PWM_START_RATE_HZ, PWM_FIXED_DUTY);
+    setMainPWM(PWM_MAIN_START_RATE_HZ, PWM_MAIN_FIXED_DUTY);
 
     PWMGenEnable(PWM_MAIN_BASE, PWM_MAIN_GEN);
 
     // Disable the output.  Repeat this call with 'true' to turn O/P on.
     PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, false);
-
-    // As a precaution, make sure that the peripherals used are reset
-    SysCtlPeripheralReset (PWM_MAIN_PERIPH_GPIO); // Used for PWM output
-    SysCtlPeripheralReset (PWM_MAIN_PERIPH_PWM);  // Main Rotor PWM
 }
 
 
+void initialiseTailPWM(void) {
+    SysCtlPeripheralReset (PWM_TAIL_PERIPH_GPIO); // Used for PWM output
+       SysCtlPeripheralReset (PWM_TAIL_PERIPH_PWM);  // Main Rotor PWM
+
+       SysCtlPeripheralEnable(PWM_TAIL_PERIPH_PWM);
+       SysCtlPeripheralEnable(PWM_TAIL_PERIPH_GPIO);
+
+       GPIOPinConfigure(PWM_TAIL_GPIO_CONFIG);
+       GPIOPinTypePWM(PWM_TAIL_GPIO_BASE, PWM_TAIL_GPIO_PIN);
+
+       PWMGenConfigure(PWM_TAIL_BASE, PWM_TAIL_GEN,
+                           PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
+       // Set the initial PWM parameters
+       setTailPWM (PWM_TAIL_START_RATE_HZ, PWM_TAIL_FIXED_DUTY);
+
+       PWMGenEnable(PWM_TAIL_BASE, PWM_TAIL_GEN);
+
+       // Disable the output.  Repeat this call with 'true' to turn O/P on.
+       PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, false);
+}
+
+
+// Initialisation is complete, so turn on the output.
 void activateMainPWM(void) {
-    // Initialisation is complete, so turn on the output.
     PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, true);
 }
 
 
-void SetPWMClock(void) {
-    SysCtlPWMClockSet(PWM_DIVIDER_CODE);
-}
-
-
-uint8_t MainRotDuty(void) {
-    return mainDuty;
-}
-
-
-void increaseMainDuty(void) {
-    mainDuty += 10;
-    setMainPWM(PWM_START_RATE_HZ, mainDuty);
+// Initialisation is complete, so turn on the output.
+void activateTailPWM(void) {
+    PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, true);
 }

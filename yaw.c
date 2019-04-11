@@ -21,7 +21,7 @@ static int32_t slots;
 
 void YawIntHandler(void) {
     ChanA = GPIOPinRead(PortB, ChAPin);
-    ChanB = GPIOPinRead(PortB, ChBPin) >> 1;
+    ChanB = GPIOPinRead(PortB, ChBPin) >> 1; // Bit shifted to the right
     if (ChanA == 1 && ChanB == 1) {
         diskState = Same;
     } else if (diskState == Same && ChanA == 1 && ChanB == 0){
@@ -30,9 +30,6 @@ void YawIntHandler(void) {
     } else if (diskState == Same && ChanA == 0 && ChanB == 1) {
         slots--;
         diskState = Different;
-    }
-    if (slots >= NUM_SLOTS || slots <= -NUM_SLOTS) {
-        slots = 0;
     }
     GPIOIntClear(PortB, ChAPin | ChBPin);
 }
@@ -53,3 +50,10 @@ void initYawGPIO(void) {
 int32_t yaw(void) {
     return ((FULL_ROT*slots)/NUM_SLOTS);
 }
+
+
+void setYawRef(void) {
+    slots = 0;
+}
+
+
