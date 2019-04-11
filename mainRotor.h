@@ -14,7 +14,10 @@ void initialiseMainPWM(void);
 void SetPWMClock(void);
 
 
-uint32_t MainRotFreq(void);
+uint32_t MainRotDuty(void);
+
+
+void increaseMainDuty(void);
 
 
 #endif /* MAINROTOR_H_ */

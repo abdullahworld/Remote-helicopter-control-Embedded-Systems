@@ -32,12 +32,12 @@
  * Constants
  **********************************************************/
 // PWM configuration
-#define PWM_START_RATE_HZ       30
+#define PWM_START_RATE_HZ       200
 #define PWM_RATE_STEP_HZ        50
 #define PWM_DUTY_CYCLE_STEP     5
 #define PWM_RATE_MIN_HZ         50
 #define PWM_RATE_MAX_HZ         400
-#define PWM_FIXED_DUTY          50
+#define PWM_FIXED_DUTY          2
 #define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
 #define PWM_DIVIDER             4
 
@@ -55,7 +55,7 @@
 #define PWM_MAIN_GPIO_PIN    GPIO_PIN_5
 
 
-static uint32_t ui32Freq = PWM_START_RATE_HZ;
+static uint8_t mainDuty = PWM_FIXED_DUTY;
 
 
 /********************************************************
@@ -108,7 +108,12 @@ void SetPWMClock(void) {
 }
 
 
-uint32_t MainRotFreq(void) {
-    return ui32Freq;
+uint8_t MainRotDuty(void) {
+    return mainDuty;
 }
 
+
+void increaseMainDuty(void) {
+    mainDuty += 2;
+    setMainPWM(PWM_START_RATE_HZ, mainDuty);
+}

@@ -50,10 +50,10 @@ void displayStats(int32_t altitude, int32_t yaw) {
     usnprintf (string, sizeof(string), "YAW: %7d DEG", yaw);
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
-    usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", MainRotFreq());
+    usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", MainRotDuty());
     // Update line on display.
     OLEDStringDraw (string, 0, 2);
-    usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", TailRotFreq());
+    usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", TailRotDuty());
     // Update line on display.
     OLEDStringDraw (string, 0, 3);
 }

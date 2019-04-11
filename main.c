@@ -91,7 +91,8 @@ void initSysTick(void) {
 
 void buttonUp(void) {
     if (checkButton(UP) == PUSHED) {
-        changeDispState();
+       // changeDispState();
+        increaseMainDuty();
     }
 }
 
@@ -112,9 +113,9 @@ void MainInit(void) {
     initialiseMainPWM();
     initialiseTailPWM();
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
-    initSysTick();
     initDisplay();
     initYawGPIO();
+    initSysTick();
     // Enable interrupts to the processor.
     IntMasterEnable();
 }

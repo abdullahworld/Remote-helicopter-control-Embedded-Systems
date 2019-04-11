@@ -31,15 +31,12 @@
  * Constants
  **********************************************************/
 // PWM configuration
-#define PWM_START_RATE_HZ       20
 #define PWM_TAIL_START_RATE_HZ  200
 #define PWM_RATE_STEP_HZ        50
 #define PWM_DUTY_CYCLE_STEP     5
 #define PWM_RATE_MIN_HZ         50
 #define PWM_RATE_MAX_HZ         400
-#define PWM_FIXED_DUTY          50
-#define PWM_TAIL_FIXED_DUTY     10
-#define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
+#define PWM_TAIL_FIXED_DUTY     2
 #define PWM_DIVIDER             4
 
 
@@ -55,7 +52,7 @@
 #define PWM_TAIL_GPIO_PIN    GPIO_PIN_1
 
 
-static uint32_t ui32Freq = PWM_START_RATE_HZ;
+static uint8_t tailDuty = PWM_TAIL_FIXED_DUTY;
 
 
 void setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty) {
@@ -99,6 +96,6 @@ void initialiseTailPWM(void) {
 }
 
 
-uint32_t TailRotFreq(void) {
-    return ui32Freq;
+uint8_t TailRotDuty(void) {
+    return tailDuty;
 }
