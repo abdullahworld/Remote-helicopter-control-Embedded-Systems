@@ -97,7 +97,10 @@ initialiseMainPWM(void) {
     // As a precaution, make sure that the peripherals used are reset
     SysCtlPeripheralReset (PWM_MAIN_PERIPH_GPIO); // Used for PWM output
     SysCtlPeripheralReset (PWM_MAIN_PERIPH_PWM);  // Main Rotor PWM
+}
 
+
+void activateMainPWM(void) {
     // Initialisation is complete, so turn on the output.
     PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, true);
 }
@@ -114,6 +117,6 @@ uint8_t MainRotDuty(void) {
 
 
 void increaseMainDuty(void) {
-    mainDuty += 2;
+    mainDuty += 10;
     setMainPWM(PWM_START_RATE_HZ, mainDuty);
 }

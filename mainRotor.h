@@ -11,6 +11,9 @@ void setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 void initialiseMainPWM(void);
 
 
+void activateMainPWM(void);
+
+
 void SetPWMClock(void);
 
 

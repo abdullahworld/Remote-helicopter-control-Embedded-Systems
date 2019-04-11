@@ -116,6 +116,7 @@ void MainInit(void) {
     initDisplay();
     initYawGPIO();
     initSysTick();
+    activateMainPWM();
     // Enable interrupts to the processor.
     IntMasterEnable();
 }
