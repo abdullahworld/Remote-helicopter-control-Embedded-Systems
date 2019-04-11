@@ -1,13 +1,17 @@
-/*
- * yaw.h
- *
- *  Created on: Apr 3, 2019
- *      Author: Admin
- */
-
 #ifndef YAW_H_
 #define YAW_H_
 
+
+#include <stdint.h>
+
+
+void YawIntHandler(void);
+
+
+void initYawGPIO(void);
+
+
+int32_t yaw(void);
 
 
 #endif /* YAW_H_ */
