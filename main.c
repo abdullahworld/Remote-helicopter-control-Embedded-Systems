@@ -9,6 +9,10 @@
 // Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
 //*****************************************************************************
+//
+// Inputs: PE4 (Altitude), PB0 (Channel A), PB1 (Channel B)
+// Outputs: PC5 (PWM Main), PF1 (PWM Tail)
+//
 
 
 #include <stdint.h>

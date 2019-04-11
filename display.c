@@ -47,6 +47,12 @@ void displayStats(int32_t altitude, int32_t yaw) {
     usnprintf (string, sizeof(string), "YAW: %7d DEG", yaw);
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
+    usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", 0);
+    // Update line on display.
+    OLEDStringDraw (string, 0, 2);
+    usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", 0);
+    // Update line on display.
+    OLEDStringDraw (string, 0, 3);
 }
 
 
