@@ -35,6 +35,7 @@
 #include "motors.h"
 #include "switch.h"
 #include "control.h"
+#include "uart.h"
 
 
 //*****************************************************************************
@@ -122,6 +123,7 @@ void MainInit(void) {
     initialiseTailPWM();
     initADC();
     initADCCircBuf();
+    initialiseUSB_UART();
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
@@ -134,6 +136,7 @@ void MainInit(void) {
 
 
 int main(void) {
+    uint32_t n;
 	MainInit();
 	while (1)
 	{
@@ -145,6 +148,12 @@ int main(void) {
 	        switched();
 	        YawRef();
             R_g_ulSampCnt = 0;
+            if (n == 50) {
+                consoleMsg();
+                n = 0;
+            } else {
+                n++;
+            }
 	    }
 	}
 }
