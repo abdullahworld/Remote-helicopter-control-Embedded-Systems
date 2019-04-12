@@ -18,6 +18,7 @@ static int32_t sum;
 static int32_t meanVal;
 static int32_t helicopter_landed_value;
 static circBuf_t g_inBuffer;
+static int8_t altitude;
 
 
 //*****************************************************************************
@@ -113,6 +114,8 @@ int32_t RetMeanVal(void) {
 }
 
 
-int32_t altitude(void) {
-    return ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
+int8_t getAlt(void) {
+    altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
+    return altitude;
 }
+

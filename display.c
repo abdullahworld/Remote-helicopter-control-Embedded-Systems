@@ -39,7 +39,7 @@ void displayStats(void) {
 
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", altitude());
+    usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
     usnprintf (string, sizeof(string), "YAW: %7d DEG", yaw());

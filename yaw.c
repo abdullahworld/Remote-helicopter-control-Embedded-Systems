@@ -48,7 +48,7 @@ void initYawGPIO(void) {
 
 
 int32_t yaw(void) {
-    return ((FULL_ROT*slots)/NUM_SLOTS);
+    return (2*FULL_ROT*slots + NUM_SLOTS) / (2*NUM_SLOTS);
 }
 
 

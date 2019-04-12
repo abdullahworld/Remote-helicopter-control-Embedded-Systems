@@ -23,7 +23,7 @@ void SetLandedVal(void);
 int32_t RetMeanVal(void);
 
 
-int32_t altitude(void);
+int8_t getAlt(void);
 
 
 #endif /* ALTITUDE_H_ */

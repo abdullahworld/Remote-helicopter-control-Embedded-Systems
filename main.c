@@ -94,15 +94,28 @@ void initSysTick(void) {
 
 void buttonUp(void) {
     if (checkButton(UP) == PUSHED) {
-       // changeDispState();
-       // increaseMainDuty();
+        incrMainPWM();
+    }
+}
+
+
+void buttonDown(void) {
+    if (checkButton(DOWN) == PUSHED) {
+        decrMainPWM();
     }
 }
 
 
 void buttonLeft(void) {
     if (checkButton(LEFT) == PUSHED) {
-            SetLandedVal();
+        decrTailPWM();
+    }
+}
+
+
+void buttonRight(void) {
+    if (checkButton(RIGHT) == PUSHED) {
+        incrTailPWM();
     }
 }
 
@@ -118,11 +131,11 @@ void initAll(void) {
     SysCtlPeripheralReset(LEFT_BUT_PERIPH);
     SysCtlPeripheralReset(UP_BUT_PERIPH);
     initClock();
+    initialiseUSB_UART();
     initialiseMainPWM();
     initialiseTailPWM();
     initADC();
     initADCCircBuf();
-    initialiseUSB_UART();
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
@@ -142,7 +155,9 @@ int main(void) {
 	        ProcessAltData();
 	        displayStats();
 	        buttonUp();
+	        buttonDown();
 	        buttonLeft();
+	        buttonRight();
 	        switched();
             g_ulSampCnt = 0;
             consoleMsgSpaced();

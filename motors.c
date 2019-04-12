@@ -71,7 +71,11 @@
 #define PWM_TAIL_PERIPH_GPIO SYSCTL_PERIPH_GPIOF
 #define PWM_TAIL_GPIO_BASE   GPIO_PORTF_BASE
 #define PWM_TAIL_GPIO_CONFIG GPIO_PF1_M1PWM5
-#define PWM_TAIL_GPIO_PIN    GPIO_PIN_1
+#define PWM_TAIL_GPIO_PIN    GPIO_PIN_1 // Causes the red LED to turn on with nothing connected
+
+
+static int32_t mainDuty = PWM_MAIN_FIXED_DUTY;
+static int32_t tailDuty = PWM_TAIL_FIXED_DUTY;
 
 
 /********************************************************
@@ -102,12 +106,16 @@ setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
 
 
 uint32_t GetMainDuty(void) {
-    return (PWMPulseWidthGet(PWM_MAIN_BASE, PWM_MAIN_OUTNUM) * 100) / PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN);
+    return (2*100*PWMPulseWidthGet(PWM_MAIN_BASE, PWM_MAIN_OUTNUM)
+            + PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN))
+            / (2*PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN));
 }
 
 
 uint32_t GetTailDuty(void) {
-    return (PWMPulseWidthGet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM) * 100) / PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN);
+    return (2*100*PWMPulseWidthGet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM)
+            + PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN))
+            / (2*PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN));
 }
 
 
@@ -130,7 +138,7 @@ void initialiseMainPWM(void) {
     PWMGenConfigure(PWM_MAIN_BASE, PWM_MAIN_GEN,
                     PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
     // Set the initial PWM parameters
-    setMainPWM(PWM_MAIN_START_RATE_HZ, PWM_MAIN_FIXED_DUTY);
+    setMainPWM(PWM_MAIN_START_RATE_HZ, mainDuty);
 
     PWMGenEnable(PWM_MAIN_BASE, PWM_MAIN_GEN);
 
@@ -152,7 +160,7 @@ void initialiseTailPWM(void) {
        PWMGenConfigure(PWM_TAIL_BASE, PWM_TAIL_GEN,
                            PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
        // Set the initial PWM parameters
-       setTailPWM (PWM_TAIL_START_RATE_HZ, PWM_TAIL_FIXED_DUTY);
+       setTailPWM (PWM_TAIL_START_RATE_HZ, tailDuty);
 
        PWMGenEnable(PWM_TAIL_BASE, PWM_TAIL_GEN);
 
@@ -182,5 +190,29 @@ void deactivateMainPWM(void) {
 // Initialisation is complete, so turn on the output.
 void deactivateTailPWM(void) {
     PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, false);
+}
+
+
+void incrMainPWM(void) {
+    mainDuty += 10;
+    setMainPWM(PWM_MAIN_START_RATE_HZ, mainDuty);
+}
+
+
+void decrMainPWM(void) {
+    mainDuty -= 10;
+    setMainPWM(PWM_MAIN_START_RATE_HZ, mainDuty);
+}
+
+
+void incrTailPWM(void) {
+    tailDuty += 15;
+    setTailPWM(PWM_TAIL_START_RATE_HZ, tailDuty);
+}
+
+
+void decrTailPWM(void) {
+    tailDuty -= 15;
+    setTailPWM(PWM_TAIL_START_RATE_HZ, tailDuty);
 }
 
