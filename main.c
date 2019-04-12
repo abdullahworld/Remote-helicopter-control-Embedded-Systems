@@ -122,7 +122,6 @@ void buttonRight(void) {
 void switched(void) {
     if (checkSwitch() > 0) {
         findRef();
-        SetLandedVal();
     }
 }
 

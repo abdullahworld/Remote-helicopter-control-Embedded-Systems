@@ -17,9 +17,6 @@ void ProcessAltData(void);
 void initADCCircBuf(void);
 
 
-void SetLandedVal(void);
-
-
 int32_t RetMeanVal(void);
 
 
