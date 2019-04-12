@@ -34,7 +34,6 @@
 #include "display.h"
 #include "motors.h"
 #include "switch.h"
-#include "control.h"
 #include "uart.h"
 
 
@@ -121,8 +120,9 @@ void buttonRight(void) {
 
 
 void switched(void) {
-    if (checkSwitch() == 0) {
+    if (checkSwitch() > 0) {
         findRef();
+        SetLandedVal();
     }
 }
 

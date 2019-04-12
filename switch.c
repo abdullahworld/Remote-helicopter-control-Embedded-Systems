@@ -10,6 +10,7 @@
 
 
 static bool switchState;
+static bool butflag = 0;
 
 
 void initSwitch(void) {
@@ -27,5 +28,13 @@ void updateSwitch(void) {
 
 
 bool checkSwitch(void) {
-    return switchState;
+    if (switchState > 0 && butflag == 0) { // Switch is up
+        butflag = 1;
+        return switchState;
+    } else if (switchState == 0 && butflag == 1) { // Switch is down
+        butflag = 0;
+        return 0;
+    } else {
+        return 0;
+    }
 }

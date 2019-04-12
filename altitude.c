@@ -104,6 +104,7 @@ void initADCCircBuf(void) {
 }
 
 
+// Unnecessary?
 void SetLandedVal(void) {
     helicopter_landed_value = meanVal;
 }

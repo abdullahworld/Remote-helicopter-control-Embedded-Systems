@@ -40,11 +40,10 @@
 // PWM configuration
 #define PWM_MAIN_START_RATE_HZ  200
 #define PWM_TAIL_START_RATE_HZ  200
-#define PWM_RATE_STEP_HZ        50
-#define PWM_RATE_MIN_HZ         50
-#define PWM_RATE_MAX_HZ         400
 #define PWM_MAIN_FIXED_DUTY     40
 #define PWM_TAIL_FIXED_DUTY     30
+#define PWM_MAIN_DUTY_STEP      10
+#define PWM_TAIL_DUTY_STEP      15
 #define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
 #define PWM_DIVIDER             4
 
@@ -194,25 +193,25 @@ void deactivateTailPWM(void) {
 
 
 void incrMainPWM(void) {
-    mainDuty += 10;
+    mainDuty += PWM_MAIN_DUTY_STEP;
     setMainPWM(PWM_MAIN_START_RATE_HZ, mainDuty);
 }
 
 
 void decrMainPWM(void) {
-    mainDuty -= 10;
+    mainDuty -= PWM_MAIN_DUTY_STEP;
     setMainPWM(PWM_MAIN_START_RATE_HZ, mainDuty);
 }
 
 
 void incrTailPWM(void) {
-    tailDuty += 15;
+    tailDuty += PWM_TAIL_DUTY_STEP;
     setTailPWM(PWM_TAIL_START_RATE_HZ, tailDuty);
 }
 
 
 void decrTailPWM(void) {
-    tailDuty -= 15;
+    tailDuty -= PWM_TAIL_DUTY_STEP;
     setTailPWM(PWM_TAIL_START_RATE_HZ, tailDuty);
 }
 

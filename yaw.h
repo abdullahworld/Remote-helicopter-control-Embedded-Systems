@@ -17,4 +17,13 @@ int32_t yaw(void);
 void setYawRef(void);
 
 
+void initYawRef(void);
+
+
+void checkYawRef(void);
+
+
+void findRef(void);
+
+
 #endif /* YAW_H_ */

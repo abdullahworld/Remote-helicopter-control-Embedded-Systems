@@ -4,6 +4,7 @@
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
 #include "yaw.h"
+#include "motors.h"
 
 
 #define NUM_SLOTS 112 // The number of slots in the slotted disk
@@ -11,12 +12,15 @@
 #define CHB_PIN GPIO_PIN_1
 #define PORTB GPIO_PORTB_BASE
 #define FULL_ROT 360 // A full rotation in degrees
+#define YAW_REF_PIN GPIO_PIN_4
+#define YAW_REF_PORT GPIO_PORTC_BASE
 
 
 enum quadrature {Same, Different};
 static enum quadrature diskState;
 static uint8_t ChanA, ChanB;
 static int32_t slots;
+static bool YawRefState;
 
 
 void YawIntHandler(void) {
@@ -57,3 +61,25 @@ void setYawRef(void) {
 }
 
 
+void initYawRef(void) {
+    // Port C already init from PWM gen
+    GPIOPinTypeGPIOInput (YAW_REF_PORT, YAW_REF_PIN);
+    GPIOPadConfigSet (YAW_REF_PORT, YAW_REF_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIODirModeSet(YAW_REF_PORT, YAW_REF_PIN, GPIO_DIR_MODE_IN);
+}
+
+
+void checkYawRef(void) {
+    YawRefState = GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN);
+    if (YawRefState != 0) {
+          setYawRef();
+          deactivateMainPWM();
+          deactivateTailPWM();
+       }
+}
+
+
+void findRef(void) {
+    activateMainPWM();
+    activateTailPWM();
+}
