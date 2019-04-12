@@ -101,6 +101,16 @@ setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
 }
 
 
+uint32_t GetMainDuty(void) {
+    return (PWMPulseWidthGet(PWM_MAIN_BASE, PWM_MAIN_OUTNUM) * 100) / PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN);
+}
+
+
+uint32_t GetTailDuty(void) {
+    return (PWMPulseWidthGet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM) * 100) / PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN);
+}
+
+
 /*********************************************************
  * initialisePWM
  * M0PWM7 (J4-05, PC5) is used for the main rotor motor

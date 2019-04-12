@@ -62,7 +62,6 @@ void SysTickIntHandler(void)
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
-    R_g_ulSampCnt++;
 }
 
 
@@ -115,7 +114,7 @@ void switched(void) {
 }
 
 
-void MainInit(void) {
+void initAll(void) {
     SysCtlPeripheralReset(LEFT_BUT_PERIPH);
     SysCtlPeripheralReset(UP_BUT_PERIPH);
     initClock();
@@ -136,24 +135,18 @@ void MainInit(void) {
 
 
 int main(void) {
-    uint32_t n;
-	MainInit();
+	initAll();
 	while (1)
 	{
-	    if (R_g_ulSampCnt > 0) {
+	    if (g_ulSampCnt > 0) { // Set to approximately 100 Hz
 	        ProcessAltData();
-	        SetDispValues(g_ulSampCnt);
+	        displayStats();
 	        buttonUp();
 	        buttonLeft();
 	        switched();
 	        YawRef();
-            R_g_ulSampCnt = 0;
-            if (n == 50) {
-                consoleMsg();
-                n = 0;
-            } else {
-                n++;
-            }
+            g_ulSampCnt = 0;
+            consoleMsgSpaced();
 	    }
 	}
 }

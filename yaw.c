@@ -7,9 +7,9 @@
 
 
 #define NUM_SLOTS 112 // The number of slots in the slotted disk
-#define ChAPin GPIO_PIN_0
-#define ChBPin GPIO_PIN_1
-#define PortB GPIO_PORTB_BASE
+#define CHA_PIN GPIO_PIN_0
+#define CHB_PIN GPIO_PIN_1
+#define PORTB GPIO_PORTB_BASE
 #define FULL_ROT 360 // A full rotation in degrees
 
 
@@ -20,8 +20,8 @@ static int32_t slots;
 
 
 void YawIntHandler(void) {
-    ChanA = GPIOPinRead(PortB, ChAPin);
-    ChanB = GPIOPinRead(PortB, ChBPin) >> 1; // Bit shifted to the right
+    ChanA = GPIOPinRead(PORTB, CHA_PIN);
+    ChanB = GPIOPinRead(PORTB, CHB_PIN) >> 1; // Bit shifted to the right
     if (ChanA == 1 && ChanB == 1) {
         diskState = Same;
     } else if (diskState == Same && ChanA == 1 && ChanB == 0){
@@ -31,19 +31,19 @@ void YawIntHandler(void) {
         slots--;
         diskState = Different;
     }
-    GPIOIntClear(PortB, ChAPin | ChBPin);
+    GPIOIntClear(PORTB, CHA_PIN | CHB_PIN);
 }
 
 
 void initYawGPIO(void) {
     SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOB);
-    GPIOPinTypeGPIOInput (PortB, ChAPin | ChBPin);
-    GPIOPadConfigSet (PortB, ChAPin | ChBPin, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
-    GPIODirModeSet(PortB, ChAPin | ChBPin, GPIO_DIR_MODE_IN);
+    GPIOPinTypeGPIOInput (PORTB, CHA_PIN | CHB_PIN);
+    GPIOPadConfigSet (PORTB, CHA_PIN | CHB_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIODirModeSet(PORTB, CHA_PIN | CHB_PIN, GPIO_DIR_MODE_IN);
 
-    GPIOIntRegister(PortB, YawIntHandler);
-    GPIOIntTypeSet(PortB, ChAPin | ChBPin, GPIO_BOTH_EDGES);
-    GPIOIntEnable(PortB, ChAPin | ChBPin);
+    GPIOIntRegister(PORTB, YawIntHandler);
+    GPIOIntTypeSet(PORTB, CHA_PIN | CHB_PIN, GPIO_BOTH_EDGES);
+    GPIOIntEnable(PORTB, CHA_PIN | CHB_PIN);
 }
 
 

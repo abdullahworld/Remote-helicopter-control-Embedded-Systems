@@ -90,6 +90,19 @@ UARTSend (char *pucBuffer)
 
 void consoleMsg() {
     // Form and send a status message to the console
-    usprintf (statusStr, "Yaw: %d | Altitude: %d\r\n",yaw(),altitude()); // * usprintf
+    usprintf (statusStr, "Altitude: %d | Yaw: %d\r\n", altitude(), yaw()); // * usprintf
     UARTSend (statusStr);
+    usprintf (statusStr, "Main PWM: %d | Tail PWM: %d\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
+    UARTSend (statusStr);
+}
+
+
+void consoleMsgSpaced(void) {
+    static uint32_t n;
+    if (n == 100) { // Set to approximately 1 Hz in the main paced loop
+        consoleMsg();
+        n = 0;
+    } else {
+        n++;
+    }
 }

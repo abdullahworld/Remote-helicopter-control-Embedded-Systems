@@ -11,4 +11,7 @@ void UARTSend (char *pucBuffer);
 void consoleMsg();
 
 
+void consoleMsgSpaced(void);
+
+
 #endif /* UART_H_ */
