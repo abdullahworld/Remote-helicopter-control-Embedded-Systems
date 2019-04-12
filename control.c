@@ -20,22 +20,17 @@ void initYawRef(void) {
 }
 
 
-void updateYawRef(void) {
+void checkYawRef(void) {
     YawRefState = GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN);
-}
-
-
-void YawRef(void) {
     if (YawRefState == 0) {
-       setYawRef();
-       deactivateMainPWM();
-       deactivateTailPWM();
-    }
+          setYawRef();
+          deactivateMainPWM();
+          deactivateTailPWM();
+       }
 }
 
 
 void findRef(void) {
     activateMainPWM();
     activateTailPWM();
-
 }

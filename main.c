@@ -3,7 +3,7 @@
 // main.c - An interrupt driven program that measures the height of the helicopter
 //
 // Authors: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 11.4.2019
+// Last modified: 12.4.2019
 //
 //*****************************************************************************
 // Based on ADCdemo1.c by P.J. Bones UCECE
@@ -58,7 +58,7 @@ void SysTickIntHandler(void)
 {
     updateButtons();
     updateSwitch();
-    updateYawRef();
+    checkYawRef();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
@@ -144,7 +144,6 @@ int main(void) {
 	        buttonUp();
 	        buttonLeft();
 	        switched();
-	        YawRef();
             g_ulSampCnt = 0;
             consoleMsgSpaced();
 	    }
