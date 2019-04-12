@@ -10,6 +10,7 @@
 #define YAW_REF_PIN GPIO_PIN_4
 #define YAW_REF_PORT GPIO_PORTC_BASE
 
+static bool YawRefState;
 
 void initYawRef(void) {
     // Port C already init from PWM gen
@@ -19,10 +20,22 @@ void initYawRef(void) {
 }
 
 
+void updateYawRef(void) {
+    YawRefState = GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN);
+}
+
+
+void YawRef(void) {
+    if (YawRefState == 0) {
+       setYawRef();
+       deactivateMainPWM();
+       deactivateTailPWM();
+    }
+}
+
+
 void findRef(void) {
     activateMainPWM();
     activateTailPWM();
-    if (GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN) == 0) {
-       setYawRef();
-    }
+
 }

@@ -23,4 +23,10 @@ void activateMainPWM(void);
 void activateTailPWM(void);
 
 
+void deactivateMainPWM(void);
+
+
+void deactivateTailPWM(void);
+
+
 #endif /* MOTORS_H_ */

@@ -5,6 +5,12 @@
 void initYawRef(void);
 
 
+void updateYawRef(void);
+
+
+void YawRef(void);
+
+
 void findRef(void);
 
 

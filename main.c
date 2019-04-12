@@ -57,6 +57,7 @@ void SysTickIntHandler(void)
 {
     updateButtons();
     updateSwitch();
+    updateYawRef();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
@@ -124,6 +125,7 @@ void MainInit(void) {
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
+    initYawRef();
     initYawGPIO();
     initSysTick();
     // Enable interrupts to the processor.
@@ -141,6 +143,7 @@ int main(void) {
 	        buttonUp();
 	        buttonLeft();
 	        switched();
+	        YawRef();
             R_g_ulSampCnt = 0;
 	    }
 	}

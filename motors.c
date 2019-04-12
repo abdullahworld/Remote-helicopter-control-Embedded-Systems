@@ -40,13 +40,13 @@
 // PWM configuration
 #define PWM_MAIN_START_RATE_HZ  200
 #define PWM_TAIL_START_RATE_HZ  200
-#define PWM_RATE_STEP_HZ   50
-#define PWM_RATE_MIN_HZ    50
-#define PWM_RATE_MAX_HZ    400
-#define PWM_MAIN_FIXED_DUTY     10
-#define PWM_TAIL_FIXED_DUTY     20
-#define PWM_DIVIDER_CODE   SYSCTL_PWMDIV_4
-#define PWM_DIVIDER        4
+#define PWM_RATE_STEP_HZ        50
+#define PWM_RATE_MIN_HZ         50
+#define PWM_RATE_MAX_HZ         400
+#define PWM_MAIN_FIXED_DUTY     40
+#define PWM_TAIL_FIXED_DUTY     30
+#define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
+#define PWM_DIVIDER             4
 
 
 //  PWM Hardware Details M0PWM7 (gen 3)
@@ -161,3 +161,16 @@ void activateMainPWM(void) {
 void activateTailPWM(void) {
     PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, true);
 }
+
+
+// Initialisation is complete, so turn on the output.
+void deactivateMainPWM(void) {
+    PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, false);
+}
+
+
+// Initialisation is complete, so turn on the output.
+void deactivateTailPWM(void) {
+    PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, false);
+}
+
