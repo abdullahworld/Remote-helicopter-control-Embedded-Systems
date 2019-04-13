@@ -1,7 +1,5 @@
 # ENCE361 - The Helicopter Project 
 
-> Developed by Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page.
-
 ## Description
 This program controls the motion of a toy helicopter. It starts of by
 calibrating the yaw with respect to a reference point and then uses
@@ -39,3 +37,8 @@ the height and yaw.
 
 > #### Right
 - Decreases the duty cycle of the tail rotor PWM by 15%
+
+## Contributers
+> - Hassan Ali Alhujhoj
+> - Abdullah Naeem 
+> - Daniel Page
