@@ -35,6 +35,7 @@
 #include "motors.h"
 #include "switch.h"
 #include "uart.h"
+#include "control.h"
 
 
 //*****************************************************************************
@@ -160,6 +161,7 @@ int main(void) {
 	        switched();
             g_ulSampCnt = 0;
             consoleMsgSpaced();
+            feedbackControl(10, 10, 10, 10, 0.1);
 	    }
 	}
 }
