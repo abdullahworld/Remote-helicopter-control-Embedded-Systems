@@ -2,6 +2,12 @@
 
 > Developed by Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page.
 
+## Description
+This program controls the motion of a toy helicopter. It starts of by
+calibrating the yaw with respect to a reference point and then uses
+PID control to maintain stable flight. The buttons are used to change
+the height and yaw.
+
 ## Inputs
 
 #### Altitude sensor
