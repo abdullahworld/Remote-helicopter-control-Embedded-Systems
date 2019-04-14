@@ -43,6 +43,7 @@ bool checkSwitch(void) {
 }
 
 
+// Returns a string of the mode
 char* getMode(void) {
 static char charFlying[] = "Flying";
 static char charLanded[] = "Landed";

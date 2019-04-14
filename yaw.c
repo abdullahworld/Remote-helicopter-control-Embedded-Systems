@@ -50,11 +50,13 @@ void initYawGPIO(void) {
 }
 
 
+// Returns the calculated and rounded yaw in degrees with respect to the reference point
 int32_t yaw(void) {
     return (2*FULL_ROT*slots + NUM_SLOTS) / (2*NUM_SLOTS);
 }
 
 
+// ISR for finding the yaw reference
 void YawRefIntHandler(void) {
         if (GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN) == 0) {
               GPIOIntDisable(YAW_REF_PORT, YAW_REF_PIN);
@@ -78,6 +80,7 @@ void initYawRef(void) {
 }
 
 
+// Starts routine to find reference
 void findRef(void) {
     activateMainPWM();
     activateTailPWM();
