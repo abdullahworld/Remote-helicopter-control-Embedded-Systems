@@ -20,7 +20,6 @@ enum quadrature {Same, Different};
 static enum quadrature diskState;
 static uint8_t ChanA, ChanB;
 static int32_t slots;
-static bool YawRefState;
 
 
 void YawIntHandler(void) {
@@ -56,26 +55,26 @@ int32_t yaw(void) {
 }
 
 
-void setYawRef(void) {
-    slots = 0;
+void YawRefIntHandler(void) {
+        if (GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN) == 0) {
+              GPIOIntDisable(YAW_REF_PORT, YAW_REF_PIN);
+              GPIOIntClear(YAW_REF_PORT, YAW_REF_PIN);
+              slots = 0;
+              deactivateMainPWM();
+              deactivateTailPWM();
+           }
 }
 
 
 void initYawRef(void) {
-    // Port C already init from PWM gen
+    SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOC);
     GPIOPinTypeGPIOInput (YAW_REF_PORT, YAW_REF_PIN);
-    GPIOPadConfigSet (YAW_REF_PORT, YAW_REF_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIOPadConfigSet (YAW_REF_PORT, YAW_REF_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     GPIODirModeSet(YAW_REF_PORT, YAW_REF_PIN, GPIO_DIR_MODE_IN);
-}
 
-
-void checkYawRef(void) {
-    YawRefState = GPIOPinRead(YAW_REF_PORT, YAW_REF_PIN);
-    if (YawRefState != 0) {
-          setYawRef();
-          deactivateMainPWM();
-          deactivateTailPWM();
-       }
+    GPIOIntRegister(YAW_REF_PORT, YawRefIntHandler);
+    GPIOIntTypeSet(YAW_REF_PORT, YAW_REF_PIN, GPIO_FALLING_EDGE);
+    GPIOIntEnable(YAW_REF_PORT, YAW_REF_PIN);
 }
 
 

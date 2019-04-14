@@ -40,7 +40,7 @@
 // PWM configuration
 #define PWM_MAIN_START_RATE_HZ  200
 #define PWM_TAIL_START_RATE_HZ  200
-#define PWM_MAIN_FIXED_DUTY     40
+#define PWM_MAIN_FIXED_DUTY     10
 #define PWM_TAIL_FIXED_DUTY     30
 #define PWM_MAIN_DUTY_STEP      10
 #define PWM_TAIL_DUTY_STEP      15

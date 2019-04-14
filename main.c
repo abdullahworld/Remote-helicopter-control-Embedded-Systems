@@ -58,7 +58,6 @@ void SysTickIntHandler(void)
 {
     updateButtons();
     updateSwitch();
-    checkYawRef();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
@@ -121,7 +120,7 @@ void buttonRight(void) {
 
 
 void switched(void) {
-    if (checkSwitch() > 0) {
+    if (checkSwitch() != 0) {
         findRef();
     }
 }
@@ -161,7 +160,7 @@ int main(void) {
 	        switched();
             g_ulSampCnt = 0;
             consoleMsgSpaced();
-            feedbackControl(10, 10, 10, 10, 0.1);
+            //feedbackControl(10, 10, 10, 10, 0.1);
 	    }
 	}
 }

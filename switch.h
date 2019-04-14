@@ -14,4 +14,7 @@ void updateSwitch(void);
 bool checkSwitch(void);
 
 
+char* getMode(void);
+
+
 #endif /* SWITCH_H_ */

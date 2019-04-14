@@ -11,6 +11,8 @@
 
 static bool switchState;
 static bool butflag = 0;
+enum mode {Flying, Landed, Landing};
+static enum mode currentMode = Landed;
 
 
 void initSwitch(void) {
@@ -21,20 +23,36 @@ void initSwitch(void) {
 }
 
 
-// Debouncing???
 void updateSwitch(void) {
     switchState = GPIOPinRead(SWITCH_PORT, SWITCH_PIN);
 }
 
 
 bool checkSwitch(void) {
-    if (switchState > 0 && butflag == 0) { // Switch is up
+    if (switchState != 0 && butflag == 0) { // Switch is up
+        currentMode = Flying;
         butflag = 1;
-        return switchState;
+        return true;
     } else if (switchState == 0 && butflag == 1) { // Switch is down
+        currentMode = Landing;
         butflag = 0;
-        return 0;
+        return false;
     } else {
-        return 0;
+        return false;
+    }
+}
+
+
+char* getMode(void) {
+static char charFlying[] = "Flying";
+static char charLanded[] = "Landed";
+static char charLanding[] = "Landing";
+
+if (currentMode == Flying) {
+        return charFlying;
+    } else if (currentMode == Landing) {
+        return charLanding;
+    } else {
+        return charLanded;
     }
 }
