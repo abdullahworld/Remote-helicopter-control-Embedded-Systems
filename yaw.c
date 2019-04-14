@@ -22,6 +22,7 @@ static uint8_t ChanA, ChanB;
 static int32_t slots;
 
 
+// ISR for quadrature encoding
 void YawIntHandler(void) {
     ChanA = GPIOPinRead(PORTB, CHA_PIN);
     ChanB = GPIOPinRead(PORTB, CHB_PIN) >> 1; // Bit shifted to the right
