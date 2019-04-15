@@ -2,6 +2,9 @@
 #define CONTROL_H_
 
 
+#include <stdint.h>
+
+
 void findRefStart(void);
 
 
@@ -18,6 +21,24 @@ void setModeFlying(void);
 
 
 void setModeLanding(void);
+
+
+void incrAlt(void);
+
+
+void decrAlt(void);
+
+
+void incrYaw(void);
+
+
+void decrYaw(void);
+
+
+uint8_t getSetAlt(void);
+
+
+int16_t getSetYaw(void);
 
 
 #endif /* CONTROL_H_ */

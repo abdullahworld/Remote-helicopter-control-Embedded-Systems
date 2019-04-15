@@ -92,30 +92,38 @@ void initSysTick(void) {
 }
 
 
+void initResetBut(void) {
+    SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOA);
+    GPIOPinTypeGPIOInput (GPIO_PORTA_BASE, GPIO_PIN_6);
+    GPIOPadConfigSet (GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIODirModeSet(GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_DIR_MODE_IN);
+}
+
+
 void buttonUp(void) {
     if (checkButton(UP) == PUSHED) {
-        incrMainPWM();
+        incrAlt();
     }
 }
 
 
 void buttonDown(void) {
     if (checkButton(DOWN) == PUSHED) {
-        decrMainPWM();
+        decrAlt();
     }
 }
 
 
 void buttonLeft(void) {
     if (checkButton(LEFT) == PUSHED) {
-        decrTailPWM();
+        decrYaw();
     }
 }
 
 
 void buttonRight(void) {
     if (checkButton(RIGHT) == PUSHED) {
-        incrTailPWM();
+        incrYaw();
     }
 }
 
@@ -123,6 +131,14 @@ void buttonRight(void) {
 void switched(void) {
     if (checkSwitch() != 0) {
         findRefStart();
+    }
+}
+
+
+
+void buttonReset(void) {
+    if (GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_6) == 0) {
+        SysCtlReset();
     }
 }
 
@@ -136,6 +152,7 @@ void initAll(void) {
     initialiseTailPWM();
     initADC();
     initADCCircBuf();
+    initResetBut();
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
@@ -159,10 +176,10 @@ int main(void) {
 	        buttonLeft();
 	        buttonRight();
 	        switched();
+	        buttonReset();
             g_ulSampCnt = 0;
             consoleMsgSpaced();
             refPulse();
-            //feedbackControl(10, 10, 10, 10, 0.1);
 	    }
 	}
 }

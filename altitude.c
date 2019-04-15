@@ -104,11 +104,6 @@ void initADCCircBuf(void) {
 }
 
 
-int32_t RetMeanVal(void) {
-    return meanVal;
-}
-
-
 int8_t getAlt(void) {
     altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
     return altitude;

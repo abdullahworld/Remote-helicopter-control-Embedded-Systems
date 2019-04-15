@@ -6,6 +6,8 @@
 enum modes {Initialising, Flying, Landed, Landing};
 static enum modes mode = Landed;
 static uint32_t count;
+static uint8_t setAlt = 0;
+static int16_t setYaw = 0;
 
 
 // Starts routine to find reference
@@ -64,3 +66,45 @@ void setModeFlying(void) {
 void setModeLanding(void) {
     mode = Landing;
 }
+
+
+void incrAlt(void) {
+    if (setAlt < 100 && mode != Initialising) {
+        setAlt += 10;
+    }
+}
+
+
+void decrAlt(void) {
+    if (setAlt > 0 && mode != Initialising) {
+        setAlt -= 10;
+    }
+
+}
+
+
+void incrYaw(void) {
+    if (setYaw < 360 && mode != Initialising) {
+        setYaw += 15;
+    }
+
+}
+
+
+void decrYaw(void) {
+    if (setYaw > -360 && mode != Initialising) {
+        setYaw -= 15;
+    }
+}
+
+
+uint8_t getSetAlt(void) {
+    return setAlt;
+}
+
+
+int16_t getSetYaw(void) {
+    return setYaw;
+}
+
+

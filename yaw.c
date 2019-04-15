@@ -53,7 +53,7 @@ void initYawGPIO(void) {
 
 
 // Returns the calculated and rounded yaw in degrees with respect to the reference point
-int32_t yaw(void) {
+int16_t getYaw(void) {
     return (2*FULL_ROT*slots + NUM_SLOTS) / (2*NUM_SLOTS);
 }
 

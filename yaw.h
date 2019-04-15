@@ -11,7 +11,7 @@ void YawIntHandler(void);
 void initYawGPIO(void);
 
 
-int32_t yaw(void);
+int16_t getYaw(void);
 
 
 void YawRefIntHandler(void);

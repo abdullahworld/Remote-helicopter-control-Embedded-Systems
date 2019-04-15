@@ -92,7 +92,9 @@ UARTSend (char *pucBuffer)
 
 void consoleMsg(void) {
     // Form and send a status message to the console
-    usprintf (statusStr, "Alt: %d%%\r\nYaw: %d deg\r\n", getAlt(), yaw()); // * usprintf
+    usprintf (statusStr, "Alt: %d / %d%%\r\n", getAlt(), getSetAlt()); // * usprintf
+    UARTSend (statusStr);
+    usprintf (statusStr, "Yaw: %d / %d deg\r\n", getYaw(), getSetYaw()); // * usprintf
     UARTSend (statusStr);
     usprintf (statusStr, "Main PWM: %d%%\r\nTail PWM: %d%%\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
     UARTSend (statusStr);
@@ -103,7 +105,7 @@ void consoleMsg(void) {
 
 void consoleMsgSpaced(void) {
     static uint32_t n;
-    if (n == 100) { // Set to approximately 2 Hz in the main paced loop
+    if (n == 50) { // Set to approximately 4 Hz in the main paced loop
         consoleMsg();
         n = 0;
     } else {
