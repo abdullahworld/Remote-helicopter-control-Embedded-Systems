@@ -5,6 +5,7 @@
 #include "driverlib/sysctl.h"
 #include "yaw.h"
 #include "motors.h"
+#include "control.h"
 
 
 #define NUM_SLOTS 112 // The number of slots in the slotted disk
@@ -63,6 +64,7 @@ void YawRefIntHandler(void) {
               GPIOIntDisable(YAW_REF_PORT, YAW_REF_PIN);
               GPIOIntClear(YAW_REF_PORT, YAW_REF_PIN);
               slots = 0;
+              findRefStop();
               deactivateMainPWM();
               deactivateTailPWM();
            }
@@ -81,8 +83,4 @@ void initYawRef(void) {
 }
 
 
-// Starts routine to find reference
-void findRef(void) {
-    activateMainPWM();
-    activateTailPWM();
-}
+

@@ -2,16 +2,22 @@
 #define CONTROL_H_
 
 
-double pcontrol_update(double error, double K_P);
+void findRefStart(void);
 
 
-double icontrol_update(double error, double K_I, double delta_t);
+void findRefStop(void);
 
 
-double dcontrol_update(double error, double K_D, double delta_t);
+void refPulse(void);
 
 
-void feedbackControl(double setpoint, double K_P, double K_I, double K_D, double delta_t);
+char* getMode(void);
+
+
+void setModeFlying(void);
+
+
+void setModeLanding(void);
 
 
 #endif /* CONTROL_H_ */

@@ -51,6 +51,7 @@ uint32_t g_ulSampCnt;    // Counter for the interrupts
 uint32_t R_g_ulSampCnt;
 
 
+
 //*****************************************************************************
 // The interrupt handler for the for SysTick interrupt.
 //*****************************************************************************
@@ -121,7 +122,7 @@ void buttonRight(void) {
 
 void switched(void) {
     if (checkSwitch() != 0) {
-        findRef();
+        findRefStart();
     }
 }
 
@@ -160,6 +161,7 @@ int main(void) {
 	        switched();
             g_ulSampCnt = 0;
             consoleMsgSpaced();
+            refPulse();
             //feedbackControl(10, 10, 10, 10, 0.1);
 	    }
 	}

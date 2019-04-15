@@ -3,47 +3,64 @@
 #include "altitude.h"
 
 
-static double error_previous;
-static double error_integrated;
+enum modes {Initialising, Flying, Landed, Landing};
+static enum modes mode = Landed;
+static uint32_t count;
 
 
-// Proportional control
-double pcontrol_update(double error, double K_P) {
-    return error * K_P;
+// Starts routine to find reference
+void findRefStart(void) {
+    activateMainPWM();
+    mode = Initialising;
 }
 
 
-// Integral control
-double icontrol_update(double error, double K_I, double delta_t) {
-    error_integrated += error * delta_t;
-    return error_integrated * K_I;
+void findRefStop(void) {
+    mode = Landed;
 }
 
 
-// Derivative control
-double dcontrol_update(double error, double K_D, double delta_t) {
-    double control;
-    double error_derivative;
-
-    error_derivative = (error - error_previous) / delta_t;
-    control = error_derivative * K_D;
-
-    error_previous = error;
-    return control;
+void refPulse(void) {
+    if (mode == Initialising) {
+        if (count == 0) {
+            activateTailPWM();
+            count++;
+        } else if (count == 10) {
+            deactivateTailPWM();
+            count++;
+        } else if (count == 45) {
+            count = 0;
+        } else {
+            count++;
+        }
+    }
 }
 
 
-void feedbackControl(double setpoint, double K_P, double K_I, double K_D, double delta_t) {
-    double error;
-    double measurement;
-    double control;
+// Returns a string of the mode
+char* getMode(void) {
+static char charInitialising[] = "Initialising";
+static char charLanded[] = "Landed";
+static char charFlying[] = "Flying";
+static char charLanding[] = "Landing";
 
-    measurement = getAlt();
-
-    error = setpoint - measurement;
-    control = pcontrol_update(error, K_P) + icontrol_update(error, K_P, delta_t) + dcontrol_update(error, K_D, delta_t);
-
-    setMainPWM(200,control);
+    if (mode == Flying) {
+        return charFlying;
+    } else if (mode == Landing) {
+        return charLanding;
+    } else if (mode == Initialising) {
+        return charInitialising;
+    } else {
+        return charLanded;
+    }
 }
 
 
+void setModeFlying(void) {
+    mode = Flying;
+}
+
+
+void setModeLanding(void) {
+    mode = Landing;
+}

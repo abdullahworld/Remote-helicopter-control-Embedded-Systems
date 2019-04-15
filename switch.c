@@ -3,6 +3,7 @@
 #include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
+#include "control.h"
 
 
 #define SWITCH_PIN GPIO_PIN_7
@@ -11,8 +12,6 @@
 
 static bool switchState;
 static bool butflag = 0;
-enum mode {Flying, Landed, Landing};
-static enum mode currentMode = Landed;
 
 
 void initSwitch(void) {
@@ -30,11 +29,11 @@ void updateSwitch(void) {
 
 bool checkSwitch(void) {
     if (switchState != 0 && butflag == 0) { // Switch is up
-        currentMode = Flying;
+        setModeFlying();
         butflag = 1;
         return true;
     } else if (switchState == 0 && butflag == 1) { // Switch is down
-        currentMode = Landing;
+        setModeLanding();
         butflag = 0;
         return false;
     } else {
@@ -43,17 +42,4 @@ bool checkSwitch(void) {
 }
 
 
-// Returns a string of the mode
-char* getMode(void) {
-static char charFlying[] = "Flying";
-static char charLanded[] = "Landed";
-static char charLanding[] = "Landing";
 
-if (currentMode == Flying) {
-        return charFlying;
-    } else if (currentMode == Landing) {
-        return charLanding;
-    } else {
-        return charLanded;
-    }
-}

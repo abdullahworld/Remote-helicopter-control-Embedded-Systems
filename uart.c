@@ -27,6 +27,7 @@
 #include "altitude.h"
 #include "motors.h"
 #include "switch.h"
+#include "control.h"
 
 
 //********************************************************
@@ -91,9 +92,9 @@ UARTSend (char *pucBuffer)
 
 void consoleMsg(void) {
     // Form and send a status message to the console
-    usprintf (statusStr, "Alt: %d\r\nYaw: %d\r\n", getAlt(), yaw()); // * usprintf
+    usprintf (statusStr, "Alt: %d%%\r\nYaw: %d deg\r\n", getAlt(), yaw()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Main PWM: %d\r\nTail PWM: %d\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Main PWM: %d%%\r\nTail PWM: %d%%\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
     UARTSend (statusStr);
     usprintf (statusStr, "Mode: %s\r\n", getMode()); // * usprintf
     UARTSend (statusStr);
