@@ -65,7 +65,6 @@ void YawRefIntHandler(void) {
               GPIOIntClear(YAW_REF_PORT, YAW_REF_PIN);
               slots = 0;
               findRefStop();
-              deactivateMainPWM();
               deactivateTailPWM();
            }
 }

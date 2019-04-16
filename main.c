@@ -59,6 +59,8 @@ void SysTickIntHandler(void)
 {
     updateButtons();
     updateSwitch();
+    refPulse();
+    pidControlUpdate();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
@@ -179,7 +181,6 @@ int main(void) {
 	        buttonReset();
             g_ulSampCnt = 0;
             consoleMsgSpaced();
-            refPulse();
 	    }
 	}
 }

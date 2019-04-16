@@ -29,11 +29,9 @@ void updateSwitch(void) {
 
 bool checkSwitch(void) {
     if (switchState != 0 && butflag == 0) { // Switch is up
-        setModeFlying();
         butflag = 1;
         return true;
     } else if (switchState == 0 && butflag == 1) { // Switch is down
-        setModeLanding();
         butflag = 0;
         return false;
     } else {

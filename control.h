@@ -17,12 +17,6 @@ void refPulse(void);
 char* getMode(void);
 
 
-void setModeFlying(void);
-
-
-void setModeLanding(void);
-
-
 void incrAlt(void);
 
 
@@ -39,6 +33,9 @@ uint8_t getSetAlt(void);
 
 
 int16_t getSetYaw(void);
+
+
+void pidControlUpdate(void);
 
 
 #endif /* CONTROL_H_ */
