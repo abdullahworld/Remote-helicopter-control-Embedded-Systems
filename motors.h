@@ -17,10 +17,10 @@ void setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 void setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 
 
-uint32_t GetMainDuty(void);
+uint16_t GetMainDuty(void);
 
 
-uint32_t GetTailDuty(void);
+uint16_t GetTailDuty(void);
 
 
 void activateMainPWM(void);

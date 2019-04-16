@@ -17,10 +17,7 @@ void ProcessAltData(void);
 void initADCCircBuf(void);
 
 
-int32_t RetMeanVal(void);
-
-
-int8_t getAlt(void);
+int16_t getAlt(void);
 
 
 #endif /* ALTITUDE_H_ */

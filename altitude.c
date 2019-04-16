@@ -18,7 +18,7 @@ static int32_t sum;
 static int32_t meanVal;
 static int32_t helicopter_landed_value;
 static circBuf_t g_inBuffer;
-static int8_t altitude;
+static int16_t altitude;
 
 
 //*****************************************************************************
@@ -104,7 +104,7 @@ void initADCCircBuf(void) {
 }
 
 
-int8_t getAlt(void) {
+int16_t getAlt(void) {
     altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
     return altitude;
 }

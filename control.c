@@ -1,7 +1,7 @@
 #include "control.h"
 #include "motors.h"
 #include "altitude.h"
-
+#include <stdint.h>
 
 #define OUTPUT_MAX 98
 #define OUTPUT_MIN 2
@@ -15,8 +15,8 @@ static int16_t setYaw = 0;
 
 
 static int32_t Kp = 4;
-static int32_t Ki = 0;
-static int32_t Kd = 0;
+static int32_t Ki = 0.1;
+static int32_t Kd = 100;
 
 
 // Starts routine to find reference
@@ -120,9 +120,14 @@ void pidControlUpdate(void) {
     static int32_t D;
     static int32_t T = 0.01;
 
+
     if (mode == Flying) {
         setpoint = getSetAlt();
-        measurement = getAlt();
+        if (getAlt() >= 0) {
+            measurement = getAlt();
+        } else {
+            measurement = 0;
+        }
 
         error = setpoint - measurement;
 
@@ -130,7 +135,12 @@ void pidControlUpdate(void) {
         P = Kp * error;
         dI = Ki * error * T;
         D = (Kd/T)*(error - prev_error);
-        control = P + (I + dI) + D;
+        //control = P + (I + dI) + D;
+        if (P > 0) {
+            control = P;
+        } else if (P < 0) {
+           control = 30;
+        }
         prev_error = error;
 
         // Enforce output limits
@@ -142,7 +152,6 @@ void pidControlUpdate(void) {
             I += dI;
         }
         setMainPWM(200, control);
-        setTailPWM(200, control);
     }
 }
 

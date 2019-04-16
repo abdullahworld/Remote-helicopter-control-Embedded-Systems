@@ -102,14 +102,14 @@ setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
 }
 
 
-uint32_t GetMainDuty(void) {
+uint16_t GetMainDuty(void) {
     return (2*100*PWMPulseWidthGet(PWM_MAIN_BASE, PWM_MAIN_OUTNUM)
             + PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN))
             / (2*PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN));
 }
 
 
-uint32_t GetTailDuty(void) {
+uint16_t GetTailDuty(void) {
     return (2*100*PWMPulseWidthGet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM)
             + PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN))
             / (2*PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN));
