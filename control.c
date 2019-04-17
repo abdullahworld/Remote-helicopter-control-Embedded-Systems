@@ -1,7 +1,9 @@
+#include <stdint.h>
 #include "control.h"
 #include "motors.h"
 #include "altitude.h"
-#include <stdint.h>
+#include "yaw.h"
+
 
 #define OUTPUT_MAX 98
 #define OUTPUT_MIN 2
@@ -14,9 +16,13 @@ static uint8_t setAlt = 0;
 static int16_t setYaw = 0;
 
 
-static int32_t Kp = 4;
-static int32_t Ki = 0.1;
-static int32_t Kd = 100;
+static int32_t MKp = 4;
+static int32_t MKi = 0.1;
+static int32_t MKd = 100;
+
+static int32_t TKp = 4;
+static int32_t TKi = 0.1;
+static int32_t TKd = 100;
 
 
 // Starts routine to find reference
@@ -26,9 +32,9 @@ void findRefStart(void) {
 }
 
 
+// Occurs once the reference point has been found
 void findRefStop(void) {
     mode = Flying;
-    activateTailPWM();
 }
 
 
@@ -37,10 +43,10 @@ void refPulse(void) {
         if (count == 0) {
             activateTailPWM();
             count++;
-        } else if (count == 100) {
+        } else if (count == 80) {
             deactivateTailPWM();
             count++;
-        } else if (count == 100) {
+        } else if (count == 350) {
             count = 0;
         } else {
             count++;
@@ -108,7 +114,7 @@ int16_t getSetYaw(void) {
 }
 
 
-void pidControlUpdate(void) {
+void pidMainUpdate(void) {
     static int32_t setpoint;
     static int32_t measurement;
     static int32_t control;
@@ -117,9 +123,8 @@ void pidControlUpdate(void) {
     static int32_t P;
     static int32_t dI;
     static int32_t I = 0;
-    static int32_t D;
-    static int32_t T = 0.01;
-
+    int32_t D;
+    int32_t T = 0.01;
 
     if (mode == Flying) {
         setpoint = getSetAlt();
@@ -131,14 +136,13 @@ void pidControlUpdate(void) {
 
         error = setpoint - measurement;
 
-
-        P = Kp * error;
-        dI = Ki * error * T;
-        D = (Kd/T)*(error - prev_error);
-        //control = P + (I + dI) + D;
-        if (P > 0) {
-            control = P;
-        } else if (P < 0) {
+        P = MKp * error;
+        dI = MKi * error * T;
+        D = (MKd/T)*(error - prev_error);
+        control = P + (I + dI) + D;
+        if (error > 0) {
+            control = P + (I + dI) + D;
+        } else if (error < 0) {
            control = 30;
         }
         prev_error = error;
@@ -156,3 +160,45 @@ void pidControlUpdate(void) {
 }
 
 
+void pidTailUpdate(void) {
+    static int32_t setpoint;
+    static int32_t measurement;
+    static int32_t control;
+    static int32_t error;
+    static int32_t prev_error;
+    static int32_t P;
+    static int32_t dI;
+    static int32_t I = 0;
+    int32_t D;
+    int32_t T = 0.01;
+
+
+    if (mode == Flying) {
+        activateTailPWM();
+
+        setpoint = getSetYaw();
+
+        measurement = getYaw();
+
+        error = setpoint - measurement;
+
+        P = TKp * error;
+        dI = TKi * error * T;
+        D = (TKd/T)*(error - prev_error);
+        control = P + (I + dI) + D;
+        control = P + (I + dI) + D;
+
+
+        prev_error = error;
+
+        // Enforce output limits
+        if (control > OUTPUT_MAX) {
+            control = OUTPUT_MAX;
+        } else if (control < OUTPUT_MIN) {
+            control = OUTPUT_MIN;
+        } else {
+            I += dI;
+        }
+        setTailPWM(200, control);
+    }
+}

@@ -35,7 +35,10 @@ uint8_t getSetAlt(void);
 int16_t getSetYaw(void);
 
 
-void pidControlUpdate(void);
+void pidMainUpdate(void);
+
+
+void pidTailUpdate(void);
 
 
 #endif /* CONTROL_H_ */

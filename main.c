@@ -41,7 +41,7 @@
 //*****************************************************************************
 // Constant
 //*****************************************************************************
-#define SYS_TICK_RATE 100
+#define SYS_TICK_RATE 200
 
 
 //*****************************************************************************
@@ -60,7 +60,8 @@ void SysTickIntHandler(void)
     updateButtons();
     updateSwitch();
     refPulse();
-    pidControlUpdate();
+    pidMainUpdate();
+    pidTailUpdate();
     // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3); 
     g_ulSampCnt++;
