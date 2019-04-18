@@ -16,11 +16,11 @@ static uint8_t setAlt = 0;
 static int16_t setYaw = 0;
 
 
-static int32_t MKp = 6;
+static int32_t MKp = 1;
 static int32_t MKi = 0;
-static int32_t MKd = 100;
+static int32_t MKd = 10;
 
-static int32_t TKp = 3;
+static int32_t TKp = 1;
 static int32_t TKi = 0;
 static int32_t TKd = 100;
 
@@ -132,9 +132,9 @@ void pidMainUpdate(void) {
         D = (MKd/T)*(error - prev_error);
         control = P + (I + dI) + D;
         if (error > 0) {
-            control = P + (I + dI) + D;
+            control = 50 + P + (I + dI) + D;
         } else if (error < 0) {
-           control = 10;
+           control = 30;
         }
         prev_error = error;
 
@@ -170,7 +170,7 @@ void pidTailUpdate(void) {
         dI = TKi * error * T;
         D = (TKd/T)*(error - prev_error);
         if (error > 0) {
-            control = P + (I + dI) + D;
+            control = 40 +  P + (I + dI) + D;
         } else if (error < 0) {
             control = 10;
         }
