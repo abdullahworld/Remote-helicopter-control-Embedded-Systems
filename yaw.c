@@ -30,10 +30,10 @@ void YawIntHandler(void) {
     if (ChanA == 1 && ChanB == 1) {
         diskState = Same;
     } else if (diskState == Same && ChanA == 1 && ChanB == 0){
-        slots++;
+        slots++; // Clockwise
         diskState = Different;
     } else if (diskState == Same && ChanA == 0 && ChanB == 1) {
-        slots--;
+        slots--; // Anticlockwise
         diskState = Different;
     }
     GPIOIntClear(PORTB, CHA_PIN | CHB_PIN);

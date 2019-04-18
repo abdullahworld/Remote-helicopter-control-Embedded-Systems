@@ -5,8 +5,8 @@
 #include "yaw.h"
 
 
-#define OUTPUT_MAX 98
-#define OUTPUT_MIN 2
+#define OUTPUT_MAX 95
+#define OUTPUT_MIN 5
 
 
 enum modes {Initialising, Flying, Landed, Landing};
@@ -16,12 +16,12 @@ static uint8_t setAlt = 0;
 static int16_t setYaw = 0;
 
 
-static int32_t MKp = 4;
-static int32_t MKi = 0.1;
+static int32_t MKp = 6;
+static int32_t MKi = 0;
 static int32_t MKd = 100;
 
-static int32_t TKp = 4;
-static int32_t TKi = 0.1;
+static int32_t TKp = 3;
+static int32_t TKi = 0;
 static int32_t TKd = 100;
 
 
@@ -115,8 +115,6 @@ int16_t getSetYaw(void) {
 
 
 void pidMainUpdate(void) {
-    static int32_t setpoint;
-    static int32_t measurement;
     static int32_t control;
     static int32_t error;
     static int32_t prev_error;
@@ -126,15 +124,8 @@ void pidMainUpdate(void) {
     int32_t D;
     int32_t T = 0.01;
 
-    if (mode == Flying) {
-        setpoint = getSetAlt();
-        if (getAlt() >= 0) {
-            measurement = getAlt();
-        } else {
-            measurement = 0;
-        }
-
-        error = setpoint - measurement;
+    if (mode == Flying && setAlt >= 10) {
+        error = setAlt - getAlt();
 
         P = MKp * error;
         dI = MKi * error * T;
@@ -143,7 +134,7 @@ void pidMainUpdate(void) {
         if (error > 0) {
             control = P + (I + dI) + D;
         } else if (error < 0) {
-           control = 30;
+           control = 10;
         }
         prev_error = error;
 
@@ -161,8 +152,6 @@ void pidMainUpdate(void) {
 
 
 void pidTailUpdate(void) {
-    static int32_t setpoint;
-    static int32_t measurement;
     static int32_t control;
     static int32_t error;
     static int32_t prev_error;
@@ -172,22 +161,19 @@ void pidTailUpdate(void) {
     int32_t D;
     int32_t T = 0.01;
 
-
-    if (mode == Flying) {
+    if (mode == Flying && setAlt >= 10) {
         activateTailPWM();
 
-        setpoint = getSetYaw();
-
-        measurement = getYaw();
-
-        error = setpoint - measurement;
+        error = setYaw - getYaw();
 
         P = TKp * error;
         dI = TKi * error * T;
         D = (TKd/T)*(error - prev_error);
-        control = P + (I + dI) + D;
-        control = P + (I + dI) + D;
-
+        if (error > 0) {
+            control = P + (I + dI) + D;
+        } else if (error < 0) {
+            control = 10;
+        }
 
         prev_error = error;
 
