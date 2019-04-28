@@ -10,6 +10,7 @@
 // Outputs: PC5 (PWM Main), PF1 (PWM Tail)
 
 
+#include <buttons.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -23,7 +24,10 @@
 #include "driverlib/debug.h"
 #include "utils/ustdlib.h"
 #include "circBufT.h"
+<<<<<<< HEAD
 #include "buttons.h"
+=======
+>>>>>>> branch 'master' of https://eng-git.canterbury.ac.nz/ence361-2019/thu_pm_group-1.git
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
@@ -86,6 +90,7 @@ initSysTick(void)
 }
 
 
+// Initialises all of the peripherals and processes
 void
 initAll(void)
 {
