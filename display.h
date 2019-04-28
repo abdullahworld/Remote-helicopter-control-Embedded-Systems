@@ -5,13 +5,16 @@
 #include <stdint.h>
 
 
-void initDisplay(void);
+void
+initDisplay(void);
 
 
-void displayMeanVal(int16_t meanVal, int32_t count);
+void
+displayMeanVal(int16_t meanVal, int32_t count);
 
 
-void displayStats(void);
+void
+displayStats(void);
 
 
 #endif /* DISPLAY_H_ */

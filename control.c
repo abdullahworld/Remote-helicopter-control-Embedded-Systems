@@ -12,8 +12,9 @@
 
 
 // Constants
-#define OUTPUT_MAX 95
-#define OUTPUT_MIN 5
+#define OUTPUT_MAX        95
+#define OUTPUT_MIN        5
+#define PWM_FIXED_RATE_HZ 200
 
 
 // Sets variables
@@ -160,7 +161,7 @@ piMainUpdate(void)
         } else {
             I += dI;
         }
-        setMainPWM(200, control);
+        setMainPWM(PWM_FIXED_RATE_HZ, control);
     }
 }
 
@@ -193,6 +194,6 @@ piTailUpdate(void)
        } else {
            I += dI;
        }
-       setTailPWM(200, control);
+       setTailPWM(PWM_FIXED_RATE_HZ, control);
     }
 }

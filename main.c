@@ -10,6 +10,7 @@
 // Outputs: PC5 (PWM Main), PF1 (PWM Tail)
 
 
+#include <buttons.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -23,7 +24,6 @@
 #include "driverlib/debug.h"
 #include "utils/ustdlib.h"
 #include "circBufT.h"
-#include "buttons4.h"
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
@@ -87,78 +87,6 @@ initSysTick(void)
     // Enable interrupt and device
     SysTickIntEnable();
     SysTickEnable();
-}
-
-
-// Initialises the GPIO pin for the soft reset button
-void
-initResetBut(void)
-{
-    SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOA);
-    GPIOPinTypeGPIOInput (GPIO_PORTA_BASE, GPIO_PIN_6);
-    GPIOPadConfigSet (GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
-    GPIODirModeSet(GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_DIR_MODE_IN);
-}
-
-
-// Checks to see if the up button has been pushed
-void
-buttonUp(void)
-{
-    if (checkButton(UP) == PUSHED) {
-        incrAlt();
-    }
-}
-
-
-// Checks to see if the down button has been pushed
-void
-buttonDown(void)
-{
-    if (checkButton(DOWN) == PUSHED) {
-        decrAlt();
-    }
-}
-
-
-// Checks to see if the left button has been pushed
-void
-buttonLeft(void)
-{
-    if (checkButton(LEFT) == PUSHED) {
-        decrYaw();
-    }
-}
-
-
-// Checks to see if the right button has been pushed
-void
-buttonRight(void)
-{
-    if (checkButton(RIGHT) == PUSHED) {
-        incrYaw();
-    }
-}
-
-
-// Checks to see if the state of the switch has been changed
-// Starts the initialising state when changed
-void
-switched(void)
-{
-    if (checkSwitch() != 0) {
-        findRefStart();
-    }
-}
-
-
-// Does a soft reset when the designated button is pushed
-void
-buttonReset(void)
-{
-    if (GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_6) == 0) {
-        SysCtlReset();
-    }
 }
 
 
