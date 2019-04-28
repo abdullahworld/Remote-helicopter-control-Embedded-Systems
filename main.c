@@ -24,10 +24,7 @@
 #include "driverlib/debug.h"
 #include "utils/ustdlib.h"
 #include "circBufT.h"
-<<<<<<< HEAD
 #include "buttons.h"
-=======
->>>>>>> branch 'master' of https://eng-git.canterbury.ac.nz/ence361-2019/thu_pm_group-1.git
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
