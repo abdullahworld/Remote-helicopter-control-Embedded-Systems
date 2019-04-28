@@ -1,3 +1,9 @@
+// switch.c - Makes the switch work
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -6,15 +12,19 @@
 #include "control.h"
 
 
+// Constants
 #define SWITCH_PIN GPIO_PIN_7
 #define SWITCH_PORT GPIO_PORTA_BASE
 
 
+// Set variables
 static bool switchState;
 static bool butflag = 0;
 
 
-void initSwitch(void) {
+void
+initSwitch(void)
+{
     SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOA);
     GPIOPinTypeGPIOInput (SWITCH_PORT, SWITCH_PIN);
     GPIOPadConfigSet (SWITCH_PORT, SWITCH_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
@@ -22,12 +32,16 @@ void initSwitch(void) {
 }
 
 
-void updateSwitch(void) {
+void
+updateSwitch(void)
+{
     switchState = GPIOPinRead(SWITCH_PORT, SWITCH_PIN);
 }
 
 
-bool checkSwitch(void) {
+bool
+checkSwitch(void)
+{
     if (switchState != 0 && butflag == 0) { // Switch is up
         butflag = 1;
         return true;

@@ -1,18 +1,13 @@
-//*****************************************************************************
-//
 // main.c - An interrupt driven program that measures the height of the helicopter
-//
-// Authors: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 12.4.2019
-//
-//*****************************************************************************
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
 // Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
-//*****************************************************************************
-//
+
 // Inputs: PE4 (Altitude), PB0 (Channel A), PB1 (Channel B)
 // Outputs: PC5 (PWM Main), PF1 (PWM Tail)
-//
 
 
 #include <stdint.h>
@@ -38,64 +33,67 @@
 #include "control.h"
 
 
-//*****************************************************************************
 // Constant
-//*****************************************************************************
 #define SYS_TICK_RATE 200
 
 
-//*****************************************************************************
-// Global variables
-//*****************************************************************************
-uint32_t g_ulSampCnt;    // Counter for the interrupts
-uint32_t R_g_ulSampCnt;
+// Sets variable
+static uint32_t ticksCount;    // Counter for the interrupts
 
 
-
-//*****************************************************************************
 // The interrupt handler for the for SysTick interrupt.
-//*****************************************************************************
-void SysTickIntHandler(void)
+void
+SysTickIntHandler(void)
 {
+    // Check for button changes
     updateButtons();
     updateSwitch();
+
+    // Pulses the PWM of the tail motor to find the reference point
+    // Only occurs while in the initialising state
     refPulse();
-    pidMainUpdate();
-    pidTailUpdate();
-    // Initiate a conversion
-    ADCProcessorTrigger(ADC0_BASE, 3); 
-    g_ulSampCnt++;
+
+    // Updates control for the main and tail rotors using PI control
+    // Only occurs while in the flying state
+    piMainUpdate();
+    piTailUpdate();
+
+    // Initiate an ADC conversion
+    ADCProcessorTrigger(ADC0_BASE, 3);
+
+    ticksCount++; // Counts the number of system ticks
 }
 
 
-//*****************************************************************************
-// Initialisation functions for the clock (incl. SysTick), ADC, display
-//*****************************************************************************
-void initClock (void)
+// Initialisation of the clock
+void
+initClock(void)
 {
     // Set the clock rate to 20 MHz
-    SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
+    SysCtlClockSet(SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
-    // Set the PWM clock rate (using the prescaler)
-
 }
 
 
-void initSysTick(void) {
-    // Set up the period for the SysTick timer.  The SysTick timer period is
-    // set as a function of the system clock.
+void
+initSysTick(void)
+{
+    // Set up the period for the SysTick timer
     SysTickPeriodSet(SysCtlClockGet() / SYS_TICK_RATE);
-    //
+
     // Register the interrupt handler
     SysTickIntRegister(SysTickIntHandler);
-    //
+
     // Enable interrupt and device
     SysTickIntEnable();
     SysTickEnable();
 }
 
 
-void initResetBut(void) {
+// Initialises the GPIO pin for the soft reset button
+void
+initResetBut(void)
+{
     SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOA);
     GPIOPinTypeGPIOInput (GPIO_PORTA_BASE, GPIO_PIN_6);
     GPIOPadConfigSet (GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
@@ -103,52 +101,71 @@ void initResetBut(void) {
 }
 
 
-void buttonUp(void) {
+// Checks to see if the up button has been pushed
+void
+buttonUp(void)
+{
     if (checkButton(UP) == PUSHED) {
         incrAlt();
     }
 }
 
 
-void buttonDown(void) {
+// Checks to see if the down button has been pushed
+void
+buttonDown(void)
+{
     if (checkButton(DOWN) == PUSHED) {
         decrAlt();
     }
 }
 
 
-void buttonLeft(void) {
+// Checks to see if the left button has been pushed
+void
+buttonLeft(void)
+{
     if (checkButton(LEFT) == PUSHED) {
         decrYaw();
     }
 }
 
 
-void buttonRight(void) {
+// Checks to see if the right button has been pushed
+void
+buttonRight(void)
+{
     if (checkButton(RIGHT) == PUSHED) {
         incrYaw();
     }
 }
 
 
-void switched(void) {
+// Checks to see if the state of the switch has been changed
+// Starts the initialising state when changed
+void
+switched(void)
+{
     if (checkSwitch() != 0) {
         findRefStart();
     }
 }
 
 
-
-void buttonReset(void) {
+// Does a soft reset when the designated button is pushed
+void
+buttonReset(void)
+{
     if (GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_6) == 0) {
         SysCtlReset();
     }
 }
 
 
-void initAll(void) {
-    SysCtlPeripheralReset(LEFT_BUT_PERIPH);
-    SysCtlPeripheralReset(UP_BUT_PERIPH);
+// Initialises all of the peripherals and processes
+void
+initAll(void)
+{
     initClock();
     initialiseUSB_UART();
     initialiseMainPWM();
@@ -156,22 +173,26 @@ void initAll(void) {
     initADC();
     initADCCircBuf();
     initResetBut();
+    SysCtlPeripheralReset(LEFT_BUT_PERIPH);
+    SysCtlPeripheralReset(UP_BUT_PERIPH);
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
     initYawRef();
     initYawGPIO();
     initSysTick();
-    // Enable interrupts to the processor.
-    IntMasterEnable();
+    IntMasterEnable(); // Enable interrupts to the processor.
 }
 
 
-int main(void) {
+// Calls the initAll() function and runs the background task loop
+int
+main(void)
+{
 	initAll();
 	while (1)
 	{
-	    if (g_ulSampCnt > 0) { // Set to approximately 100 Hz
+	    if (ticksCount > 0) { // Loop set to approximately to the system tick rate
 	        ProcessAltData();
 	        displayStats();
 	        buttonUp();
@@ -180,7 +201,7 @@ int main(void) {
 	        buttonRight();
 	        switched();
 	        buttonReset();
-            g_ulSampCnt = 0;
+	        ticksCount = 0;
             consoleMsgSpaced();
 	    }
 	}

@@ -1,3 +1,9 @@
+// altitude.c - Finds the altitude
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -7,11 +13,13 @@
 #include "altitude.h"
 
 
+// Constants
 #define BUF_SIZE 10 // Matches number of samples per period and enough will not significantly deviate
 #define SAMPLE_RATE_HZ 100 // jitter of 4Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
 
 
+// Sets variables
 static uint16_t i;
 static int8_t n = 0;
 static int32_t sum;

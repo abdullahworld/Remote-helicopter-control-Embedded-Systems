@@ -1,3 +1,9 @@
+// control.c - Controls the different states and the positioning of the helicopter
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
+
 #include <stdint.h>
 #include "control.h"
 #include "motors.h"
@@ -5,10 +11,12 @@
 #include "yaw.h"
 
 
+// Constants
 #define OUTPUT_MAX 95
 #define OUTPUT_MIN 5
 
 
+// Sets variables
 enum modes {Initialising, Flying, Landed, Landing};
 static enum modes mode = Landed;
 static uint32_t count;
@@ -16,29 +24,27 @@ static uint8_t setAlt = 0;
 static int16_t setYaw = 0;
 
 
-static int32_t MKp = 1;
-static int32_t MKi = 0;
-static int32_t MKd = 10;
-
-static int32_t TKp = 1;
-static int32_t TKi = 0;
-static int32_t TKd = 100;
-
-
 // Starts routine to find reference
-void findRefStart(void) {
+void
+findRefStart(void)
+{
     activateMainPWM();
     mode = Initialising;
 }
 
 
-// Occurs once the reference point has been found
-void findRefStop(void) {
+// Changes the mode to flying once the reference point has been found
+void
+findRefStop(void)
+{
     mode = Flying;
 }
 
 
-void refPulse(void) {
+// Pules the PWM of the tail rotor to find the reference point
+void
+refPulse(void)
+{
     if (mode == Initialising) {
         if (count == 0) {
             activateTailPWM();
@@ -56,7 +62,9 @@ void refPulse(void) {
 
 
 // Returns a string of the mode
-char* getMode(void) {
+char*
+getMode(void)
+{
 static char charInitialising[] = "Initialising";
 static char charLanded[] = "Landed";
 static char charFlying[] = "Flying";
@@ -74,14 +82,18 @@ static char charLanding[] = "Landing";
 }
 
 
-void incrAlt(void) {
+void
+incrAlt(void)
+{
     if (setAlt < 100 && mode != Initialising) {
         setAlt += 10;
     }
 }
 
 
-void decrAlt(void) {
+void
+decrAlt(void)
+{
     if (setAlt > 0 && mode != Initialising) {
         setAlt -= 10;
     }
@@ -89,7 +101,9 @@ void decrAlt(void) {
 }
 
 
-void incrYaw(void) {
+void
+incrYaw(void)
+{
     if (setYaw < 360 && mode != Initialising) {
         setYaw += 15;
     }
@@ -97,48 +111,48 @@ void incrYaw(void) {
 }
 
 
-void decrYaw(void) {
+void
+decrYaw(void)
+{
     if (setYaw > -360 && mode != Initialising) {
         setYaw -= 15;
     }
 }
 
 
-uint8_t getSetAlt(void) {
+uint8_t
+getSetAlt(void)
+{
     return setAlt;
 }
 
 
-int16_t getSetYaw(void) {
+int16_t
+getSetYaw(void)
+{
     return setYaw;
 }
 
 
-void pidMainUpdate(void) {
-    static int32_t control;
-    static int32_t error;
-    static int32_t prev_error;
-    static int32_t P;
-    static int32_t dI;
-    static int32_t I = 0;
-    int32_t D;
-    int32_t T = 0.01;
-
+void
+piMainUpdate(void)
+{
     if (mode == Flying && setAlt >= 10) {
-        error = setAlt - getAlt();
+        static double I;
+        double P;
+        double control;
+        double error;
+        double dI;
+        double T = 0.005;
+        double MKp = 1;
+        double MKi = 0.1;
 
+        error = setAlt - getAlt();
         P = MKp * error;
         dI = MKi * error * T;
-        D = (MKd/T)*(error - prev_error);
-        control = P + (I + dI) + D;
-        if (error > 0) {
-            control = 50 + P + (I + dI) + D;
-        } else if (error < 0) {
-           control = 30;
-        }
-        prev_error = error;
+        control = P + (I + dI);
 
-        // Enforce output limits
+        // Enforces output limits
         if (control > OUTPUT_MAX) {
             control = OUTPUT_MAX;
         } else if (control < OUTPUT_MIN) {
@@ -151,40 +165,34 @@ void pidMainUpdate(void) {
 }
 
 
-void pidTailUpdate(void) {
-    static int32_t control;
-    static int32_t error;
-    static int32_t prev_error;
-    static int32_t P;
-    static int32_t dI;
-    static int32_t I = 0;
-    int32_t D;
-    int32_t T = 0.01;
-
+void
+piTailUpdate(void)
+{
     if (mode == Flying && setAlt >= 10) {
-        activateTailPWM();
+       activateTailPWM(); // is this necessary?
 
-        error = setYaw - getYaw();
+       static double I;
+       double P;
+       double control;
+       double error;
+       double dI;
+       double T = 0.005;
+       double TKp = 0.1;
+       double TKi = 0.05;
 
-        P = TKp * error;
-        dI = TKi * error * T;
-        D = (TKd/T)*(error - prev_error);
-        if (error > 0) {
-            control = 40 +  P + (I + dI) + D;
-        } else if (error < 0) {
-            control = 10;
-        }
+       error = setYaw - getYaw();
+       P = TKp * error;
+       dI = TKi * error * T;
+       control = P + (I + dI);
 
-        prev_error = error;
-
-        // Enforce output limits
-        if (control > OUTPUT_MAX) {
-            control = OUTPUT_MAX;
-        } else if (control < OUTPUT_MIN) {
-            control = OUTPUT_MIN;
-        } else {
-            I += dI;
-        }
-        setTailPWM(200, control);
+       // Enforces output limits
+       if (control > OUTPUT_MAX) {
+           control = OUTPUT_MAX;
+       } else if (control < OUTPUT_MIN) {
+           control = OUTPUT_MIN;
+       } else {
+           I += dI;
+       }
+       setTailPWM(200, control);
     }
 }

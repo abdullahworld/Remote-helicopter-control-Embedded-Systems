@@ -1,15 +1,12 @@
-/**********************************************************
- *
- * pwmGen.c - Example code which generates a single PWM
- *    output on J4-05 (M0PWM7) with duty cycle fixed and
- *    the frequency controlled by UP and DOWN buttons in
- *    the range 50 Hz to 400 Hz.
- * 2017: Modified for Tiva and using straightforward, polled
- *    button debouncing implemented in 'buttons4' module.
- *
- * P.J. Bones   UCECE
- * Last modified:  7.2.2018
- **********************************************************/
+// motors.c - Controls the PWM output to the motors
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
+// Based on pwmGen.c by by P.J. Bones UCECE
+
+// Outputs: PC5 (PWM Main), PF1 (PWM Tail)
+
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -23,31 +20,15 @@
 #include "driverlib/sysctl.h"
 
 
-/**********************************************************
- * Generates a single PWM signal on Tiva board pin J4-05 =
- * PC5 (M0PWM7).  This is the same PWM output as the
- * helicopter main rotor.
- **********************************************************/
-
-
-/**********************************************************
- * Constants
- **********************************************************/
-// Systick configuration
-#define SYSTICK_RATE_HZ    100
-
-
 // PWM configuration
-#define PWM_MAIN_START_RATE_HZ  200
-#define PWM_TAIL_START_RATE_HZ  200
+#define PWM_FIXED_RATE_HZ       200
 #define PWM_MAIN_FIXED_DUTY     10
 #define PWM_TAIL_FIXED_DUTY     40
 #define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
 #define PWM_DIVIDER             4
 
 
-//  PWM Hardware Details M0PWM7 (gen 3)
-//  ---Main Rotor PWM: PC5, J4-05
+// Main Rotor PWM: PC5, J4-05
 #define PWM_MAIN_BASE        PWM0_BASE
 #define PWM_MAIN_GEN         PWM_GEN_3
 #define PWM_MAIN_OUTNUM      PWM_OUT_7
@@ -59,7 +40,7 @@
 #define PWM_MAIN_GPIO_PIN    GPIO_PIN_5
 
 
-// PF1, J3-10
+// Tail Rotor PWM: PF1, J3-10
 #define PWM_TAIL_BASE        PWM1_BASE
 #define PWM_TAIL_GEN         PWM_GEN_2
 #define PWM_TAIL_OUTNUM      PWM_OUT_5
@@ -71,21 +52,17 @@
 #define PWM_TAIL_GPIO_PIN    GPIO_PIN_1 // Causes the red LED to turn on with nothing connected
 
 
-static int32_t mainDuty = PWM_MAIN_FIXED_DUTY;
-static int32_t tailDuty = PWM_TAIL_FIXED_DUTY;
-
-
-/********************************************************
- * Function to set the freq, duty cycle of M0PWM7
- ********************************************************/
-void setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty) {
+//Function to set the freq, duty cycle of M0PWM7
+void
+setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty)
+{
     // Calculate the PWM period corresponding to the freq.
     uint32_t ui32Period =
         SysCtlClockGet() / PWM_DIVIDER / ui32Freq;
 
     PWMGenPeriodSet(PWM_MAIN_BASE, PWM_MAIN_GEN, ui32Period);
     PWMPulseWidthSet(PWM_MAIN_BASE, PWM_MAIN_OUTNUM,
-        ui32Period * ui32Duty / 100);
+                     ui32Period * ui32Duty / 100);
 }
 
 
@@ -93,35 +70,40 @@ void
 setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
 {
     // Calculate the PWM period corresponding to the freq.
-    uint32_t ui32Period =
-        SysCtlClockGet() / PWM_DIVIDER / ui32Freq;
+    uint32_t ui32Period = SysCtlClockGet() / PWM_DIVIDER / ui32Freq;
 
     PWMGenPeriodSet(PWM_TAIL_BASE, PWM_TAIL_GEN, ui32Period);
     PWMPulseWidthSet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM,
-        ui32Period * ui32Duty / 100);
+                     ui32Period * ui32Duty / 100);
 }
 
 
-uint16_t GetMainDuty(void) {
+// Returns the rounded duty cycle of the main rotor
+uint16_t
+GetMainDuty(void)
+{
     return (2*100*PWMPulseWidthGet(PWM_MAIN_BASE, PWM_MAIN_OUTNUM)
             + PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN))
             / (2*PWMGenPeriodGet(PWM_MAIN_BASE, PWM_MAIN_GEN));
 }
 
 
-uint16_t GetTailDuty(void) {
+// Returns the rounded duty cycle of the tail rotor
+uint16_t
+GetTailDuty(void)
+{
     return (2*100*PWMPulseWidthGet(PWM_TAIL_BASE, PWM_TAIL_OUTNUM)
             + PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN))
             / (2*PWMGenPeriodGet(PWM_TAIL_BASE, PWM_TAIL_GEN));
 }
 
 
-/*********************************************************
- * initialisePWM
- * M0PWM7 (J4-05, PC5) is used for the main rotor motor
- *********************************************************/
-void initialiseMainPWM(void) {
+// Initialises the PWM for the main rotor
+void
+initialiseMainPWM(void)
+{
     SysCtlPWMClockSet(PWM_DIVIDER_CODE);
+
     // As a precaution, make sure that the peripherals used are reset
     SysCtlPeripheralReset (PWM_MAIN_PERIPH_GPIO); // Used for PWM output
     SysCtlPeripheralReset (PWM_MAIN_PERIPH_PWM);  // Main Rotor PWM
@@ -135,56 +117,65 @@ void initialiseMainPWM(void) {
     PWMGenConfigure(PWM_MAIN_BASE, PWM_MAIN_GEN,
                     PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
     // Set the initial PWM parameters
-    setMainPWM(PWM_MAIN_START_RATE_HZ, mainDuty);
-
+    setMainPWM(PWM_FIXED_RATE_HZ, PWM_MAIN_FIXED_DUTY);
     PWMGenEnable(PWM_MAIN_BASE, PWM_MAIN_GEN);
-
     // Disable the output.  Repeat this call with 'true' to turn O/P on.
     PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, false);
 }
 
 
-void initialiseTailPWM(void) {
+// Initialises the PWM for the tail rotor
+void
+initialiseTailPWM(void)
+{
     SysCtlPeripheralReset (PWM_TAIL_PERIPH_GPIO); // Used for PWM output
-       SysCtlPeripheralReset (PWM_TAIL_PERIPH_PWM);  // Main Rotor PWM
+    SysCtlPeripheralReset (PWM_TAIL_PERIPH_PWM);  // Main Rotor PWM
 
-       SysCtlPeripheralEnable(PWM_TAIL_PERIPH_PWM);
-       SysCtlPeripheralEnable(PWM_TAIL_PERIPH_GPIO);
+    SysCtlPeripheralEnable(PWM_TAIL_PERIPH_PWM);
+    SysCtlPeripheralEnable(PWM_TAIL_PERIPH_GPIO);
 
-       GPIOPinConfigure(PWM_TAIL_GPIO_CONFIG);
-       GPIOPinTypePWM(PWM_TAIL_GPIO_BASE, PWM_TAIL_GPIO_PIN);
+    GPIOPinConfigure(PWM_TAIL_GPIO_CONFIG);
+    GPIOPinTypePWM(PWM_TAIL_GPIO_BASE, PWM_TAIL_GPIO_PIN);
 
-       PWMGenConfigure(PWM_TAIL_BASE, PWM_TAIL_GEN,
-                           PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
-       // Set the initial PWM parameters
-       setTailPWM (PWM_TAIL_START_RATE_HZ, tailDuty);
+    PWMGenConfigure(PWM_TAIL_BASE, PWM_TAIL_GEN,
+                       PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
+    // Set the initial PWM parameters
+    setTailPWM (PWM_FIXED_RATE_HZ, PWM_TAIL_FIXED_DUTY);
 
-       PWMGenEnable(PWM_TAIL_BASE, PWM_TAIL_GEN);
+    PWMGenEnable(PWM_TAIL_BASE, PWM_TAIL_GEN);
 
-       // Disable the output.  Repeat this call with 'true' to turn O/P on.
-       PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, false);
+    // Disable the output.  Repeat this call with 'true' to turn O/P on.
+    PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, false);
 }
 
 
-// Initialisation is complete, so turn on the output.
-void activateMainPWM(void) {
+// Enables the PWM output for the main rotor
+void
+activateMainPWM(void)
+{
     PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, true);
 }
 
 
-// Initialisation is complete, so turn on the output.
-void activateTailPWM(void) {
+// Enables the PWM output for the tail rotor
+void
+activateTailPWM(void)
+{
     PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, true);
 }
 
 
-// Initialisation is complete, so turn on the output.
-void deactivateMainPWM(void) {
+// Disables the PWM output for the main rotor
+void
+deactivateMainPWM(void)
+{
     PWMOutputState(PWM_MAIN_BASE, PWM_MAIN_OUTBIT, false);
 }
 
 
-// Initialisation is complete, so turn on the output.
-void deactivateTailPWM(void) {
+// Disables the PWM output for the tail rotor
+void
+deactivateTailPWM(void)
+{
     PWMOutputState(PWM_TAIL_BASE, PWM_TAIL_OUTBIT, false);
 }

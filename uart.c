@@ -1,12 +1,10 @@
-//********************************************************
-//
-// uartDemo.c - Example code for ENCE361
-//
-// Link with modules:  buttons2, OrbitOLEDInterface
-//
-// Author:  P.J. Bones  UCECE
-// Last modified:   16.4.2018
-//
+// uart.c - Controls the uart serial output
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
+// Based on uartDemo.c by by P.J. Bones UCECE
+
 
 #include <stdint.h>
 #include <stdbool.h>

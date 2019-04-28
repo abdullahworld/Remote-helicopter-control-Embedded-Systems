@@ -1,3 +1,9 @@
+// display.c - Controls the display
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 28.4.2019
+
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "utils/ustdlib.h"
@@ -9,7 +15,9 @@
 #include "motors.h"
 
 
-void initDisplay (void) {
+void
+initDisplay (void)
+{
     // intialise the Orbit OLED display
     OLEDInitialise();
 }
@@ -20,7 +28,9 @@ void initDisplay (void) {
 // Function to display the mean ADC value (10-bit value, note) and sample count.
 //
 //*****************************************************************************
-void displayMeanVal(int16_t meanVal, int32_t count) {
+void
+displayMeanVal(int16_t meanVal, int32_t count)
+{
     char string[17];  // 16 characters across the display
 
     // Form a new string for the line.  The maximum width specified for the
@@ -34,7 +44,9 @@ void displayMeanVal(int16_t meanVal, int32_t count) {
 }
 
 
-void displayStats(void) {
+void
+displayStats(void)
+{
     char string[17];  // 16 characters across the display
 
     // Form a new string for the line.  The maximum width specified for the
