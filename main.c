@@ -10,7 +10,6 @@
 // Outputs: PC5 (PWM Main), PF1 (PWM Tail)
 
 
-#include <buttons.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
@@ -24,6 +23,7 @@
 #include "driverlib/debug.h"
 #include "utils/ustdlib.h"
 #include "circBufT.h"
+#include "buttons.h"
 #include "altitude.h"
 #include "yaw.h"
 #include "display.h"
@@ -37,63 +37,60 @@
 #define SYS_TICK_RATE 200
 
 
-// Sets variable
-static uint32_t ticksCount;    // Counter for the interrupts
+// Global variables
+uint32_t g_ulSampCnt;    // Counter for the interrupts
+uint32_t R_g_ulSampCnt;
 
 
 // The interrupt handler for the for SysTick interrupt.
 void
 SysTickIntHandler(void)
 {
-    // Check for button changes
     updateButtons();
     updateSwitch();
-
-    // Pulses the PWM of the tail motor to find the reference point
-    // Only occurs while in the initialising state
     refPulse();
-
-    // Updates control for the main and tail rotors using PI control
-    // Only occurs while in the flying state
     piMainUpdate();
     piTailUpdate();
-
-    // Initiate an ADC conversion
+    // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3);
-
-    ticksCount++; // Counts the number of system ticks
+    g_ulSampCnt++;
 }
 
 
-// Initialisation of the clock
+
+// Initialisation functions for the clock (incl. SysTick), ADC, display
 void
 initClock(void)
 {
     // Set the clock rate to 20 MHz
-    SysCtlClockSet(SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
+    SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
+    // Set the PWM clock rate (using the prescaler)
+
 }
 
 
 void
 initSysTick(void)
 {
-    // Set up the period for the SysTick timer
+    // Set up the period for the SysTick timer.  The SysTick timer period is
+    // set as a function of the system clock.
     SysTickPeriodSet(SysCtlClockGet() / SYS_TICK_RATE);
-
+    //
     // Register the interrupt handler
     SysTickIntRegister(SysTickIntHandler);
-
+    //
     // Enable interrupt and device
     SysTickIntEnable();
     SysTickEnable();
 }
 
 
-// Initialises all of the peripherals and processes
 void
 initAll(void)
 {
+    SysCtlPeripheralReset(LEFT_BUT_PERIPH);
+    SysCtlPeripheralReset(UP_BUT_PERIPH);
     initClock();
     initialiseUSB_UART();
     initialiseMainPWM();
@@ -101,36 +98,34 @@ initAll(void)
     initADC();
     initADCCircBuf();
     initResetBut();
-    SysCtlPeripheralReset(LEFT_BUT_PERIPH);
-    SysCtlPeripheralReset(UP_BUT_PERIPH);
     initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
     initYawRef();
     initYawGPIO();
     initSysTick();
-    IntMasterEnable(); // Enable interrupts to the processor.
+    // Enable interrupts to the processor.
+    IntMasterEnable();
 }
 
 
-// Calls the initAll() function and runs the background task loop
 int
 main(void)
 {
-	initAll();
-	while (1)
-	{
-	    if (ticksCount > 0) { // Loop set to approximately to the system tick rate
-	        ProcessAltData();
-	        displayStats();
-	        buttonUp();
-	        buttonDown();
-	        buttonLeft();
-	        buttonRight();
-	        switched();
-	        buttonReset();
-	        ticksCount = 0;
+    initAll();
+    while (1)
+    {
+        if (g_ulSampCnt > 0) { // Set to approximately 100 Hz
+            ProcessAltData();
+            displayStats();
+            buttonUp();
+            buttonDown();
+            buttonLeft();
+            buttonRight();
+            switched();
+            buttonReset();
+            g_ulSampCnt = 0;
             consoleMsgSpaced();
-	    }
-	}
+        }
+    }
 }

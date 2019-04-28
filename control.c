@@ -39,6 +39,7 @@ void
 findRefStop(void)
 {
     mode = Flying;
+    activateTailPWM();
 }
 
 
@@ -170,8 +171,6 @@ void
 piTailUpdate(void)
 {
     if (mode == Flying && setAlt >= 10) {
-       activateTailPWM(); // is this necessary?
-
        static double I;
        double P;
        double control;
