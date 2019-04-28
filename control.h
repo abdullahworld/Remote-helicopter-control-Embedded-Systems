@@ -5,40 +5,52 @@
 #include <stdint.h>
 
 
-void findRefStart(void);
+void
+findRefStart(void);
 
 
-void findRefStop(void);
+void
+findRefStop(void);
 
 
-void refPulse(void);
+void
+refPulse(void);
 
 
-char* getMode(void);
+char*
+getMode(void);
 
 
-void incrAlt(void);
+void
+incrAlt(void);
 
 
-void decrAlt(void);
+void
+decrAlt(void);
 
 
-void incrYaw(void);
+void
+incrYaw(void);
 
 
-void decrYaw(void);
+void
+decrYaw(void);
 
 
-uint8_t getSetAlt(void);
+uint8_t
+getSetAlt(void);
 
 
-int16_t getSetYaw(void);
+int16_t
+getSetYaw(void);
 
 
-void piMainUpdate(void);
+void
+piMainUpdate(void);
 
 
-void piTailUpdate(void);
+void
+piTailUpdate(void);
 
 
 #endif /* CONTROL_H_ */

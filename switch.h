@@ -1,20 +1,21 @@
 #ifndef SWITCH_H_
 #define SWITCH_H_
 
-#include <stdint.h>
-#include <stdbool.h>
+
+void
+initSwitch(void);
 
 
-void initSwitch(void);
+void
+updateSwitch(void);
 
 
-void updateSwitch(void);
+bool
+checkSwitch(void);
 
 
-bool checkSwitch(void);
-
-
-char* getMode(void);
+void
+switched(void);
 
 
 #endif /* SWITCH_H_ */

@@ -45,13 +45,16 @@
 #define UART_USB_GPIO_PINS      UART_USB_GPIO_PIN_RX | UART_USB_GPIO_PIN_TX
 
 
+// Set variable
 char statusStr[MAX_STR_LEN + 1];
 
 
 //********************************************************
 // initialiseUSB_UART - 8 bits, 1 stop bit, no parity
 //********************************************************
-void initialiseUSB_UART(void) {
+void
+initialiseUSB_UART(void)
+{
     //
     // Enable GPIO port A which is used for UART0 pins.
     //
@@ -88,7 +91,9 @@ UARTSend (char *pucBuffer)
 }
 
 
-void consoleMsg(void) {
+void
+consoleMsg(void)
+{
     // Form and send a status message to the console
     usprintf (statusStr, "Alt: %d/%d\r\n", getAlt(), getSetAlt()); // * usprintf
     UARTSend (statusStr);
@@ -103,9 +108,11 @@ void consoleMsg(void) {
 }
 
 
-void consoleMsgSpaced(void) {
+void
+consoleMsgSpaced(void)
+{
     static uint32_t n;
-    if (n == 50) { // Set to approximately 4 Hz in the main paced loop
+    if (n == 50) { // Set to approximately SYS_TICK_RATE / 50 = 4Hz
         consoleMsg();
         n = 0;
     } else {

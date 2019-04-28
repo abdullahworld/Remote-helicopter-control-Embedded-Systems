@@ -2,16 +2,20 @@
 #define UART_H_
 
 
-void initialiseUSB_UART(void);
+void
+initialiseUSB_UART(void);
 
 
-void UARTSend (char *pucBuffer);
+void
+UARTSend (char *pucBuffer);
 
 
-void consoleMsg();
+void
+consoleMsg(void);
 
 
-void consoleMsgSpaced(void);
+void
+consoleMsgSpaced(void);
 
 
 #endif /* UART_H_ */

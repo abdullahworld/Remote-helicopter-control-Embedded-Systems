@@ -5,34 +5,44 @@
 #include <stdint.h>
 
 
-void initialiseMainPWM(void);
+void
+setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 
 
-void initialiseTailPWM(void);
+void
+setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 
 
-void setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty);
+uint16_t
+GetMainDuty(void);
 
 
-void setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty);
+uint16_t
+GetTailDuty(void);
 
 
-uint16_t GetMainDuty(void);
+void
+initialiseMainPWM(void);
 
 
-uint16_t GetTailDuty(void);
+void
+initialiseTailPWM(void);
 
 
-void activateMainPWM(void);
+void
+activateMainPWM(void);
 
 
-void activateTailPWM(void);
+void
+activateTailPWM(void);
 
 
-void deactivateMainPWM(void);
+void
+deactivateMainPWM(void);
 
 
-void deactivateTailPWM(void);
+void
+deactivateTailPWM(void);
 
 
 #endif /* MOTORS_H_ */

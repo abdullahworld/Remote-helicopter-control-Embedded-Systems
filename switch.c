@@ -54,4 +54,13 @@ checkSwitch(void)
 }
 
 
+// Checks to see if the state of the switch has been changed
+// Starts the initialising state when changed
+void
+switched(void)
+{
+    if (checkSwitch() != 0) {
+        findRefStart();
+    }
+}
 
