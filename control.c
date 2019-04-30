@@ -15,7 +15,11 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-
+#define M_KP              1
+#define M_KI              0.1
+#define T_KP              0.1
+#define T_KI              0.05
+#define T_DELTA           0.005
 
 // Sets variables
 enum modes {Initialising, Flying, Landed, Landing};
@@ -145,13 +149,10 @@ piMainUpdate(void)
         double control;
         double error;
         double dI;
-        double T = 0.005;
-        double MKp = 1;
-        double MKi = 0.1;
 
         error = setAlt - getAlt();
-        P = MKp * error;
-        dI = MKi * error * T;
+        P = M_KP * error;
+        dI = M_KI * error * T_DELTA;
         control = P + (I + dI);
 
         // Enforces output limits
@@ -171,18 +172,15 @@ void
 piTailUpdate(void)
 {
     if (mode == Flying && setAlt >= 10) {
-       static double I;
-       double P;
-       double control;
        double error;
+       double P;
        double dI;
-       double T = 0.005;
-       double TKp = 0.1;
-       double TKi = 0.05;
+       double control;
+       static double I;
 
        error = setYaw - getYaw();
-       P = TKp * error;
-       dI = TKi * error * T;
+       P = T_KP * error;
+       dI = T_KI * error * T_DELTA;
        control = P + (I + dI);
 
        // Enforces output limits

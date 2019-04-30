@@ -28,9 +28,7 @@
 #include "control.h"
 
 
-//********************************************************
 // Constants
-//********************************************************
 #define SYSTICK_RATE_HZ 100
 #define SLOWTICK_RATE_HZ 4
 #define MAX_STR_LEN 16
@@ -43,6 +41,7 @@
 #define UART_USB_GPIO_PIN_RX    GPIO_PIN_0
 #define UART_USB_GPIO_PIN_TX    GPIO_PIN_1
 #define UART_USB_GPIO_PINS      UART_USB_GPIO_PIN_RX | UART_USB_GPIO_PIN_TX
+#define SPACED_COUNT 50
 
 
 // Set variable
@@ -75,9 +74,7 @@ initialiseUSB_UART(void)
 }
 
 
-//**********************************************************************
 // Transmit a string via UART0
-//**********************************************************************
 void
 UARTSend (char *pucBuffer)
 {
@@ -95,13 +92,13 @@ void
 consoleMsg(void)
 {
     // Form and send a status message to the console
-    usprintf (statusStr, "Alt: %d/%d\r\n", getAlt(), getSetAlt()); // * usprintf
+    usprintf (statusStr, "Alt: %d/%d%%\r\n", getAlt(), getSetAlt()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Yaw: %d/%d\r\n", getYaw(), getSetYaw()); // * usprintf
+    usprintf (statusStr, "Yaw: %d/%d deg\r\n", getYaw(), getSetYaw()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Main: %d\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Main: %d%%\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Tail: %d\r\n", GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Tail: %d%%\r\n", GetTailDuty()); // * usprintf
     UARTSend (statusStr);
     usprintf (statusStr, "Mode: %s\r\n", getMode()); // * usprintf
     UARTSend (statusStr);
@@ -111,8 +108,8 @@ consoleMsg(void)
 void
 consoleMsgSpaced(void)
 {
-    static uint32_t n;
-    if (n == 50) { // Set to approximately SYS_TICK_RATE / 50 = 4Hz
+    static uint8_t n;
+    if (n == SPACED_COUNT) { // Set to approximately SYS_TICK_RATE / 50 = 4Hz
         consoleMsg();
         n = 0;
     } else {
