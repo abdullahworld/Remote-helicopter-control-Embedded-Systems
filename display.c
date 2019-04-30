@@ -23,27 +23,6 @@ initDisplay(void)
 }
 
 
-//*****************************************************************************
-//
-// Function to display the mean ADC value (10-bit value, note) and sample count.
-//
-//*****************************************************************************
-void
-displayMeanVal(int16_t meanVal, int32_t count)
-{
-    char string[17];  // 16 characters across the display
-
-    // Form a new string for the line.  The maximum width specified for the
-    //  number field ensures it is displayed right justified.
-    usnprintf(string, sizeof(string), "MEAN ADC = %4d", meanVal);
-    // Update line on display.
-    OLEDStringDraw (string, 0, 0);
-
-    usnprintf(string, sizeof(string), "SAMPLE NO. %5d", count);
-    OLEDStringDraw (string, 0, 1);
-}
-
-
 void
 displayStats(void)
 {
