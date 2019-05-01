@@ -21,6 +21,7 @@
 #define T_KI              0.05
 #define T_DELTA           0.005
 
+
 // Sets variables
 enum modes {Initialising, Flying, Landed, Landing};
 static enum modes mode = Landed;
@@ -88,6 +89,7 @@ static char charLanding[] = "Landing";
 }
 
 
+// Increases the desired altitude by 10%
 void
 incrAlt(void)
 {
@@ -97,6 +99,7 @@ incrAlt(void)
 }
 
 
+// Reduces the desire altitude by 10%
 void
 decrAlt(void)
 {
@@ -107,6 +110,7 @@ decrAlt(void)
 }
 
 
+// Increases the desired yaw by 15 degrees
 void
 incrYaw(void)
 {
@@ -117,6 +121,7 @@ incrYaw(void)
 }
 
 
+// Decreases the desired yaw by 15 degrees
 void
 decrYaw(void)
 {
@@ -126,6 +131,7 @@ decrYaw(void)
 }
 
 
+// Returns the desired altitude
 uint8_t
 getSetAlt(void)
 {
@@ -133,6 +139,7 @@ getSetAlt(void)
 }
 
 
+// Returns the desired yaw
 int16_t
 getSetYaw(void)
 {
@@ -140,6 +147,7 @@ getSetYaw(void)
 }
 
 
+// Updates the PI controller for the main rotor based of the desired position and the current position
 void
 piMainUpdate(void)
 {
@@ -168,6 +176,7 @@ piMainUpdate(void)
 }
 
 
+// Updates the PI controller for the tail rotor based of the desired position and the current position
 void
 piTailUpdate(void)
 {
