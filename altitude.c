@@ -1,7 +1,7 @@
-// altitude.c - Finds the altitude
+// altitude.c - Finds the altitude using an ADC conversion, uses a circular buffer and takes the average.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 28.4.2019
+// Last modified: 2.5.2019
 
 
 #include <stdint.h>

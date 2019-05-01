@@ -1,12 +1,12 @@
 // main.c - An interrupt driven program that measures the height of the helicopter
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 28.4.2019
+// Last modified: 2.5.2019
 
 // Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
 
-// This was designed to work on CCS8.3.0.00009 to work with the compiler TI v 18.1.4.LTS
+// This was designed to on CCS8.3.0.00009 to work with the compiler TI v 18.1.4.LTS
 // Inputs: PE4 (Altitude), PB0 (Channel A), PB1 (Channel B)
 // Outputs: PC5 (PWM Main), PF1 (PWM Tail)
 

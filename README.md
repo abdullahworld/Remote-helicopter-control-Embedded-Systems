@@ -6,6 +6,9 @@ calibrating the yaw with respect to a reference point and then uses
 PID control to maintain stable flight. The buttons are used to change
 the height and yaw.
 
+Note: This program was designed on CCS8.3.0.00009 to work with the compiler TI v 18.1.4.LTS.
+
+
 ## Inputs
 
 > #### Altitude sensor
