@@ -3,6 +3,8 @@
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 2.5.2019
 
+// Based on ADCdemo1.c by P.J. Bones UCECE
+
 
 #include <stdint.h>
 #include <stdbool.h>

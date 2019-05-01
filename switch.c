@@ -1,4 +1,4 @@
-// switch.c - Makes the switch work
+// switch.c - Makes the switch work.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 28.4.2019
@@ -22,6 +22,7 @@ static bool switchState;
 static bool butflag = 0;
 
 
+// Initialises the GPIO port for the switch
 void
 initSwitch(void)
 {
@@ -32,6 +33,7 @@ initSwitch(void)
 }
 
 
+// Updates the status of the switch in an ISR at SYS_TICK_RATE
 void
 updateSwitch(void)
 {
@@ -39,6 +41,7 @@ updateSwitch(void)
 }
 
 
+// Switch logic to only return a single state then lock itself until the switch is changed
 bool
 checkSwitch(void)
 {
@@ -59,7 +62,7 @@ checkSwitch(void)
 void
 switched(void)
 {
-    if (checkSwitch() != 0) {
+    if (checkSwitch() == true) { // Need to prevent from activating twice
         findRefStart();
     }
 }

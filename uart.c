@@ -1,4 +1,4 @@
-// uart.c - Controls the uart serial output
+// uart.c - Controls the UART serial output.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 28.4.2019

@@ -1,4 +1,4 @@
-// main.c - An interrupt driven program that measures the height of the helicopter
+// main.c - A program that controls the flight of a helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 2.5.2019
@@ -117,7 +117,7 @@ main(void)
     initAll();
     while (1)
     {
-        if (g_ulSampCnt > 0) { // Set to approximately 100 Hz
+        if (g_ulSampCnt > 0) { // Set to approximately <200 Hz
             ProcessAltData();
             displayStats();
             buttonUp();

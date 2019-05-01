@@ -1,4 +1,4 @@
-// yaw.c - Controls the yaw of the helicopter
+// yaw.c - Controls the yaw of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 28.4.2019
