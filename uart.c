@@ -92,13 +92,13 @@ void
 consoleMsg(void)
 {
     // Form and send a status message to the console
-    usprintf (statusStr, "Alt: %d/%d%%\r\n", getAlt(), getSetAlt()); // * usprintf
+    usprintf (statusStr, "Alt: %d/%d\r\n", getAlt(), getSetAlt()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Yaw: %d/%d deg\r\n", getYaw(), getSetYaw()); // * usprintf
+    usprintf (statusStr, "Yaw: %d/%d\r\n", getYaw(), getSetYaw()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Main: %d%%\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Main: %d\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
     UARTSend (statusStr);
-    usprintf (statusStr, "Tail: %d%%\r\n", GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Tail: %d\r\n", GetTailDuty()); // * usprintf
     UARTSend (statusStr);
     usprintf (statusStr, "Mode: %s\r\n", getMode()); // * usprintf
     UARTSend (statusStr);

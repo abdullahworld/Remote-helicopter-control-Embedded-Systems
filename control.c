@@ -17,8 +17,8 @@
 #define PWM_FIXED_RATE_HZ 200
 #define M_KP              1
 #define M_KI              0.1
-#define T_KP              0.1
-#define T_KI              0.05
+#define T_KP              0.08
+#define T_KI              0.03
 #define T_DELTA           0.005
 
 
@@ -44,7 +44,6 @@ void
 findRefStop(void)
 {
     mode = Flying;
-    activateTailPWM();
 }
 
 
@@ -181,6 +180,7 @@ void
 piTailUpdate(void)
 {
     if (mode == Flying && setAlt >= 10) {
+       activateTailPWM(); // Figure out why this has to be here
        double error;
        double P;
        double dI;
