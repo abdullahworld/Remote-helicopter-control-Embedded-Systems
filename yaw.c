@@ -1,4 +1,4 @@
-// yaw.c - Controls the yaw of the helicopter.
+// yaw.c - Controls the yaw of the helicopter
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
 // Last modified: 28.4.2019
@@ -25,9 +25,8 @@
 
 
 // Sets variables
-enum quadrature {Same, Different};
-static enum quadrature diskState;
-static uint8_t ChanA, ChanB;
+enum quadrature {A=0, B=1, C=3, D=2};
+static enum quadrature currentState;
 static int32_t slots;
 
 
@@ -35,17 +34,55 @@ static int32_t slots;
 void
 YawIntHandler(void)
 {
-    ChanA = GPIOPinRead(PORTB, CHA_PIN);
-    ChanB = GPIOPinRead(PORTB, CHB_PIN) >> 1; // Bit shifted to the right
-    if (ChanA == 1 && ChanB == 1) {
-        diskState = Same;
-    } else if (diskState == Same && ChanA == 1 && ChanB == 0){
-        slots++; // Clockwise
-        diskState = Different;
-    } else if (diskState == Same && ChanA == 0 && ChanB == 1) {
-        slots--; // Anticlockwise
-        diskState = Different;
+    enum quadrature nextState;
+    nextState = GPIOPinRead(PORTB, CHA_PIN | CHB_PIN);
+
+    switch(currentState)
+    {
+        case A:
+            switch(nextState){
+                case B:
+                    slots++;
+                    break;
+                case D:
+                    slots--;
+                    break;
+            }  break;
+
+        case B:
+            switch(nextState){
+                case A:
+                    slots--;
+                    break;
+                case C:
+                    slots++;
+                    break;
+            } break;
+
+        case C:
+           switch(nextState){
+               case B:
+                   slots--;
+                   break;
+               case D:
+                   slots++;
+                   break;
+           }   break;
+
+        case D:
+           switch(nextState){
+               case A:
+                   slots++;
+                   break;
+               case C:
+                   slots--;
+                   break;
+           }   break;
+
     }
+
+    currentState = nextState;
+
     GPIOIntClear(PORTB, CHA_PIN | CHB_PIN);
 }
 
@@ -69,7 +106,8 @@ initYawGPIO(void)
 int16_t
 getYaw(void)
 {
-    return (2*FULL_ROT*slots + NUM_SLOTS) / (2*NUM_SLOTS);
+    uint32_t NUMBER_OF_SLOTS_FOR_BOTH_EDGES_IN_ONE_ROTATION = 4 * NUM_SLOTS;
+    return (2 * FULL_ROT * slots + NUMBER_OF_SLOTS_FOR_BOTH_EDGES_IN_ONE_ROTATION) / (2 * NUMBER_OF_SLOTS_FOR_BOTH_EDGES_IN_ONE_ROTATION);
 }
 
 
