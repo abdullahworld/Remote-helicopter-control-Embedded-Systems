@@ -15,7 +15,7 @@
 
 
 // Constants
-#define NUM_SLOTS 112 // The number of slots in the slotted disk
+#define NUM_READINGS 448 // The number of slots in the slotted disk (4 * 112 slots in a rev)
 #define CHA_PIN GPIO_PIN_0
 #define CHB_PIN GPIO_PIN_1
 #define PORTB GPIO_PORTB_BASE
@@ -26,7 +26,7 @@
 
 // Sets variables
 enum quadrature {A=0, B=1, C=3, D=2};
-static enum quadrature currentState;
+int32_t currentState;
 static int32_t slots;
 
 
@@ -34,55 +34,56 @@ static int32_t slots;
 void
 YawIntHandler(void)
 {
-    enum quadrature nextState;
+    int32_t nextState;
     nextState = GPIOPinRead(PORTB, CHA_PIN | CHB_PIN);
-
     switch(currentState)
     {
         case A:
-            switch(nextState){
-                case B:
-                    slots++;
-                    break;
-                case D:
-                    slots--;
-                    break;
-            }  break;
-
+            switch(nextState)
+            {
+            case B:
+                slots--;
+                break;
+            case D:
+                slots++;
+                break;
+            }
+            break;
         case B:
-            switch(nextState){
-                case A:
-                    slots--;
-                    break;
-                case C:
-                    slots++;
-                    break;
-            } break;
-
+            switch(nextState)
+            {
+            case A:
+                slots++;
+                break;
+            case C:
+                slots--;
+                break;
+            }
+            break;
         case C:
-           switch(nextState){
-               case B:
-                   slots--;
-                   break;
-               case D:
-                   slots++;
-                   break;
-           }   break;
-
+            switch(nextState)
+            {
+            case B:
+                slots++;
+                break;
+            case D:
+                slots--;
+                break;
+            }
+            break;
         case D:
-           switch(nextState){
-               case A:
-                   slots++;
-                   break;
-               case C:
-                   slots--;
-                   break;
-           }   break;
-
+            switch(nextState)
+            {
+            case A:
+                slots--;
+                break;
+            case C:
+                slots++;
+                break;
+            }
+            break;
     }
-
     currentState = nextState;
-
     GPIOIntClear(PORTB, CHA_PIN | CHB_PIN);
 }
 
@@ -106,8 +107,7 @@ initYawGPIO(void)
 int16_t
 getYaw(void)
 {
-    uint32_t NUMBER_OF_SLOTS_FOR_BOTH_EDGES_IN_ONE_ROTATION = 4 * NUM_SLOTS;
-    return (2 * FULL_ROT * slots + NUMBER_OF_SLOTS_FOR_BOTH_EDGES_IN_ONE_ROTATION) / (2 * NUMBER_OF_SLOTS_FOR_BOTH_EDGES_IN_ONE_ROTATION);
+    return (2 * FULL_ROT * slots + NUM_READINGS) / (2 * NUM_READINGS);
 }
 
 
