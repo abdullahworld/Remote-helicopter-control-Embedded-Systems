@@ -33,7 +33,7 @@ displayStats(void)
     usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
-    usnprintf (string, sizeof(string), "YAW: %7d DEG", getYaw() % 360); // Find a way to improve
+    usnprintf (string, sizeof(string), "YAW: %7d DEG", getDispYaw());
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
     usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", GetMainDuty());

@@ -15,7 +15,7 @@
 
 
 // Constants
-#define NUM_READINGS 448 // The number of slots in the slotted disk (4 * 112 slots in a rev)
+#define NUM_READINGS 448 // The number of readings in the slotted disk (4 * (112 slots) in a rev)
 #define CHA_PIN GPIO_PIN_0
 #define CHB_PIN GPIO_PIN_1
 #define PORTB GPIO_PORTB_BASE
@@ -25,9 +25,10 @@
 
 
 // Sets variables
-enum quadrature {A=0, B=1, C=3, D=2};
+enum quadrature {A=0, B=1, C=3, D=2}; // Sets the values for the finite state machine
 int32_t currentState;
-static int32_t slots;
+static int32_t slots; // Tracks the overall slots
+static int32_t slotsDisp; // Tracks the slots within one revolution
 
 
 // ISR for quadrature encoding
@@ -43,9 +44,11 @@ YawIntHandler(void)
             {
             case B:
                 slots--;
+                slotsDisp--;
                 break;
             case D:
                 slots++;
+                slotsDisp++;
                 break;
             }
             break;
@@ -54,9 +57,11 @@ YawIntHandler(void)
             {
             case A:
                 slots++;
+                slotsDisp++;
                 break;
             case C:
                 slots--;
+                slotsDisp--;
                 break;
             }
             break;
@@ -65,9 +70,11 @@ YawIntHandler(void)
             {
             case B:
                 slots++;
+                slotsDisp++;
                 break;
             case D:
                 slots--;
+                slotsDisp--;
                 break;
             }
             break;
@@ -76,9 +83,11 @@ YawIntHandler(void)
             {
             case A:
                 slots--;
+                slotsDisp--;
                 break;
             case C:
                 slots++;
+                slotsDisp++;
                 break;
             }
             break;
@@ -108,6 +117,20 @@ int16_t
 getYaw(void)
 {
     return (2 * FULL_ROT * slots + NUM_READINGS) / (2 * NUM_READINGS);
+}
+
+
+// Returns the yaw within the range -360 to 360 for the display
+int16_t
+getDispYaw(void)
+{
+    int32_t dispYaw = (2 * FULL_ROT * slotsDisp + NUM_READINGS) / (2 * NUM_READINGS);
+    if (dispYaw >= 360 || dispYaw <= -360) {
+        slotsDisp = 0;
+        return 0;
+    } else {
+        return dispYaw;
+    }
 }
 
 
