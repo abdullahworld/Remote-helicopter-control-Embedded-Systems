@@ -27,8 +27,7 @@
 // Sets variables
 enum quadrature {A=0, B=1, C=3, D=2}; // Sets the values for the finite state machine
 int32_t currentState;
-static int32_t slots; // Tracks the overall slots
-static int32_t slotsDisp; // Tracks the slots within one revolution
+static int32_t slots;
 
 
 // ISR for quadrature encoding
@@ -44,11 +43,9 @@ YawIntHandler(void)
             {
             case B:
                 slots--;
-                slotsDisp--;
                 break;
             case D:
                 slots++;
-                slotsDisp++;
                 break;
             }
             break;
@@ -57,11 +54,9 @@ YawIntHandler(void)
             {
             case A:
                 slots++;
-                slotsDisp++;
                 break;
             case C:
                 slots--;
-                slotsDisp--;
                 break;
             }
             break;
@@ -70,11 +65,9 @@ YawIntHandler(void)
             {
             case B:
                 slots++;
-                slotsDisp++;
                 break;
             case D:
                 slots--;
-                slotsDisp--;
                 break;
             }
             break;
@@ -83,11 +76,9 @@ YawIntHandler(void)
             {
             case A:
                 slots--;
-                slotsDisp--;
                 break;
             case C:
                 slots++;
-                slotsDisp++;
                 break;
             }
             break;
@@ -124,13 +115,13 @@ getYaw(void)
 int16_t
 getDispYaw(void)
 {
-    int32_t dispYaw = (2 * FULL_ROT * slotsDisp + NUM_READINGS) / (2 * NUM_READINGS);
-    if (dispYaw >= 360 || dispYaw <= -360) {
-        slotsDisp = 0;
-        return 0;
-    } else {
-        return dispYaw;
+    static int8_t rev = 0;
+    if ((getYaw() / 360) > rev)  {
+            rev++;
+    } else if ((getYaw() / 360) < rev) {
+            rev--;
     }
+    return (getYaw()-rev*360) % 360;
 }
 
 
