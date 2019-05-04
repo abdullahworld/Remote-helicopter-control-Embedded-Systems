@@ -1,7 +1,7 @@
 // display.c - Controls the OLED display, showing the stats of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 2.5.2019
+// Last modified: 4.5.2019
 
 
 #include <stdint.h>

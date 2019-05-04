@@ -1,7 +1,7 @@
 // yaw.c - Controls the yaw of the helicopter
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 28.4.2019
+// Last modified: 4.5.2019
 
 
 #include <stdint.h>
@@ -36,7 +36,9 @@ YawIntHandler(void)
 {
     int32_t nextState;
     nextState = GPIOPinRead(PORTB, CHA_PIN | CHB_PIN);
-    switch(currentState) // A Finite State Machine that changes from one state to another. There are four states: A, B, C, and D, where A = 00, B = 01, C = 11, and D = 10.
+    /* A Finite State Machine that changes from one state to another.
+       There are four states: A, B, C, and D, where A = 00, B = 01, C = 11, and D = 10. */
+    switch(currentState)
     {
         case A:
             switch(nextState)
@@ -111,17 +113,36 @@ getYaw(void)
 }
 
 
-//// Returns the yaw within the range -360 to 360 for the display
+// Returns the yaw within the range -360 to 360 for the display
 int16_t
 getDispYaw(void)
 {
+    enum directions {clockwise, anticlockwise};
+    static enum directions direction;
     static int8_t rev = 0;
-    if ((getYaw() / 360) > rev)  {
+    if ((getYaw() / 360) >= (rev + 1))  {
             rev++;
-    } else if ((getYaw() / 360) < rev) {
+            direction = clockwise;
+    } else if ((getYaw() / 360) <= (rev - 1)) {
             rev--;
+            direction = anticlockwise;
     }
-    return (getYaw()- rev * 360) % 360;
+
+    if (direction == clockwise) {
+        if (getYaw() >= 0) {
+            return getYaw() - rev * 360;
+        } else {
+            return -(getYaw() - rev * 360);
+        }
+    } else if (direction == anticlockwise) {
+        if (getYaw() >= 0) {
+           return -(getYaw() - rev * 360);
+       } else {
+           return getYaw() - rev * 360;
+       }
+    } else {
+        return getYaw();
+    }
 }
 
 
