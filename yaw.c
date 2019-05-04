@@ -36,7 +36,7 @@ YawIntHandler(void)
 {
     int32_t nextState;
     nextState = GPIOPinRead(PORTB, CHA_PIN | CHB_PIN);
-    switch(currentState)
+    switch(currentState) // A Finite State Machine that changes from one state to another. There are four states: A, B, C, and D, where A = 00, B = 01, C = 11, and D = 10.
     {
         case A:
             switch(nextState)
@@ -111,7 +111,7 @@ getYaw(void)
 }
 
 
-// Returns the yaw within the range -360 to 360 for the display
+//// Returns the yaw within the range -360 to 360 for the display
 int16_t
 getDispYaw(void)
 {
@@ -121,7 +121,7 @@ getDispYaw(void)
     } else if ((getYaw() / 360) < rev) {
             rev--;
     }
-    return (getYaw()-rev*360) % 360;
+    return (getYaw()- rev * 360) % 360;
 }
 
 
