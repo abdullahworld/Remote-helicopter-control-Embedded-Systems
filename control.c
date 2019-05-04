@@ -15,11 +15,11 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-#define M_KP              1
-#define M_KI              0.1
-#define T_KP              0.08
-#define T_KI              0.03
-#define T_DELTA           0.005
+#define M_KP              1.3 // Proportional gain for main motor Kp
+#define M_KI              0.5 // Integral gain for main motor Ki
+#define T_KP              0.08 // Proportional gain for tail motor Kp
+#define T_KI              0.03 // Integral gain for tail motor Ki
+#define T_DELTA           0.005 // dt
 
 
 // Sets variables
@@ -157,10 +157,10 @@ piMainUpdate(void)
         double error;
         double dI;
 
-        error = setAlt - getAlt();
+        error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
         P = M_KP * error;
         dI = M_KI * error * T_DELTA;
-        control = P + (I + dI);
+        control = P + (I + dI); // The controller output
 
         // Enforces output limits
         if (control > OUTPUT_MAX) {
@@ -184,10 +184,10 @@ piTailUpdate(void)
        double error;
        double P;
        double dI;
-       double control;
+       double control; // The controller output
        static double I;
 
-       error = setYaw - getYaw();
+       error = setYaw - getYaw(); // error = set YAW value - actual YAW value
        P = T_KP * error;
        dI = T_KI * error * T_DELTA;
        control = P + (I + dI);
