@@ -17,10 +17,6 @@ int16_t
 getYaw(void);
 
 
-int16_t
-getDispYaw(void);
-
-
 void
 YawRefIntHandler(void);
 

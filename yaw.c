@@ -1,7 +1,7 @@
 // yaw.c - Controls the yaw of the helicopter
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 4.5.2019
+// Last modified: 5.5.2019
 
 
 #include <stdint.h>
@@ -110,39 +110,6 @@ int16_t
 getYaw(void)
 {
     return (2 * FULL_ROT * slots + NUM_READINGS) / (2 * NUM_READINGS);
-}
-
-
-// Returns the yaw within the range -360 to 360 for the display
-int16_t
-getDispYaw(void)
-{
-    enum directions {clockwise, anticlockwise};
-    static enum directions direction;
-    static int8_t rev = 0;
-    if ((getYaw() / 360) >= (rev + 1))  {
-            rev++;
-            direction = clockwise;
-    } else if ((getYaw() / 360) <= (rev - 1)) {
-            rev--;
-            direction = anticlockwise;
-    }
-
-    if (direction == clockwise) {
-        if (getYaw() >= 0) {
-            return getYaw() - rev * 360;
-        } else {
-            return -(getYaw() - rev * 360);
-        }
-    } else if (direction == anticlockwise) {
-        if (getYaw() >= 0) {
-           return -(getYaw() - rev * 360);
-       } else {
-           return getYaw() - rev * 360;
-       }
-    } else {
-        return getYaw();
-    }
 }
 
 
