@@ -106,11 +106,40 @@ initYawGPIO(void)
 
 
 // Returns the calculated and rounded yaw in degrees with respect to the reference point
+// This function will be use internally throughout the code and not for the dispaly.c
 int16_t
 getYaw(void)
 {
     return (2 * FULL_ROT * slots + NUM_READINGS) / (2 * NUM_READINGS);
 }
+
+// Returns the yaw within the range -360 to 360 for the display
+// We use this function only to make it readable for the user. It is easier to read the YAW angle to be -30 deg rather than -390deg or -750deg
+// We will only use this for the OLED display and on display.c
+int16_t
+getDispYaw(void)
+{
+    enum directions {clockwise, anticlockwise};
+    static enum directions dir;
+    static int8_t rev = 0;
+
+    if ((getYaw() / 360) >= (rev + 1))  { // If true, increment the number of revolutions and sign the direction to be CW
+            dir = clockwise;
+            rev++;
+    } else if ((getYaw() / 360) <= (rev - 1)) { // If true, decrement the number of revolutions and sign the direction to be CCW
+            dir = anticlockwise;
+            rev--;
+    }
+
+    if (dir == clockwise) {
+        return (getYaw() - rev * 360); // If the directions is CW reset the YAW to 0 deg after each full CW rotations
+    } else if (dir == anticlockwise) { // same idea here.
+        return (getYaw() - rev * 360);
+    } else {
+        return getYaw();
+    }
+}
+
 
 
 // ISR for finding the yaw reference
