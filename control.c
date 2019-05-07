@@ -16,8 +16,10 @@
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
 #define M_KP              1.4 // Proportional gain for main motor Kp
+#define M_KD              0.9 // Derivative gain for the main motor Kd
 #define M_KI              0.6 // Integral gain for main motor Ki
 #define T_KP              0.1 // Proportional gain for tail motor Kp
+#define T_KD              0.09 // Derivative gain for the tail motor
 #define T_KI              0.05 // Integral gain for tail motor Ki
 #define T_DELTA           0.005 // dt
 
@@ -153,6 +155,7 @@ piMainUpdate(void)
     if (mode == Flying && setAlt >= 10) {
         static double I;
         double P;
+        double D;
         double control;
         double error;
         double dI;
@@ -160,7 +163,8 @@ piMainUpdate(void)
         error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
         P = M_KP * error;
         dI = M_KI * error * T_DELTA;
-        control = P + (I + dI); // The controller output
+        D = M_KD * error;
+        control = P + (I + dI) + D; // The controller output
 
         // Enforces output limits
         if (control > OUTPUT_MAX) {
@@ -183,12 +187,14 @@ piTailUpdate(void)
        activateTailPWM(); // Figure out why this has to be here
        double error;
        double P;
+       double D;
        double dI;
        double control; // The controller output
        static double I;
 
        error = setYaw - getYaw(); // error = set YAW value - actual YAW value
        P = T_KP * error;
+       D = T_KD * error;
        dI = T_KI * error * T_DELTA;
        control = P + (I + dI);
 
