@@ -15,10 +15,10 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-#define M_KP              1.3 // Proportional gain for main motor Kp
-#define M_KI              0.5 // Integral gain for main motor Ki
-#define T_KP              0.08 // Proportional gain for tail motor Kp
-#define T_KI              0.03 // Integral gain for tail motor Ki
+#define M_KP              1.4 // Proportional gain for main motor Kp
+#define M_KI              0.6 // Integral gain for main motor Ki
+#define T_KP              0.1 // Proportional gain for tail motor Kp
+#define T_KI              0.05 // Integral gain for tail motor Ki
 #define T_DELTA           0.005 // dt
 
 
