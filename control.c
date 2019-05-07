@@ -196,7 +196,7 @@ piTailUpdate(void)
        P = T_KP * error;
        D = T_KD * error;
        dI = T_KI * error * T_DELTA;
-       control = P + (I + dI);
+       control = P + (I + dI) + D;
 
        // Enforces output limits
        if (control > OUTPUT_MAX) {
