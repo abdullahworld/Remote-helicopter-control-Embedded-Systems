@@ -15,11 +15,11 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-#define M_KP              1.3 // Proportional gain for main motor Kp
-#define M_KI              0.9 // Integral gain for main motor Ki
+#define M_KP              1.2 // Proportional gain for main motor Kp
+#define M_KI              0.8 // Integral gain for main motor Ki
 #define M_DELTA           0.02 // dt for main rotor. dt = 1 / sampling_rate. dt => need to be large enough while sampling_rate => needs to be small enough for the integral controller to gather all the samples.
-#define T_KP              0.9 // Proportional gain for tail motor Kp
-#define T_KI              0.6 // Integral gain for tail motor Ki
+#define T_KP              0.8 // Proportional gain for tail motor Kp
+#define T_KI              0.5 // Integral gain for tail motor Ki
 #define T_DELTA           0.02 // dt for tail rotor
 
 
