@@ -154,7 +154,7 @@ void
 piMainUpdate(void)
 {
     if (mode == Flying && setAlt >= 10) {
-        activateTMainPWM();
+        activateMainPWM();
         static double I;
         double dI;
         double P;
@@ -164,6 +164,7 @@ piMainUpdate(void)
         double prev_error;
 
         error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
+        prev_error = error;
         P = M_KP * error;
         D = (T_KD / T_DELTA) * (error - prev_error);
         dI = M_KI * error * T_DELTA;
@@ -197,6 +198,7 @@ piTailUpdate(void)
        double prev_error;
 
        error = setYaw - getYaw(); // error = set YAW value - actual YAW value
+       prev_error = error;
        P = T_KP * error;
        D = (T_KD / T_DELTA) * (error - prev_error);
        dI = T_KI * error * T_DELTA;
