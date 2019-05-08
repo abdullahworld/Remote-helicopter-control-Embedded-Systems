@@ -48,14 +48,13 @@ uint32_t R_g_ulSampCnt;
 void
 SysTickIntHandler(void)
 {
+    // Initiate a conversion
     ADCProcessorTrigger(ADC0_BASE, 3);
     updateButtons();
     updateSwitch();
     refPulse();
     piMainUpdate();
     piTailUpdate();
-    // Initiate a conversion
-    //g_ulSampCnt++;
 }
 
 
