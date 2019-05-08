@@ -16,11 +16,9 @@
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
 #define M_KP              1.3 // Proportional gain for main motor Kp
-#define M_KD              0 // Derivative gain for the main motor Kd
-#define M_KI              1.3 // Integral gain for main motor Ki
+#define M_KI              0.9 // Integral gain for main motor Ki
 #define M_DELTA           0.02 // dt for main rotor
 #define T_KP              0.9 // Proportional gain for tail motor Kp
-#define T_KD              0 // Derivative gain for the tail motor
 #define T_KI              0.6 // Integral gain for tail motor Ki
 #define T_DELTA           0.02 // dt for tail rotor
 
