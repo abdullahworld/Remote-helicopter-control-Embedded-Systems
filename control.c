@@ -15,14 +15,14 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-#define M_KP              2.5 // Proportional gain for main motor Kp
+#define M_KP              1.3 // Proportional gain for main motor Kp
 #define M_KD              0 // Derivative gain for the main motor Kd
 #define M_KI              1.3 // Integral gain for main motor Ki
-#define M_DELTA           0.004 // dt for main rotor
+#define M_DELTA           0.02 // dt for main rotor
 #define T_KP              0.9 // Proportional gain for tail motor Kp
 #define T_KD              0 // Derivative gain for the tail motor
 #define T_KI              0.6 // Integral gain for tail motor Ki
-#define T_DELTA           0.005 // dt for tail rotor
+#define T_DELTA           0.02 // dt for tail rotor
 
 
 // Sets variables
@@ -149,7 +149,7 @@ getSetYaw(void)
 }
 
 
-// Updates the PID controller for the main rotor based of the desired position and the current position
+// Updates the PI controller for the main rotor based of the desired position and the current position
 void
 piMainUpdate(void)
 {
@@ -158,17 +158,13 @@ piMainUpdate(void)
         static double I;
         double dI;
         double P;
-        double D;
         double control;
         double error;
-        double prev_error;
 
         error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
-        prev_error = error;
         P = M_KP * error;
-        D = (T_KD / T_DELTA) * (error - prev_error);
         dI = M_KI * error * T_DELTA;
-        control = P + (I + dI) + D; // The controller output
+        control = P + (I + dI); // The controller output
 
         // Enforces output limits
         if (control > OUTPUT_MAX) {
@@ -183,7 +179,7 @@ piMainUpdate(void)
 }
 
 
-// Updates the PID controller for the tail rotor based of the desired position and the current position
+// Updates the PI controller for the tail rotor based of the desired position and the current position
 void
 piTailUpdate(void)
 {
@@ -192,17 +188,13 @@ piTailUpdate(void)
        static double I;
        double dI;
        double P;
-       double D;
        double control; // The controller output
        double error;
-       double prev_error;
 
        error = setYaw - getYaw(); // error = set YAW value - actual YAW value
-       prev_error = error;
        P = T_KP * error;
-       D = (T_KD / T_DELTA) * (error - prev_error);
        dI = T_KI * error * T_DELTA;
-       control = P + (I + dI) + D;
+       control = P + (I + dI);
 
        // Enforces output limits
        if (control > OUTPUT_MAX) {
