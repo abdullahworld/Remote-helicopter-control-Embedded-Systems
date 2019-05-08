@@ -36,7 +36,7 @@
 
 
 // Constant
-#define SYS_TICK_RATE 200
+#define SYS_TICK_RATE 50
 
 
 // Global variables
@@ -48,14 +48,14 @@ uint32_t R_g_ulSampCnt;
 void
 SysTickIntHandler(void)
 {
+    ADCProcessorTrigger(ADC0_BASE, 3);
     updateButtons();
     updateSwitch();
     refPulse();
     piMainUpdate();
     piTailUpdate();
     // Initiate a conversion
-    ADCProcessorTrigger(ADC0_BASE, 3);
-    g_ulSampCnt++;
+    //g_ulSampCnt++;
 }
 
 
@@ -126,7 +126,7 @@ main(void)
             buttonRight();
             switched();
             buttonReset();
-            g_ulSampCnt = 0;
+            g_ulSampCnt = 0; // reset sampling count to zero
             consoleMsgSpaced();
         }
     }
