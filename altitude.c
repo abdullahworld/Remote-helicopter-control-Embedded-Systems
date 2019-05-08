@@ -17,7 +17,7 @@
 
 // Constants
 #define BUF_SIZE 10 // Matches number of samples per period and enough will not significantly deviate
-#define SAMPLE_RATE_HZ 100 // jitter of 4Hz
+#define SAMPLE_RATE_HZ 50 // Jitter of 50Hz
 #define VOLTAGE_SENSOR_RANGE 800 // in mV
 
 
@@ -115,7 +115,7 @@ void initADCCircBuf(void) {
 
 
 int16_t getAlt(void) {
-    altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
+    altitude = ((100 * 2 * (helicopter_landed_value - meanVal) + VOLTAGE_SENSOR_RANGE)) / (2 * VOLTAGE_SENSOR_RANGE); // Calculate the altitude of the helicopter.
     return altitude;
 }
 
