@@ -15,13 +15,14 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-#define M_KP              1.4 // Proportional gain for main motor Kp
-#define M_KD              0.9 // Derivative gain for the main motor Kd
-#define M_KI              0.6 // Integral gain for main motor Ki
-#define T_KP              0.1 // Proportional gain for tail motor Kp
-#define T_KD              0.09 // Derivative gain for the tail motor
-#define T_KI              0.05 // Integral gain for tail motor Ki
-#define T_DELTA           0.005 // dt
+#define M_KP              2.5 // Proportional gain for main motor Kp
+#define M_KD              0 // Derivative gain for the main motor Kd
+#define M_KI              1.3 // Integral gain for main motor Ki
+#define M_DELTA           0.004 // dt for main rotor
+#define T_KP              0.9 // Proportional gain for tail motor Kp
+#define T_KD              0 // Derivative gain for the tail motor
+#define T_KI              0.6 // Integral gain for tail motor Ki
+#define T_DELTA           0.005 // dt for tail rotor
 
 
 // Sets variables
@@ -49,7 +50,7 @@ findRefStop(void)
 }
 
 
-// Pules the PWM of the tail rotor to find the reference point
+// Pulse the PWM of the tail rotor to find the reference point
 void
 refPulse(void)
 {
@@ -148,22 +149,24 @@ getSetYaw(void)
 }
 
 
-// Updates the PI controller for the main rotor based of the desired position and the current position
+// Updates the PID controller for the main rotor based of the desired position and the current position
 void
 piMainUpdate(void)
 {
     if (mode == Flying && setAlt >= 10) {
+        activateTMainPWM();
         static double I;
+        double dI;
         double P;
         double D;
         double control;
         double error;
-        double dI;
+        double prev_error;
 
         error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
         P = M_KP * error;
+        D = (T_KD / T_DELTA) * (error - prev_error);
         dI = M_KI * error * T_DELTA;
-        D = M_KD * error;
         control = P + (I + dI) + D; // The controller output
 
         // Enforces output limits
@@ -179,22 +182,23 @@ piMainUpdate(void)
 }
 
 
-// Updates the PI controller for the tail rotor based of the desired position and the current position
+// Updates the PID controller for the tail rotor based of the desired position and the current position
 void
 piTailUpdate(void)
 {
     if (mode == Flying && setAlt >= 10) {
        activateTailPWM(); // Figure out why this has to be here
-       double error;
+       static double I;
+       double dI;
        double P;
        double D;
-       double dI;
        double control; // The controller output
-       static double I;
+       double error;
+       double prev_error;
 
        error = setYaw - getYaw(); // error = set YAW value - actual YAW value
        P = T_KP * error;
-       D = T_KD * error;
+       D = (T_KD / T_DELTA) * (error - prev_error);
        dI = T_KI * error * T_DELTA;
        control = P + (I + dI) + D;
 
