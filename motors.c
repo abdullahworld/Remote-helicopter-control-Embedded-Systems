@@ -23,7 +23,7 @@
 // PWM configuration
 #define PWM_FIXED_RATE_HZ       200
 #define PWM_MAIN_FIXED_DUTY     5
-#define PWM_TAIL_FIXED_DUTY     40
+#define PWM_TAIL_FIXED_DUTY     50
 #define PWM_DIVIDER_CODE        SYSCTL_PWMDIV_4
 #define PWM_DIVIDER             4
 

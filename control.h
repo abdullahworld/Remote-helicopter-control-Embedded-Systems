@@ -14,6 +14,18 @@ findRefStop(void);
 
 
 void
+modeLanding(void);
+
+
+void
+landingSet(void);
+
+
+void
+landedCheck(void);
+
+
+void
 refPulse(void);
 
 

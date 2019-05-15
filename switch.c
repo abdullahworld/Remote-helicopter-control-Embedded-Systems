@@ -9,6 +9,7 @@
 #include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
+#include "switch.h"
 #include "control.h"
 
 
@@ -19,7 +20,7 @@
 
 // Set variables
 static bool switchState;
-static bool butflag = 0;
+static bool flyingFlag = false;
 
 
 // Initialises the GPIO port for the switch
@@ -45,13 +46,9 @@ updateSwitch(void)
 bool
 checkSwitch(void)
 {
-    if (switchState != 0 && butflag == 0) { // Switch is up
-        butflag = 1;
+    if (switchState != 0) { // Switch is up
         return true;
-    } else if (switchState == 0 && butflag == 1) { // Switch is down
-        butflag = 0;
-        return false;
-    } else {
+    } else { // Switch is down
         return false;
     }
 }
@@ -62,8 +59,12 @@ checkSwitch(void)
 void
 switched(void)
 {
-    if (checkSwitch() == true) { // Need to prevent from activating twice
+    if (checkSwitch() == true && flyingFlag == false) {
         findRefStart();
+        flyingFlag = true;
+    } else if (checkSwitch() == false && flyingFlag == true) {
+        modeLanding();
+        flyingFlag = false;
     }
 }
 

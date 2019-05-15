@@ -1,10 +1,11 @@
 // control.c - Controls the different states of the program and the positioning of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 2.5.2019
+// Last modified: 9.5.2019
 
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "control.h"
 #include "motors.h"
 #include "altitude.h"
@@ -15,12 +16,12 @@
 #define OUTPUT_MAX        95
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
-#define M_KP              1.5 // Proportional gain for main motor Kp
-#define M_KI              0.5 * M_KP // Integral gain for main motor Ki
-#define M_DELTA           0.02 // dt for main rotor. dt = 1 / sampling_rate. dt => need to be large enough while sampling_rate => needs to be small enough for the integral controller to gather all the samples.
-#define T_KP              0.8 // Proportional gain for tail motor Kp
-#define T_KI              0.5 * T_KP // Integral gain for tail motor Ki
-#define T_DELTA           0.02 // dt for tail rotor
+#define M_KP              1.3 // Proportional gain for main motor Kp
+#define M_KI              0.5 // Integral gain for main motor Ki
+#define T_KP              0.3 // Proportional gain for tail motor Kp
+#define T_KI              0.4
+#define T_KD              0.008// Integral gain for tail motor Ki
+#define T_DELTA           0.005 // dt
 
 
 // Sets variables
@@ -44,11 +45,41 @@ findRefStart(void)
 void
 findRefStop(void)
 {
+    setTailPWM(PWM_FIXED_RATE_HZ, OUTPUT_MIN);
+    activateTailPWM();
     mode = Flying;
 }
 
 
-// Pulse the PWM of the tail rotor to find the reference point
+void
+modeLanding(void)
+{
+    mode = Landing;
+}
+
+
+void
+landingSet(void) {
+    static bool LandingFlag = 0;
+    if (mode == Landing && LandingFlag == 0) {
+        LandingFlag = 1;
+        setAlt = 0;
+        setYaw = 0;
+    }
+}
+
+
+void
+landedCheck(void) {
+    if (mode == Landing && getAlt() <= 0) {
+        deactivateMainPWM();
+        deactivateTailPWM();
+        mode = Landed;
+    }
+}
+
+
+// Pules the PWM of the tail rotor to find the reference point
 void
 refPulse(void)
 {
@@ -151,13 +182,12 @@ getSetYaw(void)
 void
 piMainUpdate(void)
 {
-    if (mode == Flying && setAlt >= 10) {
-        activateMainPWM();
+    if ((mode == Flying || mode == Landing) && setAlt >= 10) {
         static double I;
-        double dI;
         double P;
         double control;
         double error;
+        double dI;
 
         error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
         P = M_KP * error;
@@ -181,19 +211,22 @@ piMainUpdate(void)
 void
 piTailUpdate(void)
 {
-    if (mode == Flying && setAlt >= 10) {
-       activateTailPWM(); // Figure out why this has to be here
-       static double I;
-       double dI;
-       double P;
-       double control; // The controller output
+    if ((mode == Flying || mode == Landing) && setAlt >= 10) {
        double error;
+       double P;
+       double dI;
+       double D;
+       double control; // The controller output
+       static double I;
+       static double prev_error;
 
        error = setYaw - getYaw(); // error = set YAW value - actual YAW value
        P = T_KP * error;
        dI = T_KI * error * T_DELTA;
-       control = P + (I + dI);
+       D = (T_KD/T_DELTA)*(error-prev_error);
 
+       control = P + (I + dI) + D;
+       prev_error = error;
        // Enforces output limits
        if (control > OUTPUT_MAX) {
            control = OUTPUT_MAX;

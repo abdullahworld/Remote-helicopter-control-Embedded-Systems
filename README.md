@@ -3,10 +3,13 @@
 ## Description
 This program controls the motion of a toy helicopter. It starts of by
 calibrating the yaw with respect to a reference point and then uses
-PI control to maintain stable flight. The buttons are used to change
+feedback control to maintain stable flight. The buttons are used to change
 the height and yaw.
 
+This software can be run on an [online simulator](http://eng-labshare.canterbury.ac.nz) and has been optimised to work with helicopter 3.
+
 Note: This program was designed on CCS8.3.0.00009 to work with the compiler TI v 18.1.4.LTS.
+
 
 
 ## Inputs

@@ -1,7 +1,7 @@
 // display.c - Controls the OLED display, showing the stats of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 5.5.2019
+// Last modified: 4.5.2019
 
 
 #include <stdint.h>
@@ -33,7 +33,7 @@ displayStats(void)
     usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
     // Update line on display.
     OLEDStringDraw (string, 0, 0);
-    usnprintf (string, sizeof(string), "YAW: %7d DEG", getDispYaw());
+    usnprintf (string, sizeof(string), "YAW: %7d DEG", getYaw());
     // Update line on display.
     OLEDStringDraw (string, 0, 1);
     usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", GetMainDuty());
