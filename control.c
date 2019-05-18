@@ -21,7 +21,7 @@
 #define T_KP              0.3 // Proportional gain for tail motor Kp
 #define T_KI              0.4
 #define T_KD              0.008// Integral gain for tail motor Ki
-#define T_DELTA           0.005 // dt
+#define T_DELTA           0.01 // dt
 
 
 // Sets variables
@@ -145,7 +145,7 @@ decrAlt(void)
 void
 incrYaw(void)
 {
-    if (setYaw < 360 && mode != Initialising) {
+    if (setYaw < 180 && mode != Initialising) {
         setYaw += 15;
     }
 
@@ -156,7 +156,7 @@ incrYaw(void)
 void
 decrYaw(void)
 {
-    if (setYaw > -360 && mode != Initialising) {
+    if (setYaw > -180 && mode != Initialising) {
         setYaw -= 15;
     }
 }

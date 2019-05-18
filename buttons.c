@@ -36,6 +36,7 @@ static uint8_t but_count[NUM_BUTS];
 static bool but_flag[NUM_BUTS];
 static bool but_normal[NUM_BUTS];   // Corresponds to the electrical state
 
+
 // *******************************************************
 // initButtons: Initialise the variables associated with the set of buttons
 // defined by the constants in the buttons2.h header file.
@@ -98,7 +99,7 @@ updateButtons (void)
 {
 	bool but_value[NUM_BUTS];
 	int i;
-	
+
 	// Read the pins; true means HIGH, false means LOW
 	but_value[UP] = (GPIOPinRead (UP_BUT_PORT_BASE, UP_BUT_PIN) == UP_BUT_PIN);
 	but_value[DOWN] = (GPIOPinRead (DOWN_BUT_PORT_BASE, DOWN_BUT_PIN) == DOWN_BUT_PIN);
@@ -199,3 +200,12 @@ buttonReset(void)
         SysCtlReset();
     }
 }
+
+
+
+
+
+
+
+
+

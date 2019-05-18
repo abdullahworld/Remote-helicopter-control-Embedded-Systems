@@ -36,27 +36,20 @@
 
 
 // Constant
-#define SYS_TICK_RATE 200
+#define SYS_TICK_RATE 100
 
 
 // Global variables
 uint32_t g_ulSampCnt; // Counter for the interrupts
-uint32_t R_g_ulSampCnt;
 
 
 // The interrupt handler for the for SysTick interrupt.
 void
 SysTickIntHandler(void)
 {
-    updateButtons();
-    updateSwitch();
-    refPulse();
+    ADCProcessorTrigger(ADC0_BASE, 3); // Initiate a conversion
     piMainUpdate();
     piTailUpdate();
-    landingSet();
-    landedCheck();
-    // Initiate a conversion
-    ADCProcessorTrigger(ADC0_BASE, 3);
     g_ulSampCnt++;
 }
 
@@ -119,17 +112,22 @@ main(void)
     initAll();
     while (1)
     {
-        if (g_ulSampCnt > 0) { // Set to approximately <200 Hz
+        if (g_ulSampCnt > 0) { // Set to approximately <100 Hz
+            updateSwitch();
+            updateButtons();
             ProcessAltData();
-            displayStats();
+            //displayStats(); Not required for the demonstration
             buttonUp();
             buttonDown();
             buttonLeft();
             buttonRight();
             switched();
             buttonReset();
-            g_ulSampCnt = 0;
             consoleMsgSpaced();
+            landingSet();
+            landedCheck();
+            refPulse();
+            g_ulSampCnt = 0;
         }
     }
 }
