@@ -109,7 +109,7 @@ void
 consoleMsgSpaced(void)
 {
     static uint8_t n;
-    if (n => SPACED_COUNT) { // Set to approximately (SYS_TICK_RATE / SPACED_COUNT) Hz
+    if (n >= SPACED_COUNT) { // Set to approximately (SYS_TICK_RATE / SPACED_COUNT) Hz
         consoleMsg();
         n = 0;
     } else {
