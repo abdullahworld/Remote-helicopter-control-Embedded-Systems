@@ -1,7 +1,7 @@
 // uart.c - Controls the UART serial output.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 28.4.2019
+// Last modified: 21.5.2019
 
 // Based on uartDemo.c by by P.J. Bones UCECE
 
@@ -29,9 +29,9 @@
 
 
 // Constants
-#define SYSTICK_RATE_HZ 100
-#define SLOWTICK_RATE_HZ 4
 #define MAX_STR_LEN 16
+
+
 //---USB Serial comms: UART0, Rx:PA0 , Tx:PA1
 #define BAUD_RATE 9600
 #define UART_USB_BASE           UART0_BASE
@@ -41,7 +41,7 @@
 #define UART_USB_GPIO_PIN_RX    GPIO_PIN_0
 #define UART_USB_GPIO_PIN_TX    GPIO_PIN_1
 #define UART_USB_GPIO_PINS      UART_USB_GPIO_PIN_RX | UART_USB_GPIO_PIN_TX
-#define SPACED_COUNT 25
+#define SPACED_COUNT 20
 
 
 // Set variable

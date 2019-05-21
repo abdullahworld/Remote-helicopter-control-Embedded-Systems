@@ -1,11 +1,12 @@
 // control.c - Controls the different states of the program and the positioning of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 9.5.2019
+// Last modified: 21.5.2019
 
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "driverlib/sysctl.h"
 #include "control.h"
 #include "motors.h"
 #include "altitude.h"
@@ -17,10 +18,10 @@
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
 #define M_KP              0.55 // Proportional gain for main motor Kp
+#define M_KP_LANDING      0.005 // Proportional gain for main motor Kp
 #define M_KI              0.18 // Integral gain for main motor Ki
-#define T_KP              0.25 // Proportional gain for tail motor Kp
-#define T_KI              0.15
-#define T_KD              0 // Integral gain for tail motor Ki
+#define T_KP              0.22 // Proportional gain for tail motor Kp
+#define T_KI              0.14
 #define T_DELTA           0.01 // dt
 
 
@@ -75,6 +76,7 @@ landedCheck(void) {
         deactivateMainPWM();
         deactivateTailPWM();
         mode = Landed;
+        SysCtlReset();
     }
 }
 
@@ -124,7 +126,7 @@ static char charLanding[] = "Landing";
 void
 incrAlt(void)
 {
-    if (setAlt < 100 && mode != Initialising) {
+    if (setAlt < 100 && mode != Initialising && mode != Landing) {
         setAlt += 10;
     }
 }
@@ -134,7 +136,7 @@ incrAlt(void)
 void
 decrAlt(void)
 {
-    if (setAlt > 0 && mode != Initialising) {
+    if (setAlt > 0 && mode != Initialising && mode != Landing) {
         setAlt -= 10;
     }
 
@@ -145,7 +147,7 @@ decrAlt(void)
 void
 incrYaw(void)
 {
-    if (setYaw < 180 && mode != Initialising) {
+    if (setYaw < 180 && mode != Initialising && mode != Landing) {
         setYaw += 15;
     }
 
@@ -156,7 +158,7 @@ incrYaw(void)
 void
 decrYaw(void)
 {
-    if (setYaw > -180 && mode != Initialising) {
+    if (setYaw > -180 && mode != Initialising && mode != Landing) {
         setYaw -= 15;
     }
 }
@@ -182,7 +184,7 @@ getSetYaw(void)
 void
 piMainUpdate(void)
 {
-    if ((mode == Flying || mode == Landing) && setAlt >= 10) {
+    if (mode == Flying || mode == Landing) {
         static double I;
         double P;
         double control;
@@ -190,7 +192,13 @@ piMainUpdate(void)
         double dI;
 
         error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
-        P = M_KP * error;
+
+        if (mode != Landing) {
+            P = M_KP * error;
+        } else {
+            P = M_KP_LANDING * error;
+        }
+
         dI = M_KI * error * T_DELTA;
         control = P + (I + dI); // The controller output
 
@@ -211,22 +219,18 @@ piMainUpdate(void)
 void
 piTailUpdate(void)
 {
-    if ((mode == Flying || mode == Landing) && setAlt >= 10) {
+    if (mode == Flying || mode == Landing) {
        double error;
        double P;
        double dI;
-       double D;
        double control; // The controller output
        static double I;
-       static double prev_error;
 
        error = setYaw - getYaw(); // error = set YAW value - actual YAW value
        P = T_KP * error;
        dI = T_KI * error * T_DELTA;
-       D = (T_KD/T_DELTA)*(error-prev_error);
 
-       control = P + (I + dI) + D;
-       prev_error = error;
+       control = P + (I + dI);
        // Enforces output limits
        if (control > OUTPUT_MAX) {
            control = OUTPUT_MAX;

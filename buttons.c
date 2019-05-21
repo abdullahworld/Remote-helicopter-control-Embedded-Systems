@@ -192,6 +192,7 @@ buttonRight(void)
     }
 }
 
+
 // Does a soft reset when the designated button is pushed
 void
 buttonReset(void)

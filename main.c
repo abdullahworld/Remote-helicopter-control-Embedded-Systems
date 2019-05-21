@@ -1,7 +1,7 @@
 // main.c - A program that controls the flight of a helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 2.5.2019
+// Last modified: 21.5.2019
 
 // Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
@@ -39,7 +39,7 @@
 #define SYS_TICK_RATE 100
 
 
-// Global variables
+// Global variable
 uint32_t g_ulSampCnt; // Counter for the interrupts
 
 
@@ -62,7 +62,6 @@ initClock(void)
     SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
     // Set the PWM clock rate (using the prescaler)
-
 }
 
 
