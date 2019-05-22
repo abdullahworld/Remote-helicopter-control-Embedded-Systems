@@ -18,7 +18,7 @@
 #define OUTPUT_MIN        5
 #define PWM_FIXED_RATE_HZ 200
 #define M_KP              0.55 // Proportional gain for main motor Kp
-#define M_KP_LANDING      0.005 // Proportional gain for main motor Kp
+#define M_KP_LANDING      0.0005 // Proportional gain for main motor Kp
 #define M_KI              0.18 // Integral gain for main motor Ki
 #define T_KP              0.22 // Proportional gain for tail motor Kp
 #define T_KI              0.14
