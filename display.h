@@ -10,7 +10,7 @@ void
 displayStats(void);
 
 int32_t
-get_timer(void)
+get_timer(void);
 
 void
 set_timer(void);
