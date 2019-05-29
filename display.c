@@ -22,6 +22,8 @@ initDisplay(void)
     OLEDInitialise();
 }
 
+// This display function will display each line on the oled display at time instead of displaying all four lines all togather 
+// at the same time. This will improve the update rate on the oled display and make it faster.
 void
 displayStats(int16_t line)
 {
