@@ -14,7 +14,8 @@
 #include "display.h"
 #include "motors.h"
 
-
+int32_t timer = 0;
+int32_t line =0;
 void
 initDisplay(void)
 {
@@ -22,29 +23,40 @@ initDisplay(void)
     OLEDInitialise();
 }
 
-// This display function will display each line on the oled display at time instead of displaying all four lines all togather 
-// at the same time. This will improve the update rate on the oled display and make it faster.
+int32_t get_timer(void)
+{
+  return timer;
+}
+
+void set_timer(void)
+{
+    timer++;
+}
+
+// This display function will display each line depending on the timer that is updated based on sysTick
+// The timer will be updated every 10ms and each timer count is equal to 10ms. Thus, oled will update every 40 ms.
 void
-displayStats(int16_t line)
+displayStats(void)
 {
     char string[17];  // 16 characters across the display
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    if(line == 0){
+    if(get_timer() <= 1){
         usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
         OLEDStringDraw (string, 0, 0);
-        line++;
-    } else if(line == 1){// Update line on display.
+    } else if(get_timer() > 1 && get_timer() <= 2){// Update line on display.
         usnprintf (string, sizeof(string), "YAW: %7d DEG", getDispYaw());
         OLEDStringDraw (string, 0, 1);
-        line++;
-    } else if(line == 2){// Update line on display.
+    } else if( get_timer() > 2 && get_timer() <= 3){// Update line on display.
         usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", GetMainDuty());
         OLEDStringDraw (string, 0, 2);
-        line++;
-    } else if(line == 3){// Update line on display.
+    } else if(get_timer() > 3 && get_timer() <= 4){// Update line on display.
         usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", GetTailDuty());
         OLEDStringDraw (string, 0, 3);
-        line = 0;
+    }
+    if(get_timer() > 4)
+    {
+        timer = 0;
+        OrbitOledClear();
     }
 }
