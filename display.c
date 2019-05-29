@@ -22,24 +22,29 @@ initDisplay(void)
     OLEDInitialise();
 }
 
-
+// This display function will display each line on the oled display at time instead of displaying all four lines all togather 
+// at the same time. This will improve the update rate on the oled display and make it faster.
 void
-displayStats(void)
+displayStats(line)
 {
     char string[17];  // 16 characters across the display
-
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
-    // Update line on display.
-    OLEDStringDraw (string, 0, 0);
-    usnprintf (string, sizeof(string), "YAW: %7d DEG", getYaw());
-    // Update line on display.
-    OLEDStringDraw (string, 0, 1);
-    usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", GetMainDuty());
-    // Update line on display.
-    OLEDStringDraw (string, 0, 2);
-    usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", GetTailDuty());
-    // Update line on display.
-    OLEDStringDraw (string, 0, 3);
+    if(line == 0){
+        usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
+        OLEDStringDraw (string, 0, 0);
+        line++;
+    } else if(line == 1)// Update line on display.
+        usnprintf (string, sizeof(string), "YAW: %7d DEG", getDispYaw());
+        OLEDStringDraw (string, 0, 1);
+        line++;
+    } else if(line == 2){// Update line on display.
+        usnprintf (string, sizeof(string), "MAIN PWM: %5d%%", GetMainDuty());
+        OLEDStringDraw (string, 0, 2);
+        line++;
+    } else if(line == 3){// Update line on display.
+        usnprintf (string, sizeof(string), "TAIL PWM: %5d%%", GetTailDuty());
+        OLEDStringDraw (string, 0, 3);
+        line = 0;
+    }
 }
