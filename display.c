@@ -57,6 +57,5 @@ displayStats(void)
     if(get_timer() > 4)
     {
         timer = 0;
-        OrbitOledClear();
     }
 }
