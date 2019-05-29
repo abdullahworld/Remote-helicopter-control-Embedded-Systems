@@ -8,13 +8,7 @@
 void
 initDisplay(void);
 
-
 void
-displayMeanVal(int16_t meanVal, int32_t count);
-
-
-void
-displayStats(void);
-
+displayStats(int16_t line);
 
 #endif /* DISPLAY_H_ */
