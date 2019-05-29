@@ -50,7 +50,8 @@ SysTickIntHandler(void)
     ADCProcessorTrigger(ADC0_BASE, 3); // Initiate a conversion
     piMainUpdate();
     piTailUpdate();
-    g_ulSampCnt++;
+    g_ulSampCnt++;  // Increment counter until it reaches its limit and sits the flag to remove user system delay.
+    set_timer();//update oled display timer
 }
 
 
@@ -114,7 +115,7 @@ main(void)
             updateSwitch();
             updateButtons();
             ProcessAltData();
-            displayStats(0); //display line 0 first, that is altitude. This display function will display each line at time on the oled instead of displaying all four lines at the same time which will make the oled display updates faster.
+            displayStats(); //This display function will display each line at time on the oled instead of displaying all four lines at the same time which will make the oled display updates faster.
             buttonUp();
             buttonDown();
             buttonLeft();
