@@ -1,7 +1,7 @@
 // altitude.c - Finds the altitude using an ADC conversion, uses a circular buffer and takes the average.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 2.5.2019
+// Last modified: 29.5.2019
 
 // Based on ADCdemo1.c by P.J. Bones UCECE
 
@@ -31,15 +31,10 @@ static circBuf_t g_inBuffer;
 static int16_t altitude;
 
 
-//*****************************************************************************
-//
 // The handler for the ADC conversion complete interrupt.
 // Writes to the circular buffer.
-//
-//*****************************************************************************
 void ADCIntHandler(void) {
     uint32_t ulValue;
-
     //
     // Get the single sample from ADC0.  ADC_BASE is defined in
     // inc/hw_memmap.h
@@ -54,7 +49,6 @@ void ADCIntHandler(void) {
 
 
 void initADC (void) {
-    //
     // The ADC0 peripheral must be enabled for configuration and use.
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
 
@@ -63,7 +57,6 @@ void initADC (void) {
     // conversion.
     ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
 
-    //
     // Configure step 0 on sequence 3.  Sample channel 0 (ADC_CTL_CH0) in
     // single-ended mode (default) and configure the interrupt flag
     // (ADC_CTL_IE) to be set when the sample is done.  Tell the ADC logic
@@ -76,15 +69,12 @@ void initADC (void) {
     ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH9 | ADC_CTL_IE |
                              ADC_CTL_END);
 
-    //
     // Since sample sequence 3 is now configured, it must be enabled.
     ADCSequenceEnable(ADC0_BASE, 3);
 
-    //
     // Register the interrupt handler
     ADCIntRegister (ADC0_BASE, 3, ADCIntHandler);
 
-    //
     // Enable interrupts for ADC0 sequence 3 (clears any outstanding interrupts)
     ADCIntEnable(ADC0_BASE, 3);
 }
@@ -110,10 +100,11 @@ void ProcessAltData(void) {
 
 
 void initADCCircBuf(void) {
-    initCircBuf (&g_inBuffer, BUF_SIZE);
+    initCircBuf(&g_inBuffer, BUF_SIZE);
 }
 
 
+// Returns the rounded current altitude
 int16_t getAlt(void) {
     altitude = ((100*2*(helicopter_landed_value-meanVal)+VOLTAGE_SENSOR_RANGE))/(2*VOLTAGE_SENSOR_RANGE);
     return altitude;

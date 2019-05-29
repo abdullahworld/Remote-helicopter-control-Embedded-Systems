@@ -94,14 +94,13 @@ initAll(void)
     initADC();
     initADCCircBuf();
     initResetBut();
-    initButtons();  // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
+    initButtons(); // Initialises 4 pushbuttons (UP, DOWN, LEFT, RIGHT)
     initSwitch();
     initDisplay();
     initYawRef();
     initYawGPIO();
     initSysTick();
-    // Enable interrupts to the processor.
-    IntMasterEnable();
+    IntMasterEnable(); // Enable interrupts to the processor.
 }
 
 
@@ -115,7 +114,7 @@ main(void)
             updateSwitch();
             updateButtons();
             ProcessAltData();
-            //displayStats(); Not required for the demonstration
+            displayStats();
             buttonUp();
             buttonDown();
             buttonLeft();

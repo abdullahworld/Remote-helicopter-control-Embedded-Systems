@@ -1,7 +1,7 @@
 // control.c - Controls the different states of the program and the positioning of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 21.5.2019
+// Last modified: 29.5.2019
 
 
 #include <stdint.h>
@@ -14,31 +14,33 @@
 
 
 // Constants
-#define OUTPUT_MAX        95
-#define OUTPUT_MIN        5
-#define PWM_FIXED_RATE_HZ 200
-#define M_KP              0.55 // Proportional gain for main motor Kp
-#define M_KP_LANDING      0.0005 // Proportional gain for main motor Kp
-#define M_KI              0.18 // Integral gain for main motor Ki
-#define T_KP              0.22 // Proportional gain for tail motor Kp
-#define T_KI              0.14
-#define T_DELTA           0.01 // dt
+#define OUTPUT_MAX        95     // Largest possible duty cycle signal for the motors
+#define OUTPUT_MIN        5      // Smallest possible duty cycle signal for the motors
+#define PWM_FIXED_RATE_HZ 200    // Fixed rate of the PWM signal for the motors
+#define M_KP              0.55   // Proportional gain for main motor
+#define M_KP_LANDING      0.0005 // Proportional gain for main motor
+#define M_KI              0.18   // Integral gain for main motor
+#define T_KP              0.22   // Proportional gain for tail motor
+#define T_KI              0.14   // Integral gain for the tail motor
+#define T_DELTA           0.01   // Time increment for integral control
+#define ON_PULSE_CNT      80
+#define OFF_PULSE_CNT     350
 
 
 // Sets variables
-enum modes {Initialising, Flying, Landed, Landing};
-static enum modes mode = Landed;
-static uint32_t count;
-static uint8_t setAlt = 0;
-static int16_t setYaw = 0;
+enum modes {Initialising, Flying, Landed, Landing}; // Program states
+static enum modes mode = Landed; // Initial state
+static uint32_t count; // Count for the pulsing of the motors in the reference state
+static uint8_t setAlt = 0; // Initial altitude the helicopter is set to
+static int16_t setYaw = 0; // Initial yaw angle the helicopter is set to
 
 
-// Starts routine to find reference
+// Starts a routine to find the reference location where the helicopter faces the front
 void
 findRefStart(void)
 {
-    activateMainPWM();
-    mode = Initialising;
+    activateMainPWM(); // Turns on the main motor
+    mode = Initialising; // Changes program state
 }
 
 
@@ -52,6 +54,7 @@ findRefStop(void)
 }
 
 
+// Changes the program to the landing state
 void
 modeLanding(void)
 {
@@ -59,6 +62,7 @@ modeLanding(void)
 }
 
 
+// Reset set values for altitude and yaw when the program is changed to the landing state
 void
 landingSet(void) {
     static bool LandingFlag = 0;
@@ -70,13 +74,14 @@ landingSet(void) {
 }
 
 
+// Checks to see if the helicopter has landed. It turns of the motors and performs a reset when it is landed
 void
 landedCheck(void) {
-    if (mode == Landing && getAlt() <= 0) {
-        deactivateMainPWM();
-        deactivateTailPWM();
+    if (mode == Landing && getAlt() <= 0) { // Checks to see if the helicopter has landed
+        deactivateMainPWM(); // Turns off main motor
+        deactivateTailPWM(); // Turns off tail motor
         mode = Landed;
-        SysCtlReset();
+        SysCtlReset(); // Soft reset
     }
 }
 
@@ -89,10 +94,10 @@ refPulse(void)
         if (count == 0) {
             activateTailPWM();
             count++;
-        } else if (count == 80) {
+        } else if (count == ON_PULSE_CNT) {
             deactivateTailPWM();
             count++;
-        } else if (count == 350) {
+        } else if (count == OFF_PULSE_CNT) {
             count = 0;
         } else {
             count++;
@@ -101,41 +106,39 @@ refPulse(void)
 }
 
 
-// Returns a string of the mode
+// Returns a string of the current mode
 char*
 getMode(void)
 {
-static char charInitialising[] = "Initialising";
-static char charLanded[] = "Landed";
-static char charFlying[] = "Flying";
-static char charLanding[] = "Landing";
-
     if (mode == Flying) {
-        return charFlying;
+        return "Flying";
     } else if (mode == Landing) {
-        return charLanding;
+        return "Landing";
     } else if (mode == Initialising) {
-        return charInitialising;
+        return "Initialising";
     } else {
-        return charLanded;
+        return "Landed";
     }
 }
 
 
-// Increases the desired altitude by 10%
+// Increases the set altitude by 10%
 void
 incrAlt(void)
 {
+    // Limits the set altitude to <=100% and can only be changed while landed or flying
+
     if (setAlt < 100 && mode != Initialising && mode != Landing) {
         setAlt += 10;
     }
 }
 
 
-// Reduces the desire altitude by 10%
+// Decreases the set altitude by 10%
 void
 decrAlt(void)
 {
+    // Limits the set altitude to >=0% and can only be changed while landed or flying
     if (setAlt > 0 && mode != Initialising && mode != Landing) {
         setAlt -= 10;
     }
@@ -143,10 +146,11 @@ decrAlt(void)
 }
 
 
-// Increases the desired yaw by 15 degrees
+// Increases the set yaw by 15 degrees
 void
 incrYaw(void)
 {
+    // Limits the set yaw to <=180 degrees and can only be changed while landed or flying
     if (setYaw < 180 && mode != Initialising && mode != Landing) {
         setYaw += 15;
     }
@@ -154,17 +158,18 @@ incrYaw(void)
 }
 
 
-// Decreases the desired yaw by 15 degrees
+// Decreases the set yaw by 15 degrees
 void
 decrYaw(void)
 {
+    // Limits the set yaw to >=-180 degrees and can only be changed while landed or flying
     if (setYaw > -180 && mode != Initialising && mode != Landing) {
         setYaw -= 15;
     }
 }
 
 
-// Returns the desired altitude
+// Returns the current set altitude
 uint8_t
 getSetAlt(void)
 {
@@ -172,7 +177,7 @@ getSetAlt(void)
 }
 
 
-// Returns the desired yaw
+// Returns the current set yaw
 int16_t
 getSetYaw(void)
 {
@@ -184,23 +189,24 @@ getSetYaw(void)
 void
 piMainUpdate(void)
 {
-    if (mode == Flying || mode == Landing) {
+    if (mode == Flying || mode == Landing) { // Control only occurs at these states
         static double I;
         double P;
         double control;
         double error;
         double dI;
 
-        error = setAlt - getAlt(); // error = set Altitude value - actual Altitude value
+        error = setAlt - getAlt(); // Error between the set altitude and the actual altitude
 
         if (mode != Landing) {
-            P = M_KP * error;
+            P = M_KP * error; // Proportional control
         } else {
-            P = M_KP_LANDING * error;
+            P = M_KP_LANDING * error; // Proportional control for landing
         }
 
-        dI = M_KI * error * T_DELTA;
-        control = P + (I + dI); // The controller output
+        dI = M_KI * error * T_DELTA; // Integral control
+
+        control = P + (I + dI); // The combined elements of PI control
 
         // Enforces output limits
         if (control > OUTPUT_MAX) {
@@ -208,37 +214,38 @@ piMainUpdate(void)
         } else if (control < OUTPUT_MIN) {
             control = OUTPUT_MIN;
         } else {
-            I += dI;
+            I += dI; // Accumulates the a history of the error in the integral
         }
-        setMainPWM(PWM_FIXED_RATE_HZ, control);
+        setMainPWM(PWM_FIXED_RATE_HZ, control); // Updates the PWM duty cycle
     }
 }
 
 
-// Updates the PI controller for the tail rotor based of the desired position and the current position
+// Updates the PI controller for the tail rotor based on the desired position and the current position
 void
 piTailUpdate(void)
 {
-    if (mode == Flying || mode == Landing) {
+    if (mode == Flying || mode == Landing) { // Control only occurs at these states
        double error;
        double P;
        double dI;
        double control; // The controller output
        static double I;
 
-       error = setYaw - getYaw(); // error = set YAW value - actual YAW value
-       P = T_KP * error;
-       dI = T_KI * error * T_DELTA;
+       error = setYaw - getYaw(); // Error between the set yaw and the actual yaw
 
-       control = P + (I + dI);
+       P = T_KP * error; // Proportional control
+       dI = T_KI * error * T_DELTA; // Integral control
+       control = P + (I + dI); // The combined elements of PI control
+
        // Enforces output limits
        if (control > OUTPUT_MAX) {
            control = OUTPUT_MAX;
        } else if (control < OUTPUT_MIN) {
            control = OUTPUT_MIN;
        } else {
-           I += dI;
+           I += dI; // Accumulates the a history of the error in the integral
        }
-       setTailPWM(PWM_FIXED_RATE_HZ, control);
+       setTailPWM(PWM_FIXED_RATE_HZ, control); // Updates the PWM duty cycle
     }
 }

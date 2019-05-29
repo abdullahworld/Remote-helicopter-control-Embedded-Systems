@@ -48,9 +48,7 @@
 char statusStr[MAX_STR_LEN + 1];
 
 
-//********************************************************
 // initialiseUSB_UART - 8 bits, 1 stop bit, no parity
-//********************************************************
 void
 initialiseUSB_UART(void)
 {

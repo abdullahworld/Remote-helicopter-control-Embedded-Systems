@@ -12,7 +12,7 @@
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
-#include "driverlib/pin_map.h" //Needed for pin configure
+#include "driverlib/pin_map.h"
 #include "driverlib/debug.h"
 #include "driverlib/gpio.h"
 #include "driverlib/pwm.h"
@@ -49,7 +49,7 @@
 #define PWM_TAIL_PERIPH_GPIO SYSCTL_PERIPH_GPIOF
 #define PWM_TAIL_GPIO_BASE   GPIO_PORTF_BASE
 #define PWM_TAIL_GPIO_CONFIG GPIO_PF1_M1PWM5
-#define PWM_TAIL_GPIO_PIN    GPIO_PIN_1 // Causes the red LED to turn on with nothing connected
+#define PWM_TAIL_GPIO_PIN    GPIO_PIN_1 // Causes the red LED to activate on the TIVA board
 
 
 //Function to set the freq, duty cycle of M0PWM7
