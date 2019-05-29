@@ -110,17 +110,17 @@ main(void)
     initAll();
     while (1)
     {
-        if (g_ulSampCnt > 0) { // Set to approximately <100 Hz
-            updateSwitch(); // Checks to see if the switch has been changed
-            updateButtons(); // Checks to see if a button has been pressed
+        if (g_ulSampCnt > 0) { // Set to approximately <100 Hz, it took 5,480,417 clock cycles to get to this point
+            updateSwitch();
+            updateButtons();
             ProcessAltData();
-            displayStats(); // Displays helicopter metrics
-            buttonUp(); // Checks to see if the button state has changed
+            displayStats(0); //display line 0 first, that is altitude. This display function will display each line at time on the oled instead of displaying all four lines at the same time which will make the oled display updates faster.
+            buttonUp();
             buttonDown();
             buttonLeft();
             buttonRight();
             switched();
-            buttonReset(); // Checks to see if the software reset button has been pressed
+            buttonReset();
             consoleMsgSpaced();
             landingSet();
             landedCheck();
