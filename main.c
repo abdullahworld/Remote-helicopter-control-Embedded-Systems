@@ -111,16 +111,16 @@ main(void)
     while (1)
     {
         if (g_ulSampCnt > 0) { // Set to approximately <100 Hz
-            updateSwitch();
-            updateButtons();
+            updateSwitch(); // Checks to see if the switch has been changed
+            updateButtons(); // Checks to see if a button has been pressed
             ProcessAltData();
-            displayStats();
-            buttonUp();
+            displayStats(); // Displays helicopter metrics
+            buttonUp(); // Checks to see if the button state has changed
             buttonDown();
             buttonLeft();
             buttonRight();
             switched();
-            buttonReset();
+            buttonReset(); // Checks to see if the software reset button has been pressed
             consoleMsgSpaced();
             landingSet();
             landedCheck();
