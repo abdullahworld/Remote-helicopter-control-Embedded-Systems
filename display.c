@@ -22,10 +22,8 @@ initDisplay(void)
     OLEDInitialise();
 }
 
-// This display function will display each line on the oled display at time instead of displaying all four lines all togather 
-// at the same time. This will improve the update rate on the oled display and make it faster.
 void
-displayStats(line)
+displayStats(int16_t line)
 {
     char string[17];  // 16 characters across the display
     // Form a new string for the line.  The maximum width specified for the
@@ -34,7 +32,7 @@ displayStats(line)
         usnprintf (string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
         OLEDStringDraw (string, 0, 0);
         line++;
-    } else if(line == 1)// Update line on display.
+    } else if(line == 1){// Update line on display.
         usnprintf (string, sizeof(string), "YAW: %7d DEG", getDispYaw());
         OLEDStringDraw (string, 0, 1);
         line++;
