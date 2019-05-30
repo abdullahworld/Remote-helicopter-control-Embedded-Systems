@@ -23,15 +23,15 @@
 #define T_KP              0.22   // Proportional gain for tail motor
 #define T_KI              0.14   // Integral gain for the tail motor
 #define T_DELTA           0.01   // Time increment for integral control
-#define ON_PULSE_CNT      80     // The number of loops that the pulse is on for
-#define OFF_PULSE_CNT     350    // The number of loops tha tthe pulse is off for
+#define ON_PULSE_CNT      50     // The number of loops that the pulse is on for
+#define OFF_PULSE_CNT     400    // The number of loops tha tthe pulse is off for
 
 
 // Sets variables
 enum modes {Initialising, Flying, Landed, Landing}; // Program states
 static enum modes mode = Landed; // Initial state
 static uint32_t count; // Count for the pulsing of the motors in the reference state
-static uint8_t setAlt = 10; // Initial altitude the helicopter is set to
+static uint8_t setAlt = 0; // Initial altitude the helicopter is set to
 static int16_t setYaw = 0; // Initial yaw angle the helicopter is set to
 
 
@@ -128,7 +128,7 @@ incrAlt(void)
 {
     // Limits the set altitude to <=100% and can only be changed while landed or flying
 
-    if (setAlt < 100 && mode != Initialising && mode != Landing) {
+    if (setAlt < 100 && mode == Flying) {
         setAlt += 10;
     }
 }
@@ -139,7 +139,7 @@ void
 decrAlt(void)
 {
     // Limits the set altitude to >=0% and can only be changed while landed or flying
-    if (setAlt > 0 && mode != Initialising && mode != Landing) {
+    if (setAlt > 0 && mode == Flying) {
         setAlt -= 10;
     }
 
@@ -151,10 +151,9 @@ void
 incrYaw(void)
 {
     // Limits the set yaw to <=180 degrees and can only be changed while landed or flying
-    if (setYaw < 180 && mode != Initialising && mode != Landing) {
+    if (setYaw < 180 && mode == Flying) {
         setYaw += 15;
     }
-
 }
 
 
@@ -163,7 +162,7 @@ void
 decrYaw(void)
 {
     // Limits the set yaw to >=-180 degrees and can only be changed while landed or flying
-    if (setYaw > -180 && mode != Initialising && mode != Landing) {
+    if (setYaw > -180 && mode == Flying) {
         setYaw -= 15;
     }
 }
@@ -225,7 +224,9 @@ piMainUpdate(void)
 void
 piTailUpdate(void)
 {
-    if (mode == Flying || mode == Landing) { // Control only occurs at these states
+    static bool takeOff;
+    if ((mode == Flying || mode == Landing) && takeOff == 1) // PI control only occurs at these states after take off
+    {
        double error;
        double P;
        double dI;
@@ -247,5 +248,7 @@ piTailUpdate(void)
            I += dI; // Accumulates the a history of the error in the integral
        }
        setTailPWM(PWM_FIXED_RATE_HZ, control); // Updates the PWM duty cycle
+    } else if (setAlt >= 10) {
+        takeOff = 1;
     }
 }
