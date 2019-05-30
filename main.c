@@ -1,7 +1,7 @@
-// main.c - A program that controls the flight of a helicopter.
+// main.c - A program that controls a model helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 21.5.2019
+// Last modified: 30.5.2019
 
 // Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
@@ -66,6 +66,7 @@ initClock(void)
 }
 
 
+// Initialises the SysTick Timer
 void
 initSysTick(void)
 {
@@ -111,11 +112,11 @@ main(void)
     initAll();
     while (1)
     {
-        if (g_ulSampCnt > 0) { // Set to approximately <100 Hz, it took 5,480,417 clock cycles to get to this point
+        if (g_ulSampCnt > 0) { // Set approximately to <100 Hz. It took 5,480,417 clock cycles to get to this point
             updateSwitch();
             updateButtons();
             ProcessAltData();
-            displayStats(); //This display function will display each line at time on the oled instead of displaying all four lines at the same time which will make the oled display updates faster.
+            displayStats(); // Updates the stat for a different line every loop on the OLED screen
             buttonUp();
             buttonDown();
             buttonLeft();

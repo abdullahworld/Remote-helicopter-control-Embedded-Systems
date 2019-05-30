@@ -5,26 +5,27 @@
 #include <stdint.h>
 
 
+// ISR for quadrature encoding
 void
 YawIntHandler(void);
 
 
+// Initialises the GPIO pin register for yaw channels A and B
 void
 initYawGPIO(void);
 
 
+// Returns the yaw in degrees with respect to the reference point
 int16_t
 getYaw(void);
 
 
-int16_t
-getDispYaw(void);
-
-
+// ISR for finding the yaw reference
 void
 YawRefIntHandler(void);
 
 
+// Initialises the GPIO pin register for the yaw reference point
 void
 initYawRef(void);
 

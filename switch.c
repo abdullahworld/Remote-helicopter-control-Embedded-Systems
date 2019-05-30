@@ -1,7 +1,7 @@
 // switch.c - Makes the switch work.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 28.4.2019
+// Last modified: 30.5.2019
 
 
 #include <stdint.h>
@@ -18,7 +18,7 @@
 #define SWITCH_PORT GPIO_PORTA_BASE
 
 
-// Set variables
+// Sets variables
 static bool switchState;
 static bool flyingFlag = false;
 
@@ -54,8 +54,8 @@ checkSwitch(void)
 }
 
 
-// Checks to see if the state of the switch has been changed
-// Starts the initialising state when changed
+/* Checks to see if the state of the switch has been changed.
+   Changes the program to the initialising state when changed */
 void
 switched(void)
 {

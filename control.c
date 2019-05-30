@@ -1,7 +1,7 @@
 // control.c - Controls the different states of the program and the positioning of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 29.5.2019
+// Last modified: 30.5.2019
 
 
 #include <stdint.h>
@@ -23,15 +23,15 @@
 #define T_KP              0.22   // Proportional gain for tail motor
 #define T_KI              0.14   // Integral gain for the tail motor
 #define T_DELTA           0.01   // Time increment for integral control
-#define ON_PULSE_CNT      80
-#define OFF_PULSE_CNT     350
+#define ON_PULSE_CNT      80     // The number of loops that the pulse is on for
+#define OFF_PULSE_CNT     350    // The number of loops tha tthe pulse is off for
 
 
 // Sets variables
 enum modes {Initialising, Flying, Landed, Landing}; // Program states
 static enum modes mode = Landed; // Initial state
 static uint32_t count; // Count for the pulsing of the motors in the reference state
-static uint8_t setAlt = 0; // Initial altitude the helicopter is set to
+static uint8_t setAlt = 10; // Initial altitude the helicopter is set to
 static int16_t setYaw = 0; // Initial yaw angle the helicopter is set to
 
 
@@ -80,13 +80,13 @@ landedCheck(void) {
     if (mode == Landing && getAlt() <= 0) { // Checks to see if the helicopter has landed
         deactivateMainPWM(); // Turns off main motor
         deactivateTailPWM(); // Turns off tail motor
-        mode = Landed;
+        mode = Landed; // Changes the program state
         SysCtlReset(); // Soft reset
     }
 }
 
 
-// Pules the PWM of the tail rotor to find the reference point
+// Pulses the PWM of the tail motor to find the reference point
 void
 refPulse(void)
 {
@@ -185,7 +185,7 @@ getSetYaw(void)
 }
 
 
-// Updates the PI controller for the main rotor based of the desired position and the current position
+// Updates the PI controller for the main motor based of the set position and the current position
 void
 piMainUpdate(void)
 {
@@ -221,7 +221,7 @@ piMainUpdate(void)
 }
 
 
-// Updates the PI controller for the tail rotor based on the desired position and the current position
+// Updates the PI controller for the tail motor based on the set position and the current position
 void
 piTailUpdate(void)
 {

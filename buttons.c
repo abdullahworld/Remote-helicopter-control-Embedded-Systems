@@ -1,19 +1,12 @@
-// *******************************************************
-// 
-// buttons4.c
-//
-// Support for a set of FOUR specific buttons on the Tiva/Orbit.
-// ENCE361 sample code.
-// The buttons are:  UP and DOWN (on the Orbit daughterboard) plus
-// LEFT and RIGHT on the Tiva.
-//
-// Note that pin PF0 (the pin for the RIGHT pushbutton - SW2 on
-//  the Tiva board) needs special treatment - See PhilsNotesOnTiva.rtf.
-//
-// P.J. Bones UCECE
-// Last modified:  7.2.2018
-// 
-// *******************************************************
+/* buttons.c - Support for a set of FOUR specific buttons on the Tiva/Orbit.
+   The buttons are:  UP and DOWN (on the Orbit daughterboard) plus
+   LEFT and RIGHT on the Tiva. */
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 30.5.2019
+
+// Based on buttons4.c by P.J. Bones UCECE
+// Additional functions have been added from line 141 onwards
 
 
 #include <stdint.h>

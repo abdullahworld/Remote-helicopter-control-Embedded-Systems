@@ -1,7 +1,7 @@
-// altitude.c - Finds the altitude using an ADC conversion, uses a circular buffer and takes the average.
+// altitude.c - Reads the altitude using an ADC conversion and the average of a circular buffer.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 29.5.2019
+// Last modified: 30.5.2019
 
 // Based on ADCdemo1.c by P.J. Bones UCECE
 
@@ -16,9 +16,9 @@
 
 
 // Constants
-#define BUF_SIZE 10 // Matches number of samples per period and enough will not significantly deviate
-#define SAMPLE_RATE_HZ 100 // jitter of 4Hz
-#define VOLTAGE_SENSOR_RANGE 800 // in mV
+#define BUF_SIZE 25 // Matches the number of samples per period of jitter, ensuring it will not significantly deviate
+#define SAMPLE_RATE_HZ 100 // The sampling rate for altitude readings (well over the jitter of 4Hz)
+#define VOLTAGE_SENSOR_RANGE 800 // The voltage range for the height sensor [mV]
 
 
 // Sets variables
@@ -31,8 +31,8 @@ static circBuf_t g_inBuffer;
 static int16_t altitude;
 
 
-// The handler for the ADC conversion complete interrupt.
-// Writes to the circular buffer.
+/* The handler for the ADC conversion complete interrupt.
+   Writes to the circular buffer */
 void ADCIntHandler(void) {
     uint32_t ulValue;
     //
@@ -48,6 +48,7 @@ void ADCIntHandler(void) {
 }
 
 
+// Enables and configures ADC
 void initADC (void) {
     // The ADC0 peripheral must be enabled for configuration and use.
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
@@ -80,6 +81,7 @@ void initADC (void) {
 }
 
 
+// Calculates the average altitude reading from the circular buffer and sets the landed value
 void ProcessAltData(void) {
     // Background task: calculate the (approximate) mean of the values in the
     // circular buffer and display it, together with the sample number.
@@ -99,6 +101,7 @@ void ProcessAltData(void) {
 }
 
 
+// Initalises the circular buffer for altitude readings
 void initADCCircBuf(void) {
     initCircBuf(&g_inBuffer, BUF_SIZE);
 }

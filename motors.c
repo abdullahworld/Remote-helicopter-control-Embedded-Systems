@@ -52,7 +52,7 @@
 #define PWM_TAIL_GPIO_PIN    GPIO_PIN_1 // Causes the red LED to activate on the TIVA board
 
 
-//Function to set the freq, duty cycle of M0PWM7
+// Sets the frequency and duty cycle of the PWM for the main motor
 void
 setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 {
@@ -66,8 +66,9 @@ setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 }
 
 
+// Sets the frequency and duty cycle of the PWM for the tail motor
 void
-setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
+setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 {
     // Calculate the PWM period corresponding to the freq.
     uint32_t ui32Period = SysCtlClockGet() / PWM_DIVIDER / ui32Freq;
@@ -78,7 +79,7 @@ setTailPWM (uint32_t ui32Freq, uint32_t ui32Duty)
 }
 
 
-// Returns the rounded duty cycle of the main rotor
+// Returns the rounded duty cycle of the main motor
 uint16_t
 GetMainDuty(void)
 {
@@ -88,7 +89,7 @@ GetMainDuty(void)
 }
 
 
-// Returns the rounded duty cycle of the tail rotor
+// Returns the rounded duty cycle of the tail motor
 uint16_t
 GetTailDuty(void)
 {
@@ -98,15 +99,15 @@ GetTailDuty(void)
 }
 
 
-// Initialises the PWM for the main rotor
+// Initialises the PWM for the main motor
 void
 initialiseMainPWM(void)
 {
     SysCtlPWMClockSet(PWM_DIVIDER_CODE);
 
     // As a precaution, make sure that the peripherals used are reset
-    SysCtlPeripheralReset (PWM_MAIN_PERIPH_GPIO); // Used for PWM output
-    SysCtlPeripheralReset (PWM_MAIN_PERIPH_PWM);  // Main Rotor PWM
+    SysCtlPeripheralReset(PWM_MAIN_PERIPH_GPIO); // Used for PWM output
+    SysCtlPeripheralReset(PWM_MAIN_PERIPH_PWM);  // Main Rotor PWM
 
     SysCtlPeripheralEnable(PWM_MAIN_PERIPH_PWM);
     SysCtlPeripheralEnable(PWM_MAIN_PERIPH_GPIO);
@@ -124,12 +125,12 @@ initialiseMainPWM(void)
 }
 
 
-// Initialises the PWM for the tail rotor
+// Initialises the PWM for the tail motor
 void
 initialiseTailPWM(void)
 {
-    SysCtlPeripheralReset (PWM_TAIL_PERIPH_GPIO); // Used for PWM output
-    SysCtlPeripheralReset (PWM_TAIL_PERIPH_PWM);  // Main Rotor PWM
+    SysCtlPeripheralReset(PWM_TAIL_PERIPH_GPIO); // Used for PWM output
+    SysCtlPeripheralReset(PWM_TAIL_PERIPH_PWM);  // Main Rotor PWM
 
     SysCtlPeripheralEnable(PWM_TAIL_PERIPH_PWM);
     SysCtlPeripheralEnable(PWM_TAIL_PERIPH_GPIO);
@@ -149,7 +150,7 @@ initialiseTailPWM(void)
 }
 
 
-// Enables the PWM output for the main rotor
+// Enables the PWM output for the main motor
 void
 activateMainPWM(void)
 {
@@ -157,7 +158,7 @@ activateMainPWM(void)
 }
 
 
-// Enables the PWM output for the tail rotor
+// Enables the PWM output for the tail motor
 void
 activateTailPWM(void)
 {
@@ -165,7 +166,7 @@ activateTailPWM(void)
 }
 
 
-// Disables the PWM output for the main rotor
+// Disables the PWM output for the main motor
 void
 deactivateMainPWM(void)
 {

@@ -44,10 +44,10 @@ YawIntHandler(void)
             switch(nextState)
             {
             case B:
-                slots--;
+                slots--; // Decreases the slot count (anticlockwise)
                 break;
             case D:
-                slots++;
+                slots++; // Increases the slot count (clockwise)
                 break;
             }
             break;
@@ -55,10 +55,10 @@ YawIntHandler(void)
             switch(nextState)
             {
             case A:
-                slots++;
+                slots++; // Increases the slot count (clockwise)
                 break;
             case C:
-                slots--;
+                slots--; // Decreases the slot count (anticlockwise)
                 break;
             }
             break;
@@ -66,10 +66,10 @@ YawIntHandler(void)
             switch(nextState)
             {
             case B:
-                slots++;
+                slots++; // Increases the slot count (clockwise)
                 break;
             case D:
-                slots--;
+                slots--; // Decreases the slot count (anticlockwise)
                 break;
             }
             break;
@@ -77,10 +77,10 @@ YawIntHandler(void)
             switch(nextState)
             {
             case A:
-                slots--;
+                slots--; // Decreases the slot count (anticlockwise)
                 break;
             case C:
-                slots++;
+                slots++; // Increases the slot count (clockwise)
                 break;
             }
             break;

@@ -1,7 +1,7 @@
-// uart.c - Controls the UART serial output.
+// uart.c - Functions for UART serial output.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 21.5.2019
+// Last modified: 30.5.2019
 
 // Based on uartDemo.c by by P.J. Bones UCECE
 
@@ -41,14 +41,14 @@
 #define UART_USB_GPIO_PIN_RX    GPIO_PIN_0
 #define UART_USB_GPIO_PIN_TX    GPIO_PIN_1
 #define UART_USB_GPIO_PINS      UART_USB_GPIO_PIN_RX | UART_USB_GPIO_PIN_TX
-#define SPACED_COUNT 20
+#define SPACED_COUNT 20 // The number of loops between printing to the console
 
 
 // Set variable
 char statusStr[MAX_STR_LEN + 1];
 
 
-// initialiseUSB_UART - 8 bits, 1 stop bit, no parity
+// Initialise USB_UART - 8 bits, 1 stop bit, no parity
 void
 initialiseUSB_UART(void)
 {
@@ -86,23 +86,24 @@ UARTSend (char *pucBuffer)
 }
 
 
+// Forms and sends messages to the console
 void
 consoleMsg(void)
 {
-    // Form and send a status message to the console
-    usprintf (statusStr, "Alt: %d/%d%%\r\n", getAlt(), getSetAlt()); // * usprintf
+    usprintf (statusStr, "Alt: %d/%d%%\r\n", getAlt(), getSetAlt()); // Prints the current and set altitude [%]
     UARTSend (statusStr);
-    usprintf (statusStr, "Yaw: %d/%d deg\r\n", getYaw(), getSetYaw()); // * usprintf
+    usprintf (statusStr, "Yaw: %d/%d deg\r\n", getYaw(), getSetYaw()); // Prints the current and set yaw [%]
     UARTSend (statusStr);
-    usprintf (statusStr, "Main: %d%%\r\n", GetMainDuty(), GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Main: %d%%\r\n", GetMainDuty(), GetTailDuty()); // Prints the current main motor duty cycle [%]
     UARTSend (statusStr);
-    usprintf (statusStr, "Tail: %d%%\r\n", GetTailDuty()); // * usprintf
+    usprintf (statusStr, "Tail: %d%%\r\n", GetTailDuty()); // Prints the current tail motor duty cycle [%]
     UARTSend (statusStr);
-    usprintf (statusStr, "Mode: %s\r\n", getMode()); // * usprintf
+    usprintf (statusStr, "Mode: %s\r\n", getMode()); // Prints the program state
     UARTSend (statusStr);
 }
 
 
+// Sends messages to the console periodically
 void
 consoleMsgSpaced(void)
 {
