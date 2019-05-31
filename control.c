@@ -1,7 +1,7 @@
 // control.c - Controls the different states of the program and the positioning of the helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 30.5.2019
+// Last modified: 1.6.2019
 
 
 #include <stdint.h>

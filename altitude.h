@@ -2,6 +2,14 @@
 #define ALTITUDE_H_
 
 
+// altitude.h - Reads the altitude using an ADC conversion and the average of a circular buffer.
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 1.6.2019
+
+// Based on ADCdemo1.c by P.J. Bones UCECE
+
+
 #include <stdint.h>
 
 

@@ -1,18 +1,17 @@
 #ifndef BUTTONS_H_
 #define BUTTONS_H_
 
-// *******************************************************
-// buttons4.h
-//
-// Support for a set of FOUR specific buttons on the Tiva/Orbit.
-// ENCE361 sample code.
-// The buttons are:  UP and DOWN (on the Orbit daughterboard) plus
-// LEFT and RIGHT on the Tiva.
-//
-// P.J. Bones UCECE
-// Last modified:  7.2.2018
-// 
-// *******************************************************
+
+/* buttons.h - Support for a set of FOUR specific buttons on the Tiva/Orbit.
+   The buttons are:  UP and DOWN (on the Orbit daughterboard) plus
+   LEFT and RIGHT on the Tiva. */
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 1.6.2019
+
+// Based on buttons4.c by P.J. Bones UCECE
+// Additional functions have been added
+
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -72,26 +71,32 @@ enum butStates
 checkButton (uint8_t butName);
 
 
+// Initialises the GPIO pin for the software reset button
 void
 initResetBut(void);
 
 
+// Checks to see if the up button has been pushed
 void
 buttonUp(void);
 
 
+// Checks to see if the down button has been pushed
 void
 buttonDown(void);
 
 
+// Checks to see if the left button has been pushed
 void
 buttonLeft(void);
 
 
+// Checks to see if the right button has been pushed
 void
 buttonRight(void);
 
 
+// Performs a software reset when the designated button is pressed
 void
 buttonReset(void);
 

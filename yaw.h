@@ -2,6 +2,12 @@
 #define YAW_H_
 
 
+// yaw.h - Controls the yaw of the helicopter
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 1.6.2019
+
+
 #include <stdint.h>
 
 

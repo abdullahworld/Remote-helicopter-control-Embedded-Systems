@@ -1,7 +1,7 @@
 // uart.c - Functions for UART serial output.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 30.5.2019
+// Last modified: 1.6.2019
 
 // Based on uartDemo.c by by P.J. Bones UCECE
 
@@ -28,7 +28,7 @@
 #include "control.h"
 
 
-// Constants
+// Constant
 #define MAX_STR_LEN 16
 
 

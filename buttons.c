@@ -3,10 +3,10 @@
    LEFT and RIGHT on the Tiva. */
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 30.5.2019
+// Last modified: 1.6.2019
 
 // Based on buttons4.c by P.J. Bones UCECE
-// Additional functions have been added from line 141 onwards
+// Additional functions have been added
 
 
 #include <stdint.h>
@@ -19,6 +19,11 @@
 #include "inc/tm4c123gh6pm.h"  // Board specific defines (for PF0)
 #include "buttons.h"
 #include "control.h"
+
+
+// Constants
+#define SOFT_RESET_PIN  GPIO_PIN_6
+#define SOFT_RESET_PORT GPIO_PORTA_BASE
 
 
 // *******************************************************
@@ -135,7 +140,7 @@ checkButton (uint8_t butName)
 }
 
 
-// Initialises the GPIO pin for the soft reset button
+// Initialises the GPIO pin for the software reset button
 void
 initResetBut(void)
 {
@@ -186,11 +191,11 @@ buttonRight(void)
 }
 
 
-// Does a soft reset when the designated button is pushed
+// Performs a software reset when the designated button is pressed
 void
 buttonReset(void)
 {
-    if (GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_6) == 0) {
+    if (GPIOPinRead(SOFT_RESET_PORT, SOFT_RESET_PIN) == 0) {
         SysCtlReset();
     }
 }

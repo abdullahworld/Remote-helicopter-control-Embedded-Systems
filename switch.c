@@ -1,7 +1,7 @@
-// switch.c - Makes the switch work.
+// switch.c - Functions for the switch on the ORBIT BoosterPack.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 30.5.2019
+// Last modified: 1.6.2019
 
 
 #include <stdint.h>
@@ -14,7 +14,7 @@
 
 
 // Constants
-#define SWITCH_PIN GPIO_PIN_7
+#define SWITCH_PIN  GPIO_PIN_7
 #define SWITCH_PORT GPIO_PORTA_BASE
 
 

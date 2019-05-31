@@ -2,6 +2,12 @@
 #define CONTROL_H_
 
 
+// control.h - Controls the different states of the program and the positioning of the helicopter.
+
+// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+// Last modified: 1.6.2019
+
+
 #include <stdint.h>
 
 

@@ -1,7 +1,7 @@
 // main.c - A program that controls a model helicopter.
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 30.5.2019
+// Last modified: 1.6.2019
 
 // Based on ADCdemo1.c by P.J. Bones UCECE
 // Based on the 'convert' series from 2016
@@ -50,8 +50,8 @@ SysTickIntHandler(void)
     ADCProcessorTrigger(ADC0_BASE, 3); // Initiate a conversion
     piMainUpdate();
     piTailUpdate();
-    g_ulSampCnt++;  // Increment counter until it reaches its limit and sits the flag to remove user system delay.
-    set_timer();//update oled display timer
+    g_ulSampCnt++; // Increment counter until it reaches its limit and sits the flag to remove user system delay.
+    incrementDispTimer(); // Updates the OLED display timer
 }
 
 
@@ -60,7 +60,7 @@ void
 initClock(void)
 {
     // Set the clock rate to 20 MHz
-    SysCtlClockSet (SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
+    SysCtlClockSet(SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
     // Set the PWM clock rate (using the prescaler)
 }

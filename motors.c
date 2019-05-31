@@ -1,7 +1,7 @@
 // motors.c - Controls the PWM output to the motors
 
 // Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 28.4.2019
+// Last modified: 1.6.2019
 
 // Based on pwmGen.c by by P.J. Bones UCECE
 
