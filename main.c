@@ -54,7 +54,6 @@ SysTickIntHandler(void)
     updateSwitch();
     incrementDispTimer(); // Updates the OLED display timer
     g_ulSampCnt++; // Increment counter until it reaches its limit and sits the flag to remove user system delay.
-
 }
 
 
@@ -116,20 +115,24 @@ main(void)
     {
         if (g_ulSampCnt > 0) // Set approximately to <SYS_TICK_RATE
         {
-            // Data display and processing
+            // Data processing
             ProcessAltData();
+
             // Checking program states
             landingSet();
             landedCheck();
             refPulse();
+
             // Polling peripherals
-            buttonPressed();
+            buttonPressed(); // Up, down, left, right
             switched();
             buttonReset();
-            // display function and UART 
+
+            // Display function and UART
             displayStats(); // Updates the stat for a different line every loop on the OLED screen
             consoleMsgSpaced();
-            g_ulSampCnt = 0; // Reseting sample count
+
+            g_ulSampCnt = 0; // Resets sample count
         }
     }
 }

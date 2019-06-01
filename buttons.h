@@ -76,24 +76,9 @@ void
 initResetBut(void);
 
 
-// Checks to see if the up button has been pushed
+// Checks to see if the up, down, left, or right button has been pushed
 void
-buttonUp(void);
-
-
-// Checks to see if the down button has been pushed
-void
-buttonDown(void);
-
-
-// Checks to see if the left button has been pushed
-void
-buttonLeft(void);
-
-
-// Checks to see if the right button has been pushed
-void
-buttonRight(void);
+buttonPressed(void);
 
 
 // Performs a software reset when the designated button is pressed
