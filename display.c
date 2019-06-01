@@ -20,7 +20,7 @@
 
 
 // Initalises global variable
-int32_t timer = 0;
+int32_t OLEDDisplaytTimer = 0;
 
 
 // Initialise the Orbit OLED display
@@ -34,7 +34,7 @@ initDisplay(void)
 // Increments the timer to show the next line on the OLED screen
 void incrementDispTimer(void)
 {
-    timer++;
+    OLEDDisplaytTimer++;
 }
 
 
@@ -46,21 +46,21 @@ displayStats(void)
     char string[17];  // 16 characters across the display
     // Form a new string for the line.  The maximum width specified for the
     //  number field ensures it is displayed right justified.
-    if(timer <= 1){
+    if(OLEDDisplaytTimer <= 1){
         usnprintf(string, sizeof(string), "ALTITUDE: %5d%%", getAlt());
         OLEDStringDraw (string, 0, 0);
-    } else if(timer > 1 && timer <= 2) { // Update line on display.
+    } else if(OLEDDisplaytTimer > 1 && OLEDDisplaytTimer <= 2) { // Update line on display.
         usnprintf(string, sizeof(string), "YAW: %7d DEG", getYaw());
         OLEDStringDraw (string, 0, 1);
-    } else if(timer > 2 && timer <= 3) { // Update line on display.
+    } else if(OLEDDisplaytTimer > 2 && OLEDDisplaytTimer <= 3) { // Update line on display.
         usnprintf(string, sizeof(string), "MAIN PWM: %5d%%", GetMainDuty());
         OLEDStringDraw (string, 0, 2);
-    } else if(timer > 3 && timer <= 4) { // Update line on display.
+    } else if(OLEDDisplaytTimer > 3 && OLEDDisplaytTimer <= 4) { // Update line on display.
         usnprintf(string, sizeof(string), "TAIL PWM: %5d%%", GetTailDuty());
         OLEDStringDraw (string, 0, 3);
     }
 
-    if(timer > MAX_OLED_LINES) {
-        timer = 0;
+    if(OLEDDisplaytTimer > MAX_OLED_LINES) {
+        OLEDDisplaytTimer = 0;
     }
 }
