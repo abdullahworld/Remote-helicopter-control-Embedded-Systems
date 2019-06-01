@@ -152,41 +152,17 @@ initResetBut(void)
 }
 
 
-// Checks to see if the up button has been pushed
+// Checks to see if the up, down, left, or right button has been pushed
 void
-buttonUp(void)
+buttonPressed(void)
 {
     if (checkButton(UP) == PUSHED) {
         incrAlt();
-    }
-}
-
-
-// Checks to see if the down button has been pushed
-void
-buttonDown(void)
-{
-    if (checkButton(DOWN) == PUSHED) {
+    } else if (checkButton(DOWN) == PUSHED) {
         decrAlt();
-    }
-}
-
-
-// Checks to see if the left button has been pushed
-void
-buttonLeft(void)
-{
-    if (checkButton(LEFT) == PUSHED) {
+    } else if (checkButton(LEFT) == PUSHED) {
         decrYaw();
-    }
-}
-
-
-// Checks to see if the right button has been pushed
-void
-buttonRight(void)
-{
-    if (checkButton(RIGHT) == PUSHED) {
+    } else if (checkButton(RIGHT) == PUSHED) {
         incrYaw();
     }
 }
