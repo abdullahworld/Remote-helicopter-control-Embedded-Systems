@@ -122,10 +122,7 @@ main(void)
             consoleMsgSpaced();
 
             // Polling peripherals
-            buttonUp();
-            buttonDown();
-            buttonLeft();
-            buttonRight();
+            buttonPressed();
             switched();
             buttonReset();
 
