@@ -36,7 +36,7 @@
 
 
 // Constant
-#define SYS_TICK_RATE 100
+#define SYS_TICK_RATE 100 // [Hz]
 
 
 // Global variable
@@ -50,8 +50,11 @@ SysTickIntHandler(void)
     ADCProcessorTrigger(ADC0_BASE, 3); // Initiate a conversion
     piMainUpdate();
     piTailUpdate();
-    g_ulSampCnt++; // Increment counter until it reaches its limit and sits the flag to remove user system delay.
+    updateButtons();
+    updateSwitch();
     incrementDispTimer(); // Updates the OLED display timer
+    g_ulSampCnt++; // Increment counter until it reaches its limit and sits the flag to remove user system delay.
+
 }
 
 
@@ -87,8 +90,6 @@ initSysTick(void)
 void
 initAll(void)
 {
-    SysCtlPeripheralReset(LEFT_BUT_PERIPH);
-    SysCtlPeripheralReset(UP_BUT_PERIPH);
     initClock();
     initialiseUSB_UART();
     initialiseMainPWM();
@@ -106,28 +107,34 @@ initAll(void)
 }
 
 
+// Main loop using a round robin approach
 int
 main(void)
 {
     initAll();
     while (1)
     {
-        if (g_ulSampCnt > 0) { // Set approximately to <100 Hz. It took 5,480,417 clock cycles to get to this point
-            updateSwitch();
-            updateButtons();
+        if (g_ulSampCnt > 0) // Set approximately to <SYS_TICK_RATE
+        {
+            // Data display and processing
             ProcessAltData();
             displayStats(); // Updates the stat for a different line every loop on the OLED screen
+            consoleMsgSpaced();
+
+            // Polling peripherals
             buttonUp();
             buttonDown();
             buttonLeft();
             buttonRight();
             switched();
             buttonReset();
-            consoleMsgSpaced();
+
+            // Checking program states
             landingSet();
             landedCheck();
             refPulse();
-            g_ulSampCnt = 0;
+
+            g_ulSampCnt = 0; // Reseting sample count
         }
     }
 }

@@ -24,6 +24,7 @@
 // Constants
 #define SOFT_RESET_PIN  GPIO_PIN_6
 #define SOFT_RESET_PORT GPIO_PORTA_BASE
+#define RESET_BUT_PERIPH SYSCTL_PERIPH_GPIOA
 
 
 // *******************************************************
@@ -144,10 +145,10 @@ checkButton (uint8_t butName)
 void
 initResetBut(void)
 {
-    SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOA);
-    GPIOPinTypeGPIOInput (GPIO_PORTA_BASE, GPIO_PIN_6);
-    GPIOPadConfigSet (GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
-    GPIODirModeSet(GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_DIR_MODE_IN);
+    SysCtlPeripheralEnable (RESET_BUT_PERIPH);
+    GPIOPinTypeGPIOInput (SOFT_RESET_PORT, SOFT_RESET_PIN);
+    GPIOPadConfigSet (SOFT_RESET_PORT, SOFT_RESET_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    GPIODirModeSet(SOFT_RESET_PORT, SOFT_RESET_PIN, GPIO_DIR_MODE_IN);
 }
 
 
@@ -199,12 +200,3 @@ buttonReset(void)
         SysCtlReset();
     }
 }
-
-
-
-
-
-
-
-
-

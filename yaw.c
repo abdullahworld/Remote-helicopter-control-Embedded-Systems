@@ -86,7 +86,7 @@ YawIntHandler(void)
             break;
     }
     currentState = nextState;
-    // Limits the yaw to +-180 deg from the reference point
+    // Limits the yaw to +-180 degees from the reference point
     if (slots == 224 || slots == -224) {
         slots = slots*-1; // Switches the sign of yaw angle
     }
@@ -134,9 +134,9 @@ YawRefIntHandler(void)
 void
 initYawRef(void)
 {
-    SysCtlPeripheralEnable (SYSCTL_PERIPH_GPIOC);
-    GPIOPinTypeGPIOInput (YAW_REF_PORT, YAW_REF_PIN);
-    GPIOPadConfigSet (YAW_REF_PORT, YAW_REF_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+    GPIOPinTypeGPIOInput(YAW_REF_PORT, YAW_REF_PIN);
+    GPIOPadConfigSet(YAW_REF_PORT, YAW_REF_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     GPIODirModeSet(YAW_REF_PORT, YAW_REF_PIN, GPIO_DIR_MODE_IN);
 
     GPIOIntRegister(YAW_REF_PORT, YawRefIntHandler);

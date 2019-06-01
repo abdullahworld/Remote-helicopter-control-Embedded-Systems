@@ -16,6 +16,7 @@
 // Constants
 #define OUTPUT_MAX        95     // Largest possible duty cycle signal for the motors
 #define OUTPUT_MIN        5      // Smallest possible duty cycle signal for the motors
+#define OUTPUT_MAIN_MIN   10     // The duty cycle at which the main motor begins to move
 #define PWM_FIXED_RATE_HZ 200    // Fixed rate of the PWM signal for the motors
 #define M_KP              0.55   // Proportional gain for main motor
 #define M_KP_LANDING      0.0005 // Proportional gain for main motor
@@ -33,6 +34,7 @@ static enum modes mode = Landed; // Initial state
 static uint32_t count; // Count for the pulsing of the motors in the reference state
 static uint8_t setAlt = 0; // Initial altitude the helicopter is set to
 static int16_t setYaw = 0; // Initial yaw angle the helicopter is set to
+static bool takeOff;
 
 
 // Starts a routine to find the reference location where the helicopter faces the front
@@ -40,6 +42,7 @@ void
 findRefStart(void)
 {
     activateMainPWM(); // Turns on the main motor
+    setMainPWM(PWM_FIXED_RATE_HZ, OUTPUT_MAIN_MIN);
     mode = Initialising; // Changes program state
 }
 
@@ -188,7 +191,7 @@ getSetYaw(void)
 void
 piMainUpdate(void)
 {
-    if (mode == Flying || mode == Landing) { // Control only occurs at these states
+    if ((mode == Flying || mode == Landing) && takeOff == 1) { // Control only occurs at these states
         static double I;
         double P;
         double control;
@@ -216,6 +219,8 @@ piMainUpdate(void)
             I += dI; // Accumulates the a history of the error in the integral
         }
         setMainPWM(PWM_FIXED_RATE_HZ, control); // Updates the PWM duty cycle
+    } else if (setAlt >= 10) {
+        takeOff = 1;
     }
 }
 
@@ -224,7 +229,6 @@ piMainUpdate(void)
 void
 piTailUpdate(void)
 {
-    static bool takeOff;
     if ((mode == Flying || mode == Landing) && takeOff == 1) // PI control only occurs at these states after take off
     {
        double error;
@@ -248,7 +252,5 @@ piTailUpdate(void)
            I += dI; // Accumulates the a history of the error in the integral
        }
        setTailPWM(PWM_FIXED_RATE_HZ, control); // Updates the PWM duty cycle
-    } else if (setAlt >= 10) {
-        takeOff = 1;
     }
 }
