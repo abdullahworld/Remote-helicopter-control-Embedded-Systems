@@ -118,19 +118,17 @@ main(void)
         {
             // Data display and processing
             ProcessAltData();
-            displayStats(); // Updates the stat for a different line every loop on the OLED screen
-            consoleMsgSpaced();
-
-            // Polling peripherals
-            buttonPressed();
-            switched();
-            buttonReset();
-
             // Checking program states
             landingSet();
             landedCheck();
             refPulse();
-
+            // Polling peripherals
+            buttonPressed();
+            switched();
+            buttonReset();
+            // display function and UART 
+            displayStats(); // Updates the stat for a different line every loop on the OLED screen
+            consoleMsgSpaced();
             g_ulSampCnt = 0; // Reseting sample count
         }
     }
