@@ -36,8 +36,8 @@ YawIntHandler(void)
 {
     int32_t nextState;
     nextState = GPIOPinRead(PORTB, CHA_PIN | CHB_PIN);
-    /* A Finite State Machine that changes from one state to another.
-       There are four states: A, B, C, and D, where A = 00, B = 01, C = 11, and D = 10. */
+    /* A finite state machine has been used looks at the current state and the next state.
+       There are four states read from the pins: A, B, C, and D, where A = 00, B = 01, C = 11, and D = 10. */
     switch(currentState)
     {
         case A:
