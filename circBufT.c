@@ -1,6 +1,9 @@
-/*  circBufT.c Support for a circular buffer of uint32_t values on the Tiva processor.
-    P.J. Bones UCECE
-    Last modified:  8.3.2017 */
+/* circBufT.c Support for a circular buffer of uint32_t values on the Tiva processor. */
+
+/* Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on buttons4.c by P.J. Bones UCECE
+    Additional functions have been added */
 
 #include <stdint.h>
 #include "stdlib.h"
