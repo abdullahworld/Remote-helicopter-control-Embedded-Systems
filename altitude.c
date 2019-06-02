@@ -48,7 +48,7 @@ void ADCIntHandler(void) {
 }
 
 
-// Enables and configures ADC
+/* Enables and configures ADC */
 void initADC (void) {
     // The ADC0 peripheral must be enabled for configuration and use.
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
@@ -81,7 +81,7 @@ void initADC (void) {
 }
 
 
-// Calculates the average altitude reading from the circular buffer and sets the landed value
+/* Calculates the average altitude reading from the circular buffer and sets the landed value*/
 void ProcessAltData(void) {
     // Background task: calculate the (approximate) mean of the values in the
     // circular buffer and display it, together with the sample number.
@@ -101,13 +101,13 @@ void ProcessAltData(void) {
 }
 
 
-// Initalises the circular buffer for altitude readings
+/* Initalises the circular buffer for altitude readings */
 void initADCCircBuf(void) {
     initCircBuf(&g_inBuffer, BUF_SIZE);
 }
 
 
-// Returns the rounded current altitude as an integer
+/* Returns the rounded current altitude as an integer */
 int16_t getAlt(void) {
     altitude = ((100 * 2 * (helicopter_landed_value - meanVal) + VOLTAGE_SENSOR_RANGE)) / (2 * VOLTAGE_SENSOR_RANGE);
     // This adds 0.5 so truncation from floating point division is corrected
