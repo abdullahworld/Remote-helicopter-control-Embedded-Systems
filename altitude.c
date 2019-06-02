@@ -1,8 +1,8 @@
 /*  altitude.c - Reads the altitude using an ADC conversion and the average of a circular buffer.
-    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+
+/*  Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
     Last modified: 1.6.2019
     Based on ADCdemo1.c by P.J. Bones UCECE */
-
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -12,12 +12,10 @@
 #include "circBufT.h"
 #include "altitude.h"
 
-
-/* Constants*/
+/* Constants */
 #define BUF_SIZE 25 // Matches the number of samples per period of jitter, ensuring it will not significantly deviate
 #define SAMPLE_RATE_HZ 100 // The sampling rate for altitude readings (well over the jitter of 4Hz)
 #define VOLTAGE_SENSOR_RANGE 800 // The voltage range for the height sensor [mV]
-
 
 /* Sets variables */
 static uint16_t i;
@@ -27,7 +25,6 @@ static int32_t meanVal;
 static int32_t helicopter_landed_value;
 static circBuf_t g_inBuffer;
 static int16_t altitude;
-
 
 /* The handler for the ADC conversion complete interrupt.
    Writes to the circular buffer */
@@ -44,7 +41,6 @@ void ADCIntHandler(void) {
     // Clean up, clearing the interrupt
     ADCIntClear(ADC0_BASE, 3);
 }
-
 
 /* Enables and configures ADC */
 void initADC (void) {
@@ -78,7 +74,6 @@ void initADC (void) {
     ADCIntEnable(ADC0_BASE, 3);
 }
 
-
 /* Calculates the average altitude reading from the circular buffer and sets the landed value*/
 void ProcessAltData(void) {
     // Background task: calculate the (approximate) mean of the values in the
@@ -98,12 +93,10 @@ void ProcessAltData(void) {
     }
 }
 
-
 /* Initalises the circular buffer for altitude readings */
 void initADCCircBuf(void) {
     initCircBuf(&g_inBuffer, BUF_SIZE);
 }
-
 
 /* Returns the rounded current altitude as an integer */
 int16_t getAlt(void) {
@@ -112,4 +105,3 @@ int16_t getAlt(void) {
     // Based on the formula: (2*x + y)/2/y = x/y + 0.5
     return altitude;
 }
-
