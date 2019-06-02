@@ -1,11 +1,11 @@
-/*  main.c - A program that controls a model helicopter.
-    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+/*  main.c - A program that controls a model helicopter. */
+
+/*  Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
     Last modified: 1.6.2019
     Based on ADCdemo1.c by P.J. Bones UCECE */
 
 /*  Inputs: PE4 (Altitude), PB0 (Channel A), PB1 (Channel B)
     Outputs: PC5 (PWM Main), PF1 (PWM Tail) */
-
 
 #include <buttons.h>
 #include <stdint.h>
@@ -30,10 +30,8 @@
 #include "uart.h"
 #include "control.h"
 
-
 /* Constant */
 #define SYS_TICK_RATE 100 // [Hz]
-
 
 /* Global variable */
 uint32_t g_ulSampCnt; // Counter for the interrupts
@@ -41,33 +39,35 @@ uint32_t g_ulSampCnt; // Counter for the interrupts
 
 /* The interrupt handler for the for SysTick interrupt. */
 void
-SysTickIntHandler(void)
-{
+SysTickIntHandler(void) {
+
     ADCProcessorTrigger(ADC0_BASE, 3); // Initiate a conversion
+
     piMainUpdate();
+
     piTailUpdate();
+
     updateButtons();
+
     updateSwitch();
+
     incrementDispTimer(); // Updates the OLED display timer
+
     g_ulSampCnt++; // Increment counter until it reaches its limit and sits the flag to remove user system delay.
 }
 
-
 /* Initialisation functions for the clock (incl. SysTick), ADC, display */
 void
-initClock(void)
-{
+initClock(void) {
     // Set the clock rate to 20 MHz
     SysCtlClockSet(SYSCTL_SYSDIV_10 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_16MHZ);
     // Set the PWM clock rate (using the prescaler)
 }
 
-
 /* Initialises the SysTick Timer */
 void
-initSysTick(void)
-{
+initSysTick(void) {
     // Set up the period for the SysTick timer.  The SysTick timer period is
     // set as a function of the system clock.
     SysTickPeriodSet(SysCtlClockGet() / SYS_TICK_RATE);
@@ -80,11 +80,9 @@ initSysTick(void)
     SysTickEnable();
 }
 
-
 /* Initialises all of the peripherals and processes */
 void
-initAll(void)
-{
+initAll(void) {
     initClock();
     initialiseUSB_UART();
     initialiseMainPWM();
@@ -101,19 +99,15 @@ initAll(void)
     IntMasterEnable(); // Enable interrupts to the processor.
 }
 
-
 /* Main loop using a round robin approach */
 int
-main(void)
-{
+main(void){
     initAll();
-    while (1)
-    {
-        if (g_ulSampCnt > 0) // Set approximately to <SYS_TICK_RATE
-        {
+    while (1){
+        if (g_ulSampCnt > 0){ // Set approximately to <SYS_TICK_RATE
+
             // Data processing
             ProcessAltData();
-
             // Checking program states
             landingSet();
             landedCheck();
@@ -124,11 +118,12 @@ main(void)
             switched();
             buttonReset();
 
-            // Display function and UART
-            displayStats(); // Updates the stat for a different line every loop on the OLED screen
+            // OLEDD Display function and UART
+            displayStats(); // Updates the stats for a different line every loop on the OLED screen
             consoleMsgSpaced();
 
-            g_ulSampCnt = 0; // Resets sample count
+            // Resets sample count
+            g_ulSampCnt = 0;
         }
     }
 }
