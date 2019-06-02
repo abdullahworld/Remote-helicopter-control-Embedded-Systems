@@ -1,9 +1,8 @@
-// uart.c - Functions for UART serial output.
+/*  uart.c - Functions for UART serial output. */
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
-// Based on uartDemo.c by by P.J. Bones UCECE
+/*  Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on uartDemo.c by by P.J. Bones UCECE */
 
 
 #include <stdint.h>
@@ -28,11 +27,11 @@
 #include "control.h"
 
 
-// Constant
+/* Constant */
 #define MAX_STR_LEN 16
 
 
-//---USB Serial comms: UART0, Rx:PA0 , Tx:PA1
+/* USB Serial comms: UART0, Rx:PA0, Tx:PA1 */
 #define BAUD_RATE 9600
 #define UART_USB_BASE           UART0_BASE
 #define UART_USB_PERIPH_UART    SYSCTL_PERIPH_UART0
@@ -44,11 +43,11 @@
 #define SPACED_COUNT 20 // The number of loops between printing to the console
 
 
-// Set variable
+/* Set variable */
 char statusStr[MAX_STR_LEN + 1];
 
 
-// Initialise USB_UART - 8 bits, 1 stop bit, no parity
+/* Initialise USB_UART - 8 bits, 1 stop bit, no parity */
 void
 initialiseUSB_UART(void)
 {
@@ -72,7 +71,7 @@ initialiseUSB_UART(void)
 }
 
 
-// Transmit a string via UART0
+/* Transmit a string via UART0 */
 void
 UARTSend (char *pucBuffer)
 {
@@ -86,7 +85,7 @@ UARTSend (char *pucBuffer)
 }
 
 
-// Forms and sends messages to the console
+/* Forms and sends messages to the console */
 void
 consoleMsg(void)
 {
@@ -103,7 +102,7 @@ consoleMsg(void)
 }
 
 
-// Sends messages to the console periodically
+/* Sends messages to the console periodically */
 void
 consoleMsgSpaced(void)
 {
