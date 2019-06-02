@@ -107,9 +107,11 @@ void initADCCircBuf(void) {
 }
 
 
-// Returns the rounded current altitude
+// Returns the rounded current altitude as an integer
 int16_t getAlt(void) {
     altitude = ((100 * 2 * (helicopter_landed_value - meanVal) + VOLTAGE_SENSOR_RANGE)) / (2 * VOLTAGE_SENSOR_RANGE);
+    // This adds 0.5 so truncation from floating point division is corrected
+    // Based on the formula: (2*x + y)/2/y = x/y + 0.5
     return altitude;
 }
 
