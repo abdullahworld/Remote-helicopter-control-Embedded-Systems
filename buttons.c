@@ -2,11 +2,10 @@
    The buttons are:  UP and DOWN (on the Orbit daughterboard) plus
    LEFT and RIGHT on the Tiva. */
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
-// Based on buttons4.c by P.J. Bones UCECE
-// Additional functions have been added
+/* Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on buttons4.c by P.J. Bones UCECE
+    Additional functions have been added */
 
 
 #include <stdint.h>
@@ -21,23 +20,20 @@
 #include "control.h"
 
 
-// Constants
+/* Constants */
 #define SOFT_RESET_PIN   GPIO_PIN_6
 #define SOFT_RESET_PORT  GPIO_PORTA_BASE
 #define RESET_BUT_PERIPH SYSCTL_PERIPH_GPIOA
 
 
-// *******************************************************
-// Globals to module
-// *******************************************************
+/* Globals to module */
 static bool but_state[NUM_BUTS];	// Corresponds to the electrical state
 static uint8_t but_count[NUM_BUTS];
 static bool but_flag[NUM_BUTS];
 static bool but_normal[NUM_BUTS];   // Corresponds to the electrical state
 
 
-/*
-initButtons: Initialise the variables associated with the set of buttons
+/* initButtons: Initialise the variables associated with the set of buttons
  defined by the constants in the buttons2.h header file. */
 void
 initButtons (void)
@@ -84,15 +80,14 @@ initButtons (void)
 	}
 }
 
-/*
-updateButtons: Function designed to be called regularly. It polls all
-buttons once and updates variables associated with the buttons if
-necessary.  It is efficient enough to be part of an ISR, e.g. from
-a SysTick interrupt.
-Debounce algorithm: A state machine is associated with each button.
-A state change occurs only after NUM_BUT_POLLS consecutive polls have
-read the pin in the opposite condition, before the state changes and
- a flag is set.  Set NUM_BUT_POLLS according to the polling rate. */
+/*  updateButtons: Function designed to be called regularly. It polls all
+    buttons once and updates variables associated with the buttons if
+    necessary.  It is efficient enough to be part of an ISR, e.g. from
+    a SysTick interrupt.
+    Debounce algorithm: A state machine is associated with each button.
+    A state change occurs only after NUM_BUT_POLLS consecutive polls have
+    read the pin in the opposite condition, before the state changes and
+    a flag is set.  Set NUM_BUT_POLLS according to the polling rate. */
 void
 updateButtons (void)
 {
@@ -122,10 +117,9 @@ updateButtons (void)
 	}
 }
 
-/*
-checkButton: Function returns the new button logical state if the button
-logical state (PUSHED or RELEASED) has changed since the last call,
-otherwise returns NO_CHANGE. */
+/*  checkButton: Function returns the new button logical state if the button
+    logical state (PUSHED or RELEASED) has changed since the last call,
+    otherwise returns NO_CHANGE. */
 enum butStates
 checkButton (uint8_t butName)
 {
@@ -141,7 +135,7 @@ checkButton (uint8_t butName)
 }
 
 
-/*Initialises the GPIO pin for the software reset button */
+/*  Initialises the GPIO pin for the software reset button */
 void
 initResetBut(void)
 {
@@ -152,7 +146,7 @@ initResetBut(void)
 }
 
 
-/* Checks to see if the up, down, left, or right button has been pushed */
+/*  Checks to see if the up, down, left, or right button has been pushed */
 void
 buttonPressed(void)
 {
@@ -168,7 +162,7 @@ buttonPressed(void)
 }
 
 
-/* Performs a software reset when the designated button is pressed */
+/*  Performs a software reset when the designated button is pressed */
 void
 buttonReset(void)
 {
