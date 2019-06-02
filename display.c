@@ -1,7 +1,6 @@
-// display.c - Controls the OLED display, showing the stats of the helicopter.
-
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
+/*  display.c - Controls the OLED display, showing the stats of the helicopter.
+    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019 */
 
 
 #include <stdint.h>
@@ -15,15 +14,15 @@
 #include "motors.h"
 
 
-// Constant
+/* Constant */
 #define MAX_OLED_LINES 4
 
 
-// Initalises global variable
+/* Initalises global variable */
 int32_t OLEDDisplaytTimer = 0;
 
 
-// Initialise the Orbit OLED display
+/* Initialise the Orbit OLED display */
 void
 initDisplay(void)
 {
@@ -31,7 +30,7 @@ initDisplay(void)
 }
 
 
-// Increments the timer to show the next line on the OLED screen
+/* Increments the timer to show the next line on the OLED screen */
 void incrementDispTimer(void)
 {
     OLEDDisplaytTimer++;
