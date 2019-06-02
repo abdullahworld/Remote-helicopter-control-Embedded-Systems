@@ -1,68 +1,54 @@
+/*  motors.h - Controls the PWM output to the motors */
+
+/*  Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on pwmGen.c by by P.J. Bones UCECE */
+
+/*  Outputs: PC5 (PWM Main), PF1 (PWM Tail) */
+
 #ifndef MOTORS_H_
 #define MOTORS_H_
 
-
-// motors.h - Controls the PWM output to the motors
-
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
-// Based on pwmGen.c by by P.J. Bones UCECE
-
-// Outputs: PC5 (PWM Main), PF1 (PWM Tail)
-
-
 #include <stdint.h>
 
-
-// Sets the frequency and duty cycle of the PWM for the main motor
+/* Sets the frequency and duty cycle of the PWM for the main motor */
 void
 setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 
-
-// Sets the frequency and duty cycle of the PWM for the tail motor
+/* Sets the frequency and duty cycle of the PWM for the tail motor */
 void
 setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty);
 
-
-// Returns the rounded duty cycle of the main motor
+/* Returns the rounded duty cycle of the main motor */
 uint16_t
 GetMainDuty(void);
 
-
-// Returns the rounded duty cycle of the tail motor
+/* Returns the rounded duty cycle of the tail motor */
 uint16_t
 GetTailDuty(void);
 
-
-// Initialises the PWM for the main motor
+/* Initialises the PWM for the main motor */
 void
 initialiseMainPWM(void);
 
-
-// Initialises the PWM for the tail motor
+/* Initialises the PWM for the tail motor */
 void
 initialiseTailPWM(void);
 
-
-// Enables the PWM output for the main motor
+/* Enables the PWM output for the main motor */
 void
 activateMainPWM(void);
 
-
-// Enables the PWM output for the tail motor
+/* Enables the PWM output for the tail motor */
 void
 activateTailPWM(void);
 
-
-// Disables the PWM output for the main motor
+/* Disables the PWM output for the main motor */
 void
 deactivateMainPWM(void);
 
-
-// Disables the PWM output for the tail rotor
+/* Disables the PWM output for the tail rotor */
 void
 deactivateTailPWM(void);
-
 
 #endif /* MOTORS_H_ */
