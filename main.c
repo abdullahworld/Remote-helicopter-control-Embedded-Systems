@@ -1,14 +1,10 @@
-// main.c - A program that controls a model helicopter.
+/*  main.c - A program that controls a model helicopter.
+    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on ADCdemo1.c by P.J. Bones UCECE */
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
-// Based on ADCdemo1.c by P.J. Bones UCECE
-// Based on the 'convert' series from 2016
-
-// This was designed to on CCS8.3.0.00009 to work with the compiler TI v 18.1.4.LTS
-// Inputs: PE4 (Altitude), PB0 (Channel A), PB1 (Channel B)
-// Outputs: PC5 (PWM Main), PF1 (PWM Tail)
+/*  Inputs: PE4 (Altitude), PB0 (Channel A), PB1 (Channel B)
+    Outputs: PC5 (PWM Main), PF1 (PWM Tail) */
 
 
 #include <buttons.h>
@@ -35,15 +31,15 @@
 #include "control.h"
 
 
-// Constant
+/* Constant */
 #define SYS_TICK_RATE 100 // [Hz]
 
 
-// Global variable
+/* Global variable */
 uint32_t g_ulSampCnt; // Counter for the interrupts
 
 
-// The interrupt handler for the for SysTick interrupt.
+/* The interrupt handler for the for SysTick interrupt. */
 void
 SysTickIntHandler(void)
 {
@@ -57,7 +53,7 @@ SysTickIntHandler(void)
 }
 
 
-// Initialisation functions for the clock (incl. SysTick), ADC, display
+/* Initialisation functions for the clock (incl. SysTick), ADC, display */
 void
 initClock(void)
 {
@@ -68,7 +64,7 @@ initClock(void)
 }
 
 
-// Initialises the SysTick Timer
+/* Initialises the SysTick Timer */
 void
 initSysTick(void)
 {
@@ -85,7 +81,7 @@ initSysTick(void)
 }
 
 
-// Initialises all of the peripherals and processes
+/* Initialises all of the peripherals and processes */
 void
 initAll(void)
 {
@@ -106,7 +102,7 @@ initAll(void)
 }
 
 
-// Main loop using a round robin approach
+/* Main loop using a round robin approach */
 int
 main(void)
 {
