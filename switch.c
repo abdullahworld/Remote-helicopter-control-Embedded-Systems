@@ -1,7 +1,7 @@
-// switch.c - Functions for the switch on the ORBIT BoosterPack.
+/*  switch.c - Functions for the switch on the ORBIT BoosterPack. */
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
+/*  Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019 */
 
 
 #include <stdint.h>
@@ -13,17 +13,17 @@
 #include "control.h"
 
 
-// Constants
+/* Constants */
 #define SWITCH_PIN  GPIO_PIN_7
 #define SWITCH_PORT GPIO_PORTA_BASE
 
 
-// Sets variables
+/* Sets variables */
 static bool switchState;
 static bool flyingFlag = false;
 
 
-// Initialises the GPIO port for the switch
+/* Initialises the GPIO port for the switch */
 void
 initSwitch(void)
 {
@@ -34,7 +34,7 @@ initSwitch(void)
 }
 
 
-// Updates the status of the switch in an ISR at SYS_TICK_RATE
+/* Updates the status of the switch in an ISR at SYS_TICK_RATE */
 void
 updateSwitch(void)
 {
@@ -42,7 +42,7 @@ updateSwitch(void)
 }
 
 
-// Switch logic to only return a single state then lock itself until the switch is changed
+/* Switch logic to only return a single state then lock itself until the switch is changed */
 bool
 checkSwitch(void)
 {
