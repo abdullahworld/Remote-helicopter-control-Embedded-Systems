@@ -1,11 +1,9 @@
-// motors.c - Controls the PWM output to the motors
+/*  motors.c - Controls the PWM output to the motors
+    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on pwmGen.c by by P.J. Bones UCECE
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
-// Based on pwmGen.c by by P.J. Bones UCECE
-
-// Outputs: PC5 (PWM Main), PF1 (PWM Tail)
+/*  Outputs: PC5 (PWM Main), PF1 (PWM Tail) */
 
 
 #include <stdint.h>
@@ -20,7 +18,7 @@
 #include "driverlib/sysctl.h"
 
 
-// PWM configuration
+/* PWM configuration */
 #define PWM_FIXED_RATE_HZ       200
 #define PWM_MAIN_FIXED_DUTY     5
 #define PWM_TAIL_FIXED_DUTY     35
@@ -28,7 +26,7 @@
 #define PWM_DIVIDER             4
 
 
-// Main Rotor PWM: PC5, J4-05
+/* Main Rotor PWM: PC5, J4-05 */
 #define PWM_MAIN_BASE        PWM0_BASE
 #define PWM_MAIN_GEN         PWM_GEN_3
 #define PWM_MAIN_OUTNUM      PWM_OUT_7
@@ -40,7 +38,7 @@
 #define PWM_MAIN_GPIO_PIN    GPIO_PIN_5
 
 
-// Tail Rotor PWM: PF1, J3-10
+/* Tail Rotor PWM: PF1, J3-10 */
 #define PWM_TAIL_BASE        PWM1_BASE
 #define PWM_TAIL_GEN         PWM_GEN_2
 #define PWM_TAIL_OUTNUM      PWM_OUT_5
@@ -52,7 +50,7 @@
 #define PWM_TAIL_GPIO_PIN    GPIO_PIN_1 // Causes the red LED to activate on the TIVA board
 
 
-// Sets the frequency and duty cycle of the PWM for the main motor
+/* Sets the frequency and duty cycle of the PWM for the main motor */
 void
 setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 {
@@ -66,7 +64,7 @@ setMainPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 }
 
 
-// Sets the frequency and duty cycle of the PWM for the tail motor
+/* Sets the frequency and duty cycle of the PWM for the tail motor */
 void
 setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 {
@@ -79,7 +77,7 @@ setTailPWM(uint32_t ui32Freq, uint32_t ui32Duty)
 }
 
 
-// Returns the rounded duty cycle of the main motor
+/* Returns the rounded duty cycle of the main motor */
 uint16_t
 GetMainDuty(void)
 {
@@ -89,7 +87,7 @@ GetMainDuty(void)
 }
 
 
-// Returns the rounded duty cycle of the tail motor
+/* Returns the rounded duty cycle of the tail motor */
 uint16_t
 GetTailDuty(void)
 {
@@ -99,7 +97,7 @@ GetTailDuty(void)
 }
 
 
-// Initialises the PWM for the main motor
+/* Initialises the PWM for the main motor */
 void
 initialiseMainPWM(void)
 {
@@ -125,7 +123,7 @@ initialiseMainPWM(void)
 }
 
 
-// Initialises the PWM for the tail motor
+/* Initialises the PWM for the tail motor */
 void
 initialiseTailPWM(void)
 {
@@ -150,7 +148,7 @@ initialiseTailPWM(void)
 }
 
 
-// Enables the PWM output for the main motor
+/* Enables the PWM output for the main motor */
 void
 activateMainPWM(void)
 {
@@ -158,7 +156,7 @@ activateMainPWM(void)
 }
 
 
-// Enables the PWM output for the tail motor
+/* Enables the PWM output for the tail motor */
 void
 activateTailPWM(void)
 {
@@ -166,7 +164,7 @@ activateTailPWM(void)
 }
 
 
-// Disables the PWM output for the main motor
+/* Disables the PWM output for the main motor */
 void
 deactivateMainPWM(void)
 {
@@ -174,7 +172,7 @@ deactivateMainPWM(void)
 }
 
 
-// Disables the PWM output for the tail rotor
+/* Disables the PWM output for the tail rotor */
 void
 deactivateTailPWM(void)
 {
