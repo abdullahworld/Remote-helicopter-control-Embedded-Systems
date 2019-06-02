@@ -1,4 +1,3 @@
-
 /* control.c - Controls the different states of the program and the positioning of the helicopter.
     Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
     Last modified: 1.6.2019 */
@@ -13,7 +12,7 @@
 #include "yaw.h"
 
 
-// Constants
+/* Constants */
 #define OUTPUT_MAX        95     // Largest possible duty cycle signal for the motors
 #define OUTPUT_MIN        5      // Smallest possible duty cycle signal for the motors
 #define OUTPUT_MAIN_MIN   10     // The duty cycle at which the main motor begins to move
