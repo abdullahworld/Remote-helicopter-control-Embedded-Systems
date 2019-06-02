@@ -1,8 +1,7 @@
-// yaw.c - Controls the yaw of the helicopter
+/*  yaw.c - Controls the yaw of the helicopter */
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
+/*  Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019 */
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -14,7 +13,7 @@
 #include "control.h"
 
 
-// Constants
+/* Constants */
 #define NUM_READINGS 448 // The number of readings in the slotted disk (4 * (112 slots) in a rev)
 #define CHA_PIN GPIO_PIN_0
 #define CHB_PIN GPIO_PIN_1
@@ -24,13 +23,13 @@
 #define YAW_REF_PORT GPIO_PORTC_BASE
 
 
-// Sets variables
+/* Sets variables*/
 enum quadrature {A=0, B=1, C=3, D=2}; // Sets the values for the finite state machine
 int32_t currentState;
 static int32_t slots;
 
 
-// ISR for quadrature encoding
+/* ISR for quadrature encoding */
 void
 YawIntHandler(void)
 {
@@ -94,7 +93,7 @@ YawIntHandler(void)
 }
 
 
-// Initialises the GPIO pin register for yaw channels A and B
+/* Initialises the GPIO pin register for yaw channels A and B */
 void
 initYawGPIO(void)
 {
@@ -109,7 +108,7 @@ initYawGPIO(void)
 }
 
 
-// Returns the yaw in degrees with respect to the reference point
+/* Returns the yaw in degrees with respect to the reference point */
 int16_t
 getYaw(void)
 {
@@ -117,7 +116,7 @@ getYaw(void)
 }
 
 
-// ISR for finding the yaw reference
+/* ISR for finding the yaw reference */
 void
 YawRefIntHandler(void)
 {
@@ -130,7 +129,7 @@ YawRefIntHandler(void)
 }
 
 
-// Initialises the GPIO pin register for the yaw reference point
+/* Initialises the GPIO pin register for the yaw reference point */
 void
 initYawRef(void)
 {
