@@ -1,8 +1,4 @@
-
-/*    circBufT.c
-
-    Support for a circular buffer of uint32_t values on the 
-    Tiva processor.
+/*  circBufT.c Support for a circular buffer of uint32_t values on the Tiva processor.
     P.J. Bones UCECE
     Last modified:  8.3.2017 */
 
