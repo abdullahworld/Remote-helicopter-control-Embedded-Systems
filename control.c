@@ -1,7 +1,7 @@
-// control.c - Controls the different states of the program and the positioning of the helicopter.
 
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
+/* control.c - Controls the different states of the program and the positioning of the helicopter.
+    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019 */
 
 
 #include <stdint.h>
@@ -28,7 +28,7 @@
 #define OFF_PULSE_CNT     400    // The number of loops tha tthe pulse is off for
 
 
-// Sets variables
+/* Sets variables */
 enum modes {Initialising, Flying, Landed, Landing}; // Program states
 static enum modes mode = Landed; // Initial state
 static uint32_t count; // Count for the pulsing of the motors in the reference state
@@ -37,7 +37,7 @@ static int16_t setYaw = 0; // Initial yaw angle the helicopter is set to
 static bool takeOff;
 
 
-// Starts a routine to find the reference location where the helicopter faces the front
+/* Starts a routine to find the reference location where the helicopter faces the front */
 void
 findRefStart(void)
 {
@@ -47,7 +47,7 @@ findRefStart(void)
 }
 
 
-// Changes the mode to flying once the reference point has been found
+/* Changes the mode to flying once the reference point has been found */
 void
 findRefStop(void)
 {
@@ -57,7 +57,7 @@ findRefStop(void)
 }
 
 
-// Changes the program to the landing state
+/* Changes the program to the landing state */
 void
 modeLanding(void)
 {
@@ -65,7 +65,7 @@ modeLanding(void)
 }
 
 
-// Reset set values for altitude and yaw when the program is changed to the landing state
+/* Reset set values for altitude and yaw when the program is changed to the landing state */
 void
 landingSet(void) {
     static bool LandingFlag = 0;
@@ -77,7 +77,7 @@ landingSet(void) {
 }
 
 
-// Checks to see if the helicopter has landed. It turns of the motors and performs a reset when it is landed
+/* Checks to see if the helicopter has landed. It turns of the motors and performs a reset when it is landed */
 void
 landedCheck(void) {
     if (mode == Landing && getAlt() <= 0) { // Checks to see if the helicopter has landed
@@ -89,7 +89,7 @@ landedCheck(void) {
 }
 
 
-// Pulses the PWM of the tail motor to find the reference point
+/* Pulses the PWM of the tail motor to find the reference point */
 void
 refPulse(void)
 {
@@ -109,7 +109,7 @@ refPulse(void)
 }
 
 
-// Returns a string of the current mode
+/* Returns a string of the current mode */
 char*
 getMode(void)
 {
@@ -125,7 +125,7 @@ getMode(void)
 }
 
 
-// Increases the set altitude by 10%
+/* Increases the set altitude by 10% */
 void
 incrAlt(void)
 {
@@ -137,7 +137,7 @@ incrAlt(void)
 }
 
 
-// Decreases the set altitude by 10%
+/* Decreases the set altitude by 10% */
 void
 decrAlt(void)
 {
@@ -149,7 +149,7 @@ decrAlt(void)
 }
 
 
-// Increases the set yaw by 15 degrees
+/* Increases the set yaw by 15 degrees */
 void
 incrYaw(void)
 {
@@ -160,7 +160,7 @@ incrYaw(void)
 }
 
 
-// Decreases the set yaw by 15 degrees
+/* Decreases the set yaw by 15 degrees */
 void
 decrYaw(void)
 {
@@ -171,7 +171,7 @@ decrYaw(void)
 }
 
 
-// Returns the current set altitude
+/* Returns the current set altitude */
 uint8_t
 getSetAlt(void)
 {
@@ -179,7 +179,7 @@ getSetAlt(void)
 }
 
 
-// Returns the current set yaw
+/* Returns the current set yaw */
 int16_t
 getSetYaw(void)
 {
@@ -187,7 +187,7 @@ getSetYaw(void)
 }
 
 
-// Updates the PI controller for the main motor based of the set position and the current position
+/* Updates the PI controller for the main motor based of the set position and the current position */
 void
 piMainUpdate(void)
 {
@@ -225,7 +225,7 @@ piMainUpdate(void)
 }
 
 
-// Updates the PI controller for the tail motor based on the set position and the current position
+/* Updates the PI controller for the tail motor based on the set position and the current position */
 void
 piTailUpdate(void)
 {
