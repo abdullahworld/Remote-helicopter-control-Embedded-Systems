@@ -1,9 +1,7 @@
-// altitude.c - Reads the altitude using an ADC conversion and the average of a circular buffer.
-
-// Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
-// Last modified: 1.6.2019
-
-// Based on ADCdemo1.c by P.J. Bones UCECE
+/*  altitude.c - Reads the altitude using an ADC conversion and the average of a circular buffer.
+    Contributers: Hassan Ali Alhujhoj, Abdullah Naeem and Daniel Page
+    Last modified: 1.6.2019
+    Based on ADCdemo1.c by P.J. Bones UCECE */
 
 
 #include <stdint.h>
@@ -15,13 +13,13 @@
 #include "altitude.h"
 
 
-// Constants
+/* Constants*/
 #define BUF_SIZE 25 // Matches the number of samples per period of jitter, ensuring it will not significantly deviate
 #define SAMPLE_RATE_HZ 100 // The sampling rate for altitude readings (well over the jitter of 4Hz)
 #define VOLTAGE_SENSOR_RANGE 800 // The voltage range for the height sensor [mV]
 
 
-// Sets variables
+/* Sets variables */
 static uint16_t i;
 static int8_t n = 0;
 static int32_t sum;
