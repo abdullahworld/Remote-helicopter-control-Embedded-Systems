@@ -43,6 +43,6 @@ Note: This program was designed on CCS8.3.0.00009 to work with the compiler TI v
 - Decreases the duty cycle of the tail rotor PWM by 15%
 
 ## Contributers
-> - Hassan Ali Alhujhoj
-> - Abdullah Naeem 
-> - Daniel Page
+* [Hassan Alhujhoj](https://github.com/hassan-alhujhoj)
+* [Abdullah Naeem](https://github.com/Abdullah-Naeem)
+* [Daniel Page](https://github.com/Daniel-Page)
