@@ -44,5 +44,5 @@ Note: This program was designed on CCS8.3.0.00009 to work with the compiler TI v
 
 ## Contributers
 * [Hassan Alhujhoj](https://github.com/hassan-alhujhoj)
-* [Abdullah Naeem](https://github.com/Abdullah-Naeem)
+* [Abdullah Naeem](https://github.com/ana104-collab)
 * [Daniel Page](https://github.com/Daniel-Page)
